@@ -1,3 +1,6 @@
+# No Backup files in git
+*~
+
 # Compiled Object files
 *.slo
 *.lo

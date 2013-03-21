@@ -1,0 +1,1268 @@
+               AcquRoot Release Notes
+
+
+Version 3
+------------------------------------------------------------------------------
+9th Feb. 2005 (J.R.M. Annand): New 3v15 AcquRoot Available
+
+Some of you will have encountered problems trying to compile AcquRoot on 
+Fedora Core 3 systems. This is because version 3.4 of the gcc compiler
+represents a substantial change with respect to version 3.3. In particular the
+code to parse templated entities has been completely rewritten and of
+course the new stuff "adheres to rigourous new C++ standards" ie refuses to
+understand old constructs.
+
+Changes to 3v15.
+1) templated classes to handle histogramming and data cuts now conform
+   to the new standards.
+
+2) all attempts to initialise a class when instantiating via the new
+   operator will fail with 3.4 eg the line
+
+   fP4 = new TLorentzVector[maxcl](0.,0.,0.,-1.);
+
+   will fail with gcc 3.4
+
+   fP4 = new TLorentzVector[maxcl];
+
+   will work with gcc 3.4.
+
+3) a couple of bugs regarding read-in of monte-carlo generated data have
+   been removed.
+
+
+I have compiled and run 3v15 on systems running gcc 3.2, 3.3 and 3.4.
+Anything earlier I cannot access. If you change to 3v15 your user code may
+not compile, most probably due to item 2) above.
+READ THE COMPILER MESSAGE AND FIX ACCORDINGLY.
+
+I have updated the user code bundled with 3v15 
+(see $acqu_sys/User/UserAcqu.tar.gz).....it should compile under gcc 3.4.
+
+-------------------------------------------------------------------------------
+22nd Feb. 2005 (J.R.M. Annand): Update to 3v15
+
+1) Fixed a bug in --offline operation which caused the last output 
+   reduced-data file to be corrupted.
+
+2) Implemented batch-mode operation. The command line option --batch switches
+   AcquRoot to this mode e.g. and dumps any text output not already written to
+   the main .log files to AR.log
+
+   AcquRoot --batch CB.Offline >&! AR.log &
+
+-------------------------------------------------------------------------------
+3rd Mar 2005 (J.R.M. Annand): Update to 3v15
+
+1) Facility to redirect log files and similar to a directory of choice.
+   Batch-mode under say "Alien" control may need this.
+
+2) User make file automatically compiles and links any file
+   $acqu/root/src/XXX_t.cc
+
+3) TA2ClusterDetector and HitCluster_t modified to make user-defined cluster
+   algorithms easier to implement
+
+-------------------------------------------------------------------------------
+11th Mar 2005 (J.R.M. Annand): Update to 3v15
+
+1) Flush log-file buffers to disk every data record (online mode) or 
+   every input root file change (offline mode).
+
+2) Setup of TRint via TA2Control...default don't extract anything from argv.
+   Inherited classes of TA2Control may also require changing to default to
+   the same behaviour.
+
+-------------------------------------------------------------------------------
+23rd Mar 2005 (J.R.M. Annand): Update to 3v15
+
+1) acqu_setup script: K.Livingston $ACQURC  mod for batch farming.
+
+2) TA2ParticleID: optional local store particle properties, add SetMassP4
+
+3) TA2Apparatus: re-order default PostInit, particleID integration
+
+4) TA2Analysis: particleID integration (ensure only 1 database created)
+
+5) TA2Detector: add/bud-fix Getters
+
+6) TA2WireChamber: add Getters
+
+-------------------------------------------------------------------------------
+18th May 2005 (J.R.M. Annand): 3v16
+
+1) TA2HistManager: 
+   Add 3D histograms.
+   Add non-unity weight increment for 1D,2D and 3D histograms. The weight is
+   supplied in a class variable (as e.g. x,y,z variables)
+   Include histogram cut spec at construction,
+   General tidy up of code.
+   Cut/histogram naming convention changed...cut name appended to hist name 
+   with '.', e.g. histname.cutname. Similar for weighting histname.wgtname.
+   Bug fix remove insertion of '0' index on scaler variable.
+
+2) TA2H: 
+   New hist base class to store cut and weight info. TA2H1,2,3 inherit
+   both from TH1,2,3F and TA2H. Fill method defined in TA2H part. Modify TA2H1
+   and TA2H2 to comply.
+
+3) TA2H3: New derivative of TA2H for 3D histograms. 
+   X,Y,Z variables can be of different types Int_t or Double_t 
+   (as 2D histograms), but all must be
+   either single or multi-value (all the same).
+
+4) TA2DataManager: 
+   Add 2D polygon cuts.
+   Add miscellaneous cut list "misc" cuts (e.g. for making particle ID
+   decisions during event reconstruction).
+   Add wild-card options stored in TA2Cut local data bank (e.g. to
+   specify a particle type if a particular cut condition is met)
+
+5) TA2Cut: 
+   Add store for options info, mod TA2Cut1D to comply
+
+6) TA2Cut2D: 
+   New derivative of TA2Cut for 2D polygon cuts
+
+7) TA2MultiCut: 
+   Getter to return linked-list pointer
+
+8) TA2Apparatus: 
+   Add method to sort cuts from the miscellaneous linked list
+   to indexed arrays for relation to detector sectors.
+   Move creation of TLorentzVector array and PDG code array here 
+   from TA2ParticleID
+
+9) HitCluster_t: 
+   Getter to return fraction of total energy in the central element.
+
+10)TA2ParticleID: 
+   Add GetMassMeV(ipdg) method as standard mass getter from PDG data base
+   returns in GeV
+   Move creation of TLorentzVector array and PDG code array from here to
+   TA2Apparatus
+
+11) TAcquRoot bug fix scaler handler in OfflineLoop()
+
+12) TA2Analysis move all reduced-data save (raw format) from Process() to
+    Cleanup(). Always save event where scalers are read. If the event doesn't
+    pass applied conditions its stored as a "null-hits" event.
+
+-------------------------------------------------------------------------------
+3rd November 2005 (J.R.M. Annand): 3v17
+
+1)  Add TRandom pointer to TA2DataManager.
+    Await inplemention of smearing functions for kinematic variables.
+
+2)  HitCluster_t input up to 64 nearest neighbours
+    Add HitCluster_t::Merge() function for split-off recovery
+    Add HitCluster_t::MoreNeighbours() scan beyond list of nearest neighbours
+    for further members of cluster
+
+3)  TA2Cut2D added TestXY(<T>,<T>) function
+
+4)  TA2Detector 
+    add fEnergyScale..."global" energy scaling factor
+    By default this is initialised to 1.0. To set non-unity use line in 
+    detector config file...
+    Energy-Scale: 1.05
+    Add global corrdinate system shift fOrigin, fThetaShift, fPhiShift
+    ##            Origin x,y,z      theta   phi (deg)
+    Shift-Coord:  0.0  0.0  0.0     0.0     100.0. 
+
+5)  TA2ClusterDetector add split-off merging stuff, and config for
+    extra cluster-neighbour scans. Upgrade time output.
+    ReadDecoded() function to read back MC generated data now checks individual
+    upper and lower energy thresholds before writing to fEnergy array.
+    To turn on extra cluster neighbour search enter line in detector config file
+    ##			hits-size-fact  min-dist	max-dist
+    Iterate-Neighbours:	2		4.5		5.5
+    ##
+    hits-size-fact is the factor to increase the cluster hits array to accomodate
+    any extra neighbours. The array boundary is checked and if the end is reached
+    the algorithm finishes. Otherwise it finishes when a further scan produces no new
+    neighbours. 
+    min/max-dist specify the distance range between calorimeter elements to be
+    considered neighbours. The values above are rough ones for the CB (not checked).
+    For TAPS the relevant numbers are 5.9 6.1
+    To turn on the split-off search for separated clusters
+    enter line in detector config file
+    ##  	Thresh-SplitOff(MeV)  	Split-Off Opening angle (deg.)
+    Split-Off:	40.0			25.0
+    ##
+    Any "main" cluster is configured to require more than 40 MeV to look for split-offs
+    The threshold for clusters of any type would be << 40 MeV so that separated
+    split-offs could be registered
+
+6)  HitD2A_t add getters for protected variables
+    ( for TA2ClusterDetector::ReadDecoded() )
+    Get global fEnergyScale from TA2Detector and apply in digital-to-energy
+    conversion by Calibrate() method. fEnergyScale defaults to 1.0...see item 4)
+
+7)  Cut_t add getters for protected variables
+    ( for TA2ClusterDetector::ReadDecoded() to determine energy/time limits )
+
+8)  F77 HBOOK interface rzfile.f. Add functions open_ntp() close_ntp() for
+    ntuple generation by Monte Carlo kinematics generator TMCGenerator.
+    Output format of ntuple mimics that of mkin, so that it may used as input
+    for cbsim.
+
+9)  New Monte Carlo event generator code MCGenerator...similar functionality
+    to mkin. HBOOK (for G3 model cbsim) or ROOT output. The root output Tree format
+    is different in structure to the HBOOK nutple. A ROOT macro MCReplay.C is bundled
+    with user AcquRoot code
+    UNDER DEVELOPMENT
+
+9)  TMCGenerator new event generator for MC studies
+    "Realistic" beam energy/angle distributions
+    Default is phase space
+
+10) TMCParticle particle phase-space and physics distributions for MC
+    Decay to any number of particles.
+
+11) TA2DataManager::SetCut()...else if(type == ECutMultiX) "==" for "="
+
+12) gcc 4.0 errors in src/c/ControlUtil.c, root/src/TA2H1.h fixed.
+    Note /usr/lib in FC4 distribution (gcc 4.0, glibc 3.3) missing libg2c.a
+    Link to /usr/lib/gcc-lib/i386-redhat-linux/3.2.3/libg2c.a
+
+13) SetConfig hierarchy change. Try detector-class's own local command list 1st
+    then try parent class configs (parent is "default:" in C++ switch)
+
+-------------------------------------------------------------------------------
+2nd December 2005 (J.R.M. Annand): 3v17.02.12.05
+
+ 1) TA2Detector
+    Global shifting of coordinates of elements of detector.  
+    Get global coordinate-shift variables from input line
+    A shift operation is characterised by a 2-char name and value
+    Up to 12 operations may input and the associated corrinate
+    transforms are performed in order they appear on the line
+    Allowed operations
+    Translate in X,Y or Z.....TX,TY,TZ by assocoaied value
+    Rotate about X,Y or Z.....RX,RY,RZ by associated value in deg.
+    Invert X,Y,Z..............IX,IY,IZ    (associated value ignored)
+    Rotate about mean pos (vector to centre of detector)
+    (Z only for now)     .....MX,MY,MZ by associated value in deg.
+    MX and MY not coded yet. MZ rotates about the centre vector
+
+-------------------------------------------------------------------------------
+12th-21st April 2006 (J.R.M. Annand): 3v17.12.04.06
+
+ 1) TAcquRoot
+    Check that any Event ID ADC index has a sensible value if its not 0xffff,
+    ie <= the highest defined ADC index. Turn it off if not sensible.
+
+ 2) TA2DataFormat
+    Add SetEventIndex(Int_t)...for item 1) above
+
+ 3) TA2Analysis
+    Ensure Scalers() does not print beyond end of scaler buffer
+
+ 4) TA2ClusterDetector
+    Command-key enumerators to header
+
+-------------------------------------------------------------------------------
+7th June 2006 (J.R.M. Annand): 3v17.07.06.06....
+
+ 1) TMCGenerator
+    Use new TH1D based random-number generation.
+    Add separate SetConfig() keyword to input TMCParticle distributions.
+
+ 2) TMCParticle
+    Redo non-uniform random-number generation. Use TH1D instead of TF1.
+    Distribution entered as function ( e.g. 5x*x + *TMath::Sqrt(x) ) or as a
+    grid of points. Distribution can be energy, momentum, theta, cos(theta)
+    or phi. Functions Energy() etc. return random value inside preset limits.
+    Extend Gen2Decay() capability...
+    Toy model of radiative decay of resonance.
+    Quasi-free interactions in nuclei
+    Use particles energy/momentum/angle distributions instead of phase space
+
+ 3) TMCResonance
+    Make mass distribution compatible with new TH1D basis in TMCParticle
+
+ 4) TAcquRoot
+    Provision to handle non-clearing scalers. SetConfig() and StoreScalers()
+    Reinstate scaler error checking
+
+ 5) TA2Analysis
+    Format of Scalers() output
+    ZeroAll()..zeros also histograms of children
+
+-------------------------------------------------------------------------------
+15th September 2006 (J.R.M. Annand): 3v17.15.09.06....
+25th October   2006
+
+ 1) TA2Detector
+    Add GetNelement(), GetTimeOR, GetEnergyOR
+    AllElement and AllTimeWalk fixes for potential memory leaks if single
+    element initialisation also attempted.
+    TimeWalk input....allow 3-variable indexed input:
+         TimeWalk:  index  risetime threshold
+    Walk parameters are then applied to fElement[index]
+    Old method 2-variable input (risetime, threshold) where the walk line
+    immediately follows element line still available.
+ 2) TAcquRoot
+    StoreScalers()
+    If error in scaler storage and end-of-event (0xffffffff) not found....
+    scan until found.
+
+-------------------------------------------------------------------------------
+26th October 2006 (J.R.M. Annand): 3v18.25.10.06 - 3v18.13.01.07
+
+ 1) TA2DataFormat
+    Add fStartOffset GetStartOffset()...flexible allowance for event headers
+    when merging data, default value 4 (bytes).
+    fNsrc record of data source number (muliple input sources)
+    GetEventLength() checks fNsrc when deciding whether or not to account for
+    software event number
+ 2) TA2Mk1Format
+    fStartOffset set to 4 for 0th data source, 8 for subsequent
+    data sources to avoid event # being merged in to data.
+ 3) TA2DataServer
+    Use TA2DataFormat::GetStartOffset() to position at start of data in
+    an event.
+    StartSources() pause usleep(100) after starting thread for each data
+    source to avoid problems on fast multprocessor machines
+    FlushBuffers() put limit (max # buffers in TA2Ringbuffer) to flush loop
+    CompareEvent() identify unambiguously the data stream if event-stamp
+    mismatch found
+    CompareEvent() search data stream for event-ID match if mismatch found
+ 4) TAcquRoot
+    Account for fragmented scaler blocks.
+    SplitScaler: option in SetConfig() to provide info on scaler block length
+    StoreScalers() checks for fragmented blocks...if fNScalerBlock != 0
+    call StoreScalerBlock()
+    StoreScalers should be cleaned up and multi-block read made more secure.
+ 5) TA2LongScint
+    Inherit from TA2Detector (instead of TA2ClusterDetector)
+
+-------------------------------------------------------------------------------
+               Version 4 Major New Release
+-------------------------------------------------------------------------------
+31st January 2007 (J.R.M. Annand): 4v0.31.01.07
+
+ 1) Removed all ACQU and Acqu++ directories. root directory now called AcquRoot
+    Classes which are included in the root dictionary are TAcquRoot and all
+    TA2XXX. Associate classes YYY_t are not included in the dictionary
+ 2) MCGenerator code moved to directory AcquMC/src, macros to AcquMC/macros
+ 3) New DAQ code in directory AcquDAQ
+ 4) All references to Cernlib removed...code is completely C++ and links
+    to libraries in $ROOTSYS
+ 5) .rootrc
+    Update paths for new directory structure
+ 6) Makefile and Makefile.user updated for new structure.
+ 7) TA2System
+    friend classes ARSocket_t, ARFile_t
+    Input and log files are ARFile_t. They may optionally be opened
+    at construction.
+    Extra map handlers
+    Enumerated constants in EnumConst.h
+    Base class also for AcquMC and AcquDAQ
+ 8) ARFile_t
+    File handler adapted from TAcquFile
+ 9) ARSocket_t
+    Net socket handler adapted from TA2Socket
+    ARSocket_t takes many features from TDAQsocket...has read/write functions
+10) TAcquRoot
+    Remove all references to old-style Acqu++ analysis...data base etc.
+    remove functions Mk1OnlineLoop, LinkAcqu, SetOnline, SetOffline
+    Compatibility with TA2System upgrade
+11) TA2Analysis
+    Compatibility with TA2System upgrade
+12) TA2DataServer
+    Use ARFile_t for data output write
+13) TA2FileSource
+    Use ARFile_t for data input
+14) TA2NetSource
+    Use ARSocket_t for data input
+    ARSocket_t takes many features from TDAQsocket...has read/write functions
+15) TA2Control
+    Compatibility with TA2System upgrade
+16) TA2DataFormat
+    Compatibility with TA2System upgrade
+    Use ARSocket_t for data input
+    Data structures specified in DataFormats.h
+17) TA2DataManager
+    Compatibility with TA2System
+18) TA2Detector
+    Remove fIsConfigPass
+19) TA2ClusterDetector
+    Compatibility with TA2System
+    Remove fIsConfigPass
+20) TA2Apparatus
+    Modify 2D particle-ID cut setup
+21) TA2RingBuffer
+    Add Update(Char_t*, UInt_t)
+22) TA2Mk2Format
+    New Acqu data format
+-------------------------------------------------------------------------------
+30th April - 18th November 2007 (J.R.M. Annand): 4v1.18.11.07
+
+  01) Makefile
+      KL version with system-dependent sub directories for obj, lib,
+      bin and deps. Put dependencies in deps/XXX/
+      Mods to archive   
+  02) acqu_setup
+      KL version...setup subdirectories acqu_usesubdirs env variable
+  03) Makefile.user
+      User makefile compiles entire Acqu from scratch to decouple ROOT
+      linkage from that employed by $acqu_sys
+      make archive option to save a user setup
+  04) htmldoc macros accounts for new directory structure
+  05) ROOT includes after Acqu...TMCParticle
+
+AR01) TAcquRoot
+      LinkDataServer given format-independent extraction of
+      hardware, ADC, scaler information from header.
+      Offline analysis...check Tree pulled from file before use
+      Rename Mk1Loop() as DataLoop()
+      Mk2EventLoop() decode Mk2 data
+      StoreScalersMk2() Mk2 scalers debug 29/5/07
+      Mk2ErrorCheck store Mk2-type error block
+      GetErrorModule
+      StoreScalers() more intelligent recover in case of error
+      MCBranchID extend enumerator for A2 Geant4. Note that tveto is not in
+      the A2 generated file
+AR02) TA2DataFormat
+      add prototype virtual getters of header information
+      add error sort flag
+AR03) TA2Mk1Format
+      add prototype virtual getters of header information
+AR04) TA2Mk2Format
+      add prototype virtual getters of header information
+      add list index to module struct
+      subst list index for adc index in error-block struct and add
+      error-block trailer
+      Set error-sort flag true in constructer
+AR05) TA2DataServer
+      Add Mk2 create
+AR06) HitCluster_t
+      Add sqrt(Energy) weighted mean radius
+      Add check that time is included in TA2ClusterDetector
+AR07) TA2ClusterDetector
+      Store central energy fraction and energy-weighted radius from individual
+      clusters
+AR08) TA2Control
+      Offline analysis...check LinkADC() has accessed info from TTree file
+AR09) TA2RingBuffer
+      Add function ResetBuffPtr()
+AR10) TA2Analysis
+      LoadVariable also use standard display setup
+      Error display
+AR11) TA2Detector
+      Some housekeeping in initialisation and cleanup
+AR12) TA2Control
+      If MC process check that ADCs manually initialised
+AR13) TA2System
+      Include TMath.h for ROOT 5.16 compatibility
+      Include TROOT.h for gROOT
+AR14) HitCluster_t
+      Include TMath.h for ROOT 5.16 compatibility
+
+MC01) TMCFoamInt
+      Add N-dimensional linear interpolater
+MC02) TMCGenerator
+      Strip out all refs to TFoam
+MC03) TMCParticle
+      Strip out all refs to TFoam
+MC04) TMCFoamGenerator
+      New class, descendent of TMCGenerator
+      SetConfig() Initialisation and specification of density
+      functionof TFoam, Foamisation convert TMCParticle to TMCFoamParticle  
+MC05) TMCFoamParticle
+      Provide link(s) to TFoam-generated kinematics vector. Otherwise has
+      all functionality of TMCParticle
+MC06) TMCPhotoPSGenerator
+      Specialist generator for SAID
+MC07) TMCPhotoPSInt
+      Specialist integrand function for SAID
+
+DQ01) ModIndex.h
+      Add virtual module ID
+DQ02) TVirtualModule
+      Virtual module class....ADC, scaler, controller
+DQ03) TDAQmodule
+      Add ScalerStore(void**, UInt_t, UInt_t)
+      ReadHeader(), ErrorStore(), GetIndex(), SetIndex()...
+      ..account for Mk2Format upgrades to module and error-block structs
+DQ04) TDAQexperiment
+      Add TVirtualModule
+      StoreBuffer: ensure buffer pointer reset
+      AddModule() set module index (Mk2 format upgrade)
+DQ05) TVME_CATCH
+      COMPASS CATCH TDC/Scaler
+
+-------------------------------------------------------------------------------
+Version 4v2
+20th November  2007 (J.R.M. Annand): 4v2.20.11.07
+06th February  2008 (J.R.M. Annand): 4v2.14.01.08
+16th April     2008 (J.R.M. Annand): 4v2.14.01.08
+14th May       2008 (J.R.M. Annand): 4v2.02.05.08
+03rd June      2008 (J.R.M. Annand): 4v2.03.06.08
+25th June      2008 (J.R.M. Annand): 4v2.03.06.08
+30th June      2008 (J.R.M. Annand): 4v2.03.06.08
+18th July      2008 (J.R.M. Annand): 4v2.18.07.08
+ 6th September 2008 (J.R.M. Annand): 4v2.06.09.08
+
+  01) Makefile
+      include libGui.so
+      Update htmldoc.C to load libGui.so
+      ##install dummy libCAENVME.so if not available....removed 03.06.08
+      Remove all dummy CAEN libs....made conditional source code sections
+      Use env. variables CAENVME_LIB and CAENVME_COMP (set by LinkCAENlibs)
+      Add AcquDAQ/vme to archive
+      Add TA2TOFApparatus
+
+  02) Makefile.user
+      Include libGui.so
+      Update htmldocU.C to load libGui.so
+      Use CAENVME_LIB
+
+  03) acqu_setup..
+      setup LB_LIBRARY_PATH, remove X11 lib spec.
+      run script LinkCAENlibs to check for CAEN hardware libraries and set
+      env. variables CAENVME_LIB and CAENVME_COMP.
+
+  04) Use of gcc 4.3. New compiler is more picky about conversion between
+      Char_t* and const Char_t*. Declare string handling procedures as taking
+      const Char_t*....classes
+      AR_File_t, AR_Socket_t, TA2System, TA2Apparatus, TA2DataServer,
+      TA2Analysis, TA2Control, TA2TAPSFormat
+      TGUIsupervise, TDAQsupervise, TDAQguiCtrl, TDAQexperiment,
+      TDAQ_SY1527, TVME_V1190
+      MainAcquMC, MCNtuple, TMCGenerator, TMCResonance
+
+AR01) AcquRootLinkDef.h
+      Add gCTRL, gDAQ globals
+      Add TA2TOFApparatus
+
+AR02) TAcquRoot
+      SetConfig() local DAQ spec. with DAQ files
+      Start() do LinkDataServer and fAnalysis->FileConfig within this to
+      avoid blocking TRint->Run() which starts any GUIs
+      LinkDataServer() Setup ADC's storage j<nadc (was j<=nadc)
+      fNDataBuffer # data buffers analysed
+      LinkDataServer() mod running calculation of maxscaler
+      SetDataServer() check if there is a data server 1st
+
+AR03) TA2Analysis
+      InitSaveTree ensure that fEvent[EARScalerBr] is equated with
+      fScalerBuff via gAR->GetScalerBuff()
+      Fix omission of SetConfig() before OfflineLoop
+
+AR04) TA2Control
+      Mod to conform with new TAcquRoot->Start()...doesn't block Run()
+      command
+
+AR05) TA2DataSource
+
+AR06) TA2LocalSource
+      New class to link TA2DataServer to an online local-node data readout
+
+AR07) TA2DataServer
+      fNDataBuffer # data buffers processed
+      ProcessHeader() Non-header buffer error non-fatal
+      Call UpdateInfo() method of format class in multi-source operation
+      Process() unrecognised buffer header...check if its a header buffer
+
+AR08) TA2DataFormat
+      UpdateInfo() virtual method to update header info for multi-source
+      operation. This is only really necessary for Mk1 format. UpdateInfo
+      does nothing in other formats.
+
+AR09) TA2Mk1Format
+      GetModNChan() returns fAmax+1...see TAcquRoot::LinkDataServer
+      Check if module is already an ADC before assigning it as a scaler
+      Add UpdateInfo() to update fModInfo on 0th data source header. Move
+      some code from MergeHeader() to UpdateInfo()
+      UpdateInfo() fix bug in determining number of channels read out
+      from module
+
+AR10) TA2Mk2Format
+      Add UpdateInfo() method just in case
+      Probably Mk2 format can use the TA2DataFormat (null) method
+
+AR11) ARFile_t
+      Switch to make fopen non-fatal error.
+      ~ARFile_t check fStart non-NULL before
+
+AR12) ARSocket_t
+      Retry connect if it fails 1st time round
+
+AR13) TA2LongScint
+      Add direction and flight-path storage
+      Put in exp resolution effects for ReadDecoded...CheckMCInput()
+      Include z coordinate read MC (Modified A2 output), also macro
+      LadderNewPos.C to incorp bar positions from A2 output
+
+AR14) LongBar_t
+      Add time zero
+      Add pulse-height droop and time resolution for MC decoding
+
+AR15) TA2ParticleID
+      SetP4tof set 4-momentum from time of flight (beta)
+
+AR16) TA2TOFApparatus
+      Move from user code
+
+AR17) TA2GenericDetector
+      Add ReadDecoded method...reads from "tof" arrays
+
+MC01) TMCdS5MDMParticle
+      New particle class for MDM 5-fold differential cross sections
+      Derived from TMCFoamParticle.
+      Bug-fix 30/6
+
+MC02) TMCFoamGenerator
+      Make aware of TMCdS5MDMParticle, add as input option
+      EMCFoamParticle input extra (7th parameter) string...
+      Blank default standard foam particle
+      MDM TMCdS5MDMParticle...radiative meson production (resonance MDM)
+      Remove explicit brem weighting, introduce general weighting
+      Move ReadData processes to TMCFoamInt type classes
+      Add Foam-Model: directive....choose type of TMCFoamLin
+
+MC03) TMCFoamInt
+      Debug YComp() which provides 1st order compensation for the error in
+      multi-linear interpolation.
+      Remove explicit brem weighting, introduce general weighting...
+      bremsstrahlung 1/Egamma, sin(theta), resonance
+      TMCFoamInt classes now have their own ReadData procedure
+
+MC04) TMCdS5MDMInt
+      Specialist setup of dSig5 for radiative pion production.
+      Incorporate TMCFoamInt changes
+
+MC05) TMCPhotoPSInt
+      Incorporate TMCFoamInt changes.
+      NB TMCPhotoPSGenerator is no longer needed. TMCFoamGenerator can now
+      handle all integrand classes
+
+MC06) TMCDgpInt
+      Specialist TMCFoamInt generator for 2-body deuteron photodisintegration
+      Opt 0 for proton angle, opt 1 for neutron angle
+
+MC07) TMCGenerator
+      Remove all QF related stuff, apart from reading in config info.
+
+MC08) TMCParticle
+      Put QF beam-particle interaction into Gen2Decay(). Implement 2-stage QF
+      calculation...e.g. interaction with nucleon-nucleon pair...momentum
+      distribution of CM of pair and momentum distribution of nucleons in the
+      CM frame of the pair.
+
+DQ01) TDAQexperiment
+
+DQ02) TDAQsupervise
+
+DQ03) TDAQguiCtrl
+      New class to handle control GUI for online run control
+
+DQ04) TVirtualModule
+      WaitIRQ, sleep(1) if IRQ not enabled
+
+DQ05) TGUIsupervise
+      New class for GUI networked experiment control
+
+DQ06  TCAMACmodule, TVMEmodule, TVME_V4508, TVME_V792 
+      Working classes, tested on real DAQ.
+
+DQ07) TVME_V775, TVME_V1190
+      CAEN 32-chan TDC, based in V792 QDC, CAEN 128-chan multihit TDC
+
+DQ08) AcquDAQLinkDef.h
+      Add TGUIsupervise, TVME_V775, TVME_V1190
+
+DQ09) ModuleIndex.h
+      Add CAEN V775, V1190
+
+DQ10) TDAQ_SY1527
+      New class for CAEN HV crates. Needs CAEN libraries
+      libcaenhvwrapper.so.2.11 and  libhscaenet.so
+      Put all references to CAEN libraries within conditionally compiled code
+
+DQ11) TDAQ_V2718
+      Put all references to CAEN libraries within conditionally compiled code
+
+
+-------------------------------------------------------------------------------
+Version 4v3
+30th October   2008 (J.R.M. Annand): 4v3.30.10.08
+27th January   2009 (J.R.M. Annand): 4v3.27.01.09
+15th February  2009 (D.I. Glazier/J.R.M. Annand): 4v3.15.02.09
+28th April     2009 (J.R.M. Annand): 4v3.28.04.09
+1st September  2009 (J.R.M. Annand): 4v3.01.09.09
+
+  01) Makefile
+      Fix up libraries for RSupervise
+      Add TA2GenericCluster and GenHitCluster_t for AcquRoot
+  02) 4v3.01.09.09 General issues for gcc 4.4 (flagged by W.Deconinck)
+      use delete[] when new xxx[] used
+      ordering of operations maybe changed....see new HitD2A_t(...)
+  03) New AcquUname script (01.09.09)
+  04) New AcquDiff script
+
+AR01) TA2Detector
+      Add arrays to handle multihit TDC
+      fTimeM, fTimeORM, fHitsM, fNhitsM
+      and fNMultihit...max # multihits to analyse
+      Mod time-walk input in SetConfig...allow different options
+      User delete[] for arrays
+      Manual incr fNelem after new HitD2A_t
+      Cleanup function...zero all elements of fEnergy and fTime arrays        
+
+AR02) HitD2A_t
+      Add arrays to handle multihit TDC
+      Check efficiency of conversion algorithms....remove D2A_t and Cut_t
+      and implement functional equivalent within HitD2A_t...
+      This speeds up the conversion process somewhat.
+      Implement multiple-choice time-walk procedure
+      01.09.09 don't increment nelem in constructor gcc 4.4 issues
+
+AR03) TA2GenericDetector
+      Generic ReadDecoded to read from Monte Carlo generated (A2)
+      data banks. Bank to read from determined in SetConfig().
+      Decode and store incident MC particle 4-momenta
+
+AR04) TA2Ladder
+      Add to core distribution. Incorporate multihit decoding
+      User delete[] for arrays
+      Manual incr fNelem after new HitD2A_t
+      ReadDecoded fDoubles
+
+AR05  TA2Tagger
+      Add to core distribution. Incorporate linear polarisation
+      Add some getter functions
+      Add TA2GenericDetector to list of detectors 
+      Add TA2Particle support, with recording of beam helicity
+      Initialise fBadScalerChan[i] = EFalse
+
+AR06  TA2Particle (by S.Schumann)
+      New class. Instead of a list of TLorentzVector, the TA2Apparatus classes
+      will supply a list of TA2Particles to the TA2Physics type classes.
+      TA2Particle contains all parameters associated with a "part-analysed"
+      particle. It also has hooks to supply lower-level info (eg cluster info)
+      to the physics class, should this be needed.
+      ***P4 a TLorentzVector or *TLorentzVector??
+      Make TA2Particle inherit from TObject.
+
+AR07  TA2GenericPhysics
+      New class. A working framework for physics classes. It links to various
+      TA2Apparatus classes...tagger,CB etc. and accesses their lists of
+      TA2Particles. It does not do any reaction reconstruction.
+
+AR08  TA2LongScint
+      Make it a TA2GenericDetector so that it can use the generic ReadDecoded()
+      SmearHits() adds resolution effects and signal from 2nd PMT attached
+      to bar
+
+AR09  TA2DataManager
+      GetChildType(Char_t* type, Int_t n). Add Int_t n...nth instance of type
+      in linked list.
+      Use delete[] for arrays
+
+AR10  TA2Analysis
+      Add TA2GenericPhysics to list of known children
+      Fix branch format strings for TTree output of data
+      Use delete[] for arrays
+
+AR11  TA2Physics
+      EPhysUndefined defined here. The same number as was EPhotoPhysUndefined
+      This one is available to all physics classes
+
+AR12  TA2Apparatus
+      TA2Particle* fParticleInfo
+      Contains array of TA2Particles (size fMaxParticle)
+      TLorentzVector* fP4 array should now be redundent.
+
+AR13  TA2ClusterDetector
+      TMath::Sort() fix for Root v5.22
+
+AR14  TA2System
+      Add friend class DAQMemMap_t
+      User delete[] for arrays
+
+AR15  TA2GenericCluster
+      New class, very similar to TA2ClusterDetector, but based on
+      TA2GenericDetector, for generic ReadDecoded function
+      Record errors in reconstructed hit position for MC data
+      SetConfig add adjustable energy weighting
+
+AR16  GenHitCluster_t
+      New class very similar to HitCluster_t, for use with TA2GenericCluster
+      Implement adjustable energy weighting
+
+AR17  TA2TOFApparatus
+      Class for general analysis of block arrays of scintillator.
+      Knows about TA2GenericDetector, TA2GenericCluster, TA2LongScint
+      detector classes
+      Add prototype nucleon polarimetry
+
+AR18  TA2ParticleID
+      Use delete[] for arrays
+
+AR19  TA2WireChamber
+      Variable names from BuildName
+
+AR20  TAcquRoot
+      Use delete[] for arrays
+
+AR21  TA2DataServer
+      Use delete[] for arrays
+
+AR22  ARFile_t
+      Use delete[] for arrays
+
+AR23  ARSocket_t
+      default try connect 5 times (was 1)
+
+AR24  HitCluster_t
+      Implement adjustable energy weighting E**y, y = any real number
+      
+
+MC01) MCNtuple.h
+      Add ID for ion species H2, H3, He3, He4. Add table with ion masses
+      as root data base only has restricted particle list. Add Getter
+      functions for masses and convertion PDG<-->G3 codes
+      Use PDG convention 100ZZZAAA0
+
+MC02) TMCGenerator
+      Rejig particle finder with new function GetPDG_ID
+      This attempts to ID a particles mass by deconstructing a char string
+      1) String contains '.' its a floating-point number ie directly a mass
+      2) String is an integer...ie a PDG code
+      3) Its not a number, therefore its a particle name...the ion table
+         in MCNtuple.h has name strings
+      The constructers of all particle classes (TMCParticle and decendents)
+      have been reconfigured to use this system more efficiently.
+      Pass fBeam (full TMCParticle) instead of fP4Beam to TMCParticle 
+      at initialisation
+      Add DG's output TTree implementation. Output TParticles instead of
+      TLorentzVectors. This is added as an option...other output remains
+      Add Benchmarking
+      Option not to compensate beam energy Gen2Decay() EMCParticleQF_NBC
+      Mod to allow beam particle to have decay daughter(s) eg e,e'
+      Check sensible e' energy
+      Use delete[] for arrays
+
+MC03) TMCParticle
+      Field fPDG is now a TParticlePDG and not a TDatabasePDG
+      Constructers modified to take account of this.
+      Store (TMCParticle*)fBeam instead of (TLorentzVector*)fP4Beam
+      Add inline ResetT(Double_t dT)....allows resetting beam energy in QF
+      situations, where QF particle momentum allows "sub-threshold".
+      Gen2Decay() in QF beam is initially sampled from a free-particle
+      excitation function...calc effective beam energy for non-rest struck
+      particle and feed-back difference to give new beam energy. Mod
+      "reaction particle" 4-momentum accordingly.
+      Bug-fix in SetDist( Int_t, Char_t*,.... 
+      Bug-fix in ResetT(...)
+      Option not to compensate beam energy Gen2Decay()
+      Add GetFirstDecay() particle method (1st decay on list)
+      Add trivial method Gen1Decay() for completeness
+      Fix for BoostLab() bug noticed electroproduction
+
+MC04) TMCResonance
+      TMCFoamParticle
+      TMCdS5MDMParticle
+      Constructers changed in accordance with TMCParticle
+
+MC05) TMCFoamGenerator
+      Check that particle is not "Beam" before setting it to fReaction
+      (has no parent)
+
+MC06) TMCPhotoPSGenerator
+      Add DG stuff for recoil polarisation....save it in TParticle
+
+MC07) TMCPhotoPSInt
+      Add DG stuff for recoil polarisation
+
+DAQ01 TDAQKphI686
+      Memory mapping...declare a MapSlave() method with creates physical to
+      virtual memory maps. The physical addresses use the boards memory to
+      VMEbus mappings.
+      Enter read and write methods which assume virtual memory mapping
+      already performed.
+
+DAQ02 DAQMemMap_t (previously TDAQmemmap)
+      No longer a TA2System, but a TObject....low overheads, but in the
+      root dictionary.
+
+DAQ03 TDAQModule
+      Memory mapping stuff. Add dummy virtual MapSlave().
+      Procedure MapReg() convert register addresses to virtual memory
+      From PostInit() call MapReg().
+      fEXP pointer to TDAQexperiment
+
+DAQ04 TVMEModule
+      Memory mapping stuff
+      From PostInit() call the MapSlave() method of the primary controller.
+      If the primary doesn't use memory mapping then MapSlave() does nothing
+      and subsequent MapReg() also do nothing
+
+DAQ05 TAQcontrol
+      Store DAQMemMap_t memory mappings here in a TList
+
+DAQ06 TVME_1190, TVME_V792, TVME_V775, TVME_CBD8210, TVME_CATCH_TCS, 
+      TVME_CATCH_Scaler, TCATCH_TDC, TVME_CATCH, TVME_GeSiCA
+      Remove refs to TDAQmemmap
+
+DAQ07 TDAQexperiment 
+      passes its pointer after module created
+
+DAQ08 TVMEmodule
+      InitReg version for multiple register initialisation
+
+DAQ09 TDAQsupervise
+      Use delete[] for arrays
+
+DAQ10 TDAQguiCtrl
+      Use delete[] for arrays
+
+//////////////////////////////////////////////////////////////////////////////
+------------------------------------------------------------------------------
+Version 4v4
+27th January   2010 (J.R.M. Annand): 4v4.07.01.09
+17th February  2010 (J.R.M. Annand): update
+24th March     2010 (J.R.M. Annand): update
+13th April     2010 (J.R.M. Annand): update
+22nd April     2010 (J.R.M. Annand): 4v4.22.04.10
+17th May       2010 (J.R.M. Annand): update
+
+General
+acqu_setup
+	13/04/10 Environment setup script... make default machine type __LINUX
+------------------------------------------------------------------------------
+AcquRoot
+TA2GenericDetector
+	16/02/10 Recognise branch "tofew" weighted energy reposit from MC
+	generated data. Can be used by the detector in preference to
+	unweighted energy deposits.
+	27/03/10 Recognise branch "tofte" time over threshold from MC
+	generated data. Can be used in preference to time of 1st hit
+TA2TOFApparatus
+	17/02/10 Reconstruct phi dependence of scattering
+	24/03/10 Clean up reconstruct and add theta limits
+TA2GenericCluster
+	13/04/10 Add error in reconstructed z-coordinate
+TA2RingBuffer
+	12/09/10 Update buffer pointer...leave space for final trailer word when
+		 checking if event fits in buffer
+------------------------------------------------------------------------------
+
+AcquMC
+TMCParticle
+	27/01/10 In Gen2Decay(), if 1st decay particle is a resonance then
+	use d0->Mass() instead of fMd2
+TMCResonance
+	27/01/10 In constructer, if supplied particle to copy is a resonance
+	then copy all resonance properties, and then set name
+TMCPhotoPSInt
+	17/05/10 Install D.Glazier fix for polarised azimuthal distributions
+TMCPhotoPSGenerator
+	17/05/10 Install D.Glazier fix for polarised azimuthal distributions
+	Include GP4() to correct for cm-lab boost rotation	
+------------------------------------------------------------------------------
+
+AcquDAQ
+ModuleIndex.h
+	11/09/10 Add enums EDAQ_VADC, EDAQ_VScaler
+TVMEmodule
+	13/04/10 64-bit machines ULong_t integer equivalent of void*
+	05/09/10 Refix bug in InitReg()...offset added twice
+TVME_CATCH
+	05/09/10 rm fSpyData=NULL in constructer
+	06/09/10 Set fMaxSpy to sensible value (length spy buffer)
+                 Add GetEventID()...returns fTCSEventID
+TDAQexperiment
+	19/07/10 Optional Mk1 format data output.
+	02/09/10 Check slave operation....call fSupervise->ExecAutoStart()
+	05/09/10 Add event synchronisation TDAQmodule
+	06/09/10 Ensure TDAQsupervise has start/trigger module pointer
+		 Implement event ID stuff for synchronisation
+	09/09/10 Implement PostReset() after trigger control stuff
+		 includes fStartSettleDelay after CATCH reset
+		 Enable resetting of (secondary) controller module
+	11/09/10 Add class TCAMAC_4413DAQEnable and uncomment ELRS_2323
+	12/09/10 Add NetSlave superviser mode, debug Mk1/2 in scaler readout
+TDAQsupervise
+	19/07/10 Add slave-mode operation, add Mk1 header creation
+	04/09/10 Some more checks about Mk1 or Mk2
+	06/09/10 Add SetTrigMod()..ensure trigger control ptr supplied
+	11/09/10 Debug adc/scaler range Mk1 header
+	12/09/10 Add ConfigTCS method & NetSlave mode of running
+	15/09/10 Move enet socket init to CommandLoop...otherwise can block
+		 Allways ensure fOutBuff initialised...multiple thread access
+TDAQmodule
+	04/09/10 Add switches in error-block or scaler write to account
+		 for Mk1 or 2 data format
+        06/09/10 GetEventID() method added
+	09/09/10 kModTypes."NULL"=undefined
+	11/09/10 kModTypes.add EDAQ_VADC,EDAQ_VScaler
+	12/09/10 ReadHeader(mod) debug Mk1 version and make Mk2 more intelligent
+	13/09/10 ErrorStore Mk1 format initialise
+		 all elements of the struct
+TCAMACmodule
+	05/09/10 Data for CNAF in hex (config file)
+TCAMAC_4413SPILL
+	06/09/10 Set TrigSet and TrigExe ptrs after virtual addr mapping
+	08/09/10 TCS reset pause between start-stop
+	10/09/10 Temp measure fEXP->PostReset() into TCS reset & start
+		 Change fReg ordering F26 (put online) must come 1st
+TCAMAC_4413DAQEnable
+	11/09/10 New class derived from TCAMAC_4413SPILL. This one doesn't
+		 do any spill ctrl, only flip-flop toggling
+TVME_KPhSMI
+	27/07/10 Clean up, ReadIRQ, ReadIRQS ADC and scaler readout
+	04/09/10 ReadIRQS renamed ReadIRQScaler...TDAQmodule compatible
+	09/09/10 Slow down basic read/write functions to allow data to settle
+	14/09/10 ReadIRQScaler...ensure the pipeline data suppression disabled
+TFB_1821SMI
+	27/07/10 Clean up
+	02/08/10 Bug fix constructer
+	03/08/10 Bug fix HM_1821
+	09/09/10 ESMIStatusTry reset to 1000 (after read/write slowed)
+	14/09/10 PedAddr() == 1821 manual, but not old acqu. Pedestal load
+		 still doesn't work
+TFBmodule
+	29/07/10 Clean up
+	04/09/10 Scaler decode Mk1/2 compatible,
+		 Read base index from config-file line
+TFB_LRS1800
+	29/07/10 Clean up
+TFB_STR200
+	29/07/10 Clean up
+TFB_Phil10C
+	29/07/10 New class
+
+//////////////////////////////////////////////////////////////////////////////
+------------------------------------------------------------------------------
+Version 4v5
+16th September  2010 (J.R.M. Annand): 4v5.16.09.10
+ 5th February   2011 (J.R.M. Annand): 4v5.06.02.11
+ 2nd May        2011 (J.R.M. Annand): 4v5.02.05.11
+10th July       2011 (J.R.M. Annand): 4v5.10.07.11
+25th February   2012 (J.R.M. Annand): 4v5.10.07.11
+18th May	2012 (J.R.M. Annand): 4v5.18.05.12
+
+General
+------------------------------------------------------------------------------
+AcquRoot
+TA2RingBuffer
+	?? There has been a change
+TA2Tagger
+	01/04/11 Change class variables from Private to Protected
+TA2Detector
+	06/07/11 Implement suggested changes from D.Hornidge and A.Mushkarenkov
+MCBranchID
+	06/07/11 Implement suggested changes from E.Downie
+TA2GenericCluster
+	16/09/11 Add logarithmic energy weighting
+GenHitCluster_t
+	16/09/11 Add logarithmic energy weighting
+TA2ClusterDetector
+	17/09/11 Add E**x and logarithmic energy weighting
+HitCluster_t
+	17/09/11 Add E**x and logarithmic energy weighting
+------------------------------------------------------------------------------
+AcquMC
+TMCGenerator
+	25/02/12 Add option for out-of-plane angle. Can be used in "beam-decay"
+	particle...e.g (e,e'). Puts e' through rectangular aperture.
+TMCParticle
+	25/02/12 Add option for out-of-plane angle (OOP) (rather than phi) 
+------------------------------------------------------------------------------
+AcquDAQ
+
+ModuleIndex.h
+	17/09/10 VME address modifier codes moved to here
+	25/01/12 Add GSI 4800	 
+TDAQKPhI686
+	17/09/10 Move VMEbus address modifiers to ModuleIndex.h
+TDAQmodule
+	17/09/10 Add fVirtOffset and GetVirtAddr(offset)
+		 Setup in MapReg
+	06/07/11 gcc4.6-x86_64 warning fixes
+	25/01/12 Read fNBits in constructor
+TVME_CBD8210
+	17/09/10 The memory mapping should be to A24 space
+TVMEmodule
+	06/07/11 gcc4.6-x86_64 warning fixes
+TVME_CATCH
+	18/09/10 Use GetVirtAddr(); CatchProcedure() replace WrtCatch
+	04/02/11 Keep WrtCatch
+	06/02/11 Update WrtCatch...takes just address offset. Add usleep(1)
+		 after operation. Make Pause() usleep(100), was usleep(1)
+	06/07/11 gcc4.6-x86_64 warning fixes, casts, r/w formats
+TVME_CATCH_TDC
+	18/09/10 Use CatchProcedure()
+	04/02/11 Keep WrtCatch
+TVME_CATCH_Scaler
+	18/09/10 Use CatchProcedure()
+	04/02/11 Keep WrtCatch
+TVME_CATCH_TCS
+	18/09/10 Use CatchProcedure()
+	04/02/11 Keep WrtCatch
+	07/02/11 conOffset in ProgTCS is a 2-byte-word offset
+	06/07/11 gcc4.6-x86_64 warning fixes
+TVME_GeSiCA
+	04/02/11 Check that all VMEbus access is by Read/Write functions
+	30/04/11 Move all harware-access initialisation to PostInit function
+	10/07/11 Add usleep mainly to I2C read/write to make initialisation
+		 more reliable...Performed by Baya during June/July
+		 Fix error in Spy buffer reset... use base register
+	24/01/12 Save TCS event ID
+	25/01/12 Set # bits = 13 in constructor
+TDAQsupervise
+	04/02/11 Add CAM_IO procedure...read/write CAMAC CNAFs
+	05/02/11 Mods to ExecRun...run number
+	12/05/11 Command loop mods for TApplication/TDAQguiCtrl
+		 fIsRunning shows DAQ running or not
+	16/05/11 Auto running debugged, code/debug buffer dump.
+	06/07/11 gcc4.6-x86_64 warning fixes
+TDAQexperiment
+	05/02/11 Flush text buffer at beginning StartExperiment()
+	12/05/11 ADC and scaler read-error counters
+	12/05/11 Start a local GUI from main prog, not thread (X11 effects)
+	06/07/11 gcc4.6-x86_64 warning fixes
+	24/11/11 fix bug loading LRS2323 (was loading 2373)
+	09/02/12 Check there are actually scalers in the system (fNScaler > 0)
+		 before entering scaler readout loop (Baya's bug find)
+	25/01/12 Add GSI 4800 scaler
+TDAQguiCtrl
+	12/05/11 Use TApplication. Add new I/O buttons etc and a TTimer
+		 for use with TApplication. Move fIsRunning to TDAQsupervise.
+	16/05/11 Debug auto running
+	 6/07/11 gcc4.6-x86_64 mods, Store all button pointers.
+	10/07/11 Acknowledge in message buffer change of comment
+TGUISupervise
+	 6/07/11 gcc4.6-x86_64 mods, Store all button pointers.
+TVirtualModule
+	16/05/11 Produce exact number scaler channels, adc zero-suppressed
+TDAQ_SY1527
+	06/07/11 gcc4.6-x86_64 warning fixes
+TDAQ_V2718
+	06/07/11 gcc4.6-x86_64 warning fixes
+TFB_1821SMI
+	06/07/11 gcc4.6-x86_64 warning fixes
+TFBmodule
+	06/07/11 gcc4.6-x86_64 warning fixes
+TCAMAC_GSI4800
+	25/01/12 New class to control and read GSI 48-chan CAMAC scaler
+TCAMAC_2323
+	24/11/11 Fix bug in InitDelay()...use left-shift instead of right shift
+//////////////////////////////////////////////////////////////////////////////
+------------------------------------------------------------------------------
+Version 4v6
+18th May  2012 (J.R.M. Annand): 4v6.19.05.12
+ 3rd July 2012 (J.R.M. Annand): 4v6.03.07.12
+31st Sept 2012 (J.R.M. Annand): 4v6.31.09.12 (should be 1st October)
+ 1st Dec. 2012 (J.R.M. Annand): 4v6.01.12.12
+10th Jan. 2013 (J.R.M. Annand): 4v6.10.01.13
+
+General
+------------------------------------------------------------------------------
+AcquRoot
+TA2GenericDetector
+	30/05/12 Check *fNPartMC
+TA2DataServer
+	31/08/12 Data merging recognises Mk2 data buffer
+TA2BitPattern
+	29/09/12 Add GetNHits[i]...for histogramming number of hits
+TA2Analysis
+	29/09.12 Add histogram for #hits in bit pattern
+TA2Detector
+	06/10/12 DecodeBasic bug fix time hits
+TA2GenericDetector
+	10/10/12 Add stuff for time-over-threshold
+TA2LongScint
+	11/10/12 Use TA2GenericDetector::Decode (time over threshold)
+HitD2A_t
+	11/10/12 Add stuff for time-over-threshold
+	 8/11/12 Initialise fA2, fT2
+TA2DataServer
+	21/11/12 Mk2 format data merging
+TA2DataFormat
+	21/11/12 Specimen functions to allow Mk1 and Mk2 differentiate
+TA2Mk2Format
+	21/11/12 Provide info for data merging
+TA2RingBuffer
+	07/01/13 Add SetHeader function
+TA2FileSource
+	07/01/13 Implement premature end of file after N records
+------------------------------------------------------------------------------
+AcquMC
+------------------------------------------------------------------------------
+AcquDAQ
+
+MainAcquDAQ
+	??	 Init level 2 separation (Baya)
+RSupervise
+	28/06/12 More robust command line interface (Baya)
+	09/07/12 Fix up to allow commands with parameters
+AcquDAQLinkDef.h
+	19/05/12 Add TVME_VUPROM module
+ModuleIndex.h
+	19/05/12 Add TVME_VUPROM module
+	 1/09/12 Add SIS 3820
+	 3/09/12 Add EDAQ_ADC_Scaler definition
+	 9/01/13 Add CAEN V874 TAPS module
+TDAQexperiment
+	19/05/12 Add TVME_VUPROM module
+	21/05/12 Modify StoreEvent so that it doesn't freeze in nostore mode
+		 Move TCS control stuff from scaler loop to slow ctrl loop
+        ??	 Init level 2 separation
+	02/09/12 Event ID to remote system options
+	09/11/12 sleep(1) after starting data storage thread...otherwise often
+		 get seg. fault.
+	09/01/13 Add CAEN V874 TAPS module
+TDAQsupervise
+	20/05/12 Add commands Go:, Stop: nostore running with TCS control
+	09/07/12 Add online control for VUPROM
+	01/09/12 Explicit kill of GUI ctrl in ExecKill (if used)
+	29/09/12 Get trigger info from vuprom class
+	01/10/12 Allow stop/go when storing
+TDAQstore
+	01/10/12 Print waiting message when connecting AcquRoot
+TDAQguiCtrl
+	12/07/12 Extend for online trigger control
+	28/09/12 Add L1 width, strobe delays and M-thresholds
+	29/09/12 Get trigger info from vuprom class
+TDAQmodule
+	22/05/12 Make ReadIRQSlow do nothing by default
+	28/08/12 Add dummy ReadEventID()
+	02/09/12 Add dummies for sending event ID to remote
+	03/09/12 Change handling of module types in SetConfig
+TVMEmodule
+	20/05/12 Init list of registers...Check AM and IsWrt register arrays
+		 initialised, Implement "repeat" function
+        24/08/12 2-byte word access is 'w', not 'm'
+TVME_VUPROM
+	19/05/12 New class to control the GSI VUPROM FPGA based module
+	03/07/12 More work to implement
+	12/07/12 Add online control functions
+	28/07/12 Add event ID send and receive
+	02/09/12 Enable TAPS option, control L1 width, L1,L2 delay
+	26/09/12 Multiplicity accept control registers
+	28/09/12 Extra online control, implement pattern reads
+	29/09/12 Provide trigger parameters to supervisor
+	29/11/12 100 us time out on event ID receive
+	01/12/12 Mod for scaler read only..adjustable number of channels
+		 Control for Ref TDC output width
+	02/12/12 RAM download <= 0xffff, increase buffer array size
+TVME_V1190
+	24/07/12 Start to debug
+	25/09/12 1st "working" version
+TVME_GeSiCA
+	22/11/12 Add send event ID in SpyRead()
+TVME_SIS3820
+	02/09/12 New module for event ID to TAPS
+TVME_CATCH
+	02/09/12 Send event ID to remote option
+TVirtualModule
+	26/11/12 Write "virtual" event ID
+TVME_V874
+	09/01/13 New class to service the CAEN V874B module which reads out
+		 the BaF2 counters of TAPS
