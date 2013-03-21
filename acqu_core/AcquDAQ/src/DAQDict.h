@@ -53,6 +53,7 @@ extern void G__set_cpp_environmentDAQDict();
 #include "/home/acqu/4v6/acqu/AcquDAQ/src/TCAMAC_4413SPILL.h"
 #include "/home/acqu/4v6/acqu/AcquDAQ/src/TDAQ_V2718.h"
 #include "/home/acqu/4v6/acqu/AcquDAQ/src/TVME_CATCH.h"
+#include "/home/acqu/4v6/acqu/AcquDAQ/src/TEPICSmodule.h"
 #include "/home/acqu/4v6/acqu/AcquDAQ/src/TVME_V792.h"
 #include "/home/acqu/4v6/acqu/AcquDAQ/src/TVME_V775.h"
 #include "/home/acqu/4v6/acqu/AcquDAQ/src/TCAMAC_4413DAQEnable.h"
@@ -153,6 +154,7 @@ extern G__linked_taginfo G__DAQDictLN_TVME_V874;
 extern G__linked_taginfo G__DAQDictLN_TDAQ_KPhI686;
 extern G__linked_taginfo G__DAQDictLN_TCAMAC_4413SPILL;
 extern G__linked_taginfo G__DAQDictLN_TDAQ_V2718;
+extern G__linked_taginfo G__DAQDictLN_TEPICSmodule;
 extern G__linked_taginfo G__DAQDictLN_TVME_V792;
 extern G__linked_taginfo G__DAQDictLN_TVME_V775;
 extern G__linked_taginfo G__DAQDictLN_TCAMAC_4413DAQEnable;

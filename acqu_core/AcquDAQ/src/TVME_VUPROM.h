@@ -10,7 +10,8 @@
 //--Rev 	JRM Annand   26th Sep 2012 Add registers for multiplicity
 //--Rev 	JRM Annand   28th Sep 2012 Pattern readout and extra ctrl fns
 //--Rev  	JRM Annand    1st Dec 2012 Scaler read only, Ref TDC width ctrl
-//--Update 	JRM Annand    2nd Dec 2012 Mod RAM download (buff size & <=) 
+//--Rev 	JRM Annand    2nd Dec 2012 Mod RAM download (buff size & <=) 
+//--Update 	JRM Annand   28th Feb 2013 Modified L1,L2 prescale setup 
 //
 //--Description
 //                *** AcquDAQ++ <-> Root ***
@@ -51,7 +52,13 @@ enum{
   EVU_R2data,
   EVU_R2read,
   EVU_L1prescale,
+  EVU_L1prescale1,
+  EVU_L1prescale2,
+  EVU_L1prescale3,
   EVU_L2prescale,
+  EVU_L2prescale1,
+  EVU_L2prescale2,
+  EVU_L2prescale3,
   EVU_InPattRead,
   EVU_L1Width,
   EVU_L1Delay,
@@ -134,7 +141,8 @@ class TVME_VUPROM : public TVMEmodule {
   virtual Bool_t CheckHardID();       // Cross check loaded firmware version
   virtual void RAMDownload(Int_t,Int_t=-1);  // Download trigger pattern file
   virtual void SetDebugOut(Int_t, Int_t);    // switch debug output
-  virtual void SetPrescale(Int_t, Int_t=-1, Int_t=0);// inp trig prescale val.
+  virtual void SetPrescale(Int_t, Int_t=-1, Int_t=0); // inp trig prescale val.
+  //  virtual void SetLPrescale(Int_t, Int_t=-1, Int_t=0);// L1/L2 prescale val.
   virtual void SetIntDelay(Int_t, Int_t);    // interrupt delay
   virtual void CmdExe(Char_t*);              // execute command from DAQ ctrl
   virtual Int_t* GetParms(Int_t);            // provide trigger parameters

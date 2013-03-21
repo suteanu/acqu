@@ -1161,20 +1161,31 @@ Version 4v6
 31st Sept 2012 (J.R.M. Annand): 4v6.31.09.12 (should be 1st October)
  1st Dec. 2012 (J.R.M. Annand): 4v6.01.12.12
 10th Jan. 2013 (J.R.M. Annand): 4v6.10.01.13
+10th Feb. 2013 (J.R.M. Annand): 4v6.10.02.13
+ 4th Mar. 2013 (J.R.M. Annand): 4v6.04.03.13
 
 General
+Makefile
+	11/01/13 Add stuff for building EPICS interface
+		 acqu contains ezcaRoot subdirectory
+	04/03/13 search generic extensions/src/ezca dir (symbolic link)
+	06/03/13 Add TA2TAPSMk2Format in class list
 ------------------------------------------------------------------------------
 AcquRoot
 TA2GenericDetector
 	30/05/12 Check *fNPartMC
 TA2DataServer
 	31/08/12 Data merging recognises Mk2 data buffer
+	21/11/12 More debugging of Mk2 merge
+	01/03/13 Debug Mk2 merge...hopefully done
 TA2BitPattern
 	29/09/12 Add GetNHits[i]...for histogramming number of hits
 TA2Analysis
 	29/09.12 Add histogram for #hits in bit pattern
+	07/02/13 Add support for EPICS info block
 TA2Detector
 	06/10/12 DecodeBasic bug fix time hits
+	07/03/13 DecodeBasic bug fix time hits filter out time = -1
 TA2GenericDetector
 	10/10/12 Add stuff for time-over-threshold
 TA2LongScint
@@ -1184,14 +1195,30 @@ HitD2A_t
 	 8/11/12 Initialise fA2, fT2
 TA2DataServer
 	21/11/12 Mk2 format data merging
+	01/03/13 Debuf Mk2 format data merging
+	06/03/13 Add TA2TAPSMk2Format
 TA2DataFormat
 	21/11/12 Specimen functions to allow Mk1 and Mk2 differentiate
+	02/07/13 GetNEPICS() prototype...only actually used in Mk2 format
 TA2Mk2Format
 	21/11/12 Provide info for data merging
+	07/02/13 Struct for EPICS data header (KL)
+	01/03/13 Debug sub-event getting for data merge
+	04/03/13 EpicsHeaderInfo_t change "time_t time" to "UInt_t time"
+		 sizeof time_t 32/64 bit hardware dependent
+	06/03/13 Fix the TAPS (foreign module) module setup in ConstructHeader()
+TA2TAPSMk2Format
+	06/03/13 New class for Mk2 data
 TA2RingBuffer
 	07/01/13 Add SetHeader function
 TA2FileSource
 	07/01/13 Implement premature end of file after N records
+EnumConst.h
+	07/02/13 FDFDFDFD delimiter for start of EPICS information block
+TA2DataManager
+	07/02/13 Stuff for handling EPICS information
+TAcquRoot
+	07/02/13 Stuff to pull out EPICS info from the data stream
 ------------------------------------------------------------------------------
 AcquMC
 ------------------------------------------------------------------------------
@@ -1204,11 +1231,14 @@ RSupervise
 	09/07/12 Fix up to allow commands with parameters
 AcquDAQLinkDef.h
 	19/05/12 Add TVME_VUPROM module
+	 9/01/13 Add CAEN V874 TAPS module
+	 8/02/12 Add EPICS "virtual" DAQ module
 ModuleIndex.h
 	19/05/12 Add TVME_VUPROM module
 	 1/09/12 Add SIS 3820
 	 3/09/12 Add EDAQ_ADC_Scaler definition
 	 9/01/13 Add CAEN V874 TAPS module
+	 8/02/12 Add EPICS "virtual" DAQ module
 TDAQexperiment
 	19/05/12 Add TVME_VUPROM module
 	21/05/12 Modify StoreEvent so that it doesn't freeze in nostore mode
@@ -1218,12 +1248,15 @@ TDAQexperiment
 	09/11/12 sleep(1) after starting data storage thread...otherwise often
 		 get seg. fault.
 	09/01/13 Add CAEN V874 TAPS module
+	08/02/13 Add support for EPICS slow control (KL)
+	02/03/13 EPICS access with ReadIRQ contained in conditional block
 TDAQsupervise
 	20/05/12 Add commands Go:, Stop: nostore running with TCS control
 	09/07/12 Add online control for VUPROM
 	01/09/12 Explicit kill of GUI ctrl in ExecKill (if used)
 	29/09/12 Get trigger info from vuprom class
 	01/10/12 Allow stop/go when storing
+	02/03/13 Check VADC and VScaler when making Mk2 header
 TDAQstore
 	01/10/12 Print waiting message when connecting AcquRoot
 TDAQguiCtrl
@@ -1252,6 +1285,7 @@ TVME_VUPROM
 	01/12/12 Mod for scaler read only..adjustable number of channels
 		 Control for Ref TDC output width
 	02/12/12 RAM download <= 0xffff, increase buffer array size
+	28/02/13 Modified L1,L2 prescale setup
 TVME_V1190
 	24/07/12 Start to debug
 	25/09/12 1st "working" version
@@ -1266,3 +1300,5 @@ TVirtualModule
 TVME_V874
 	09/01/13 New class to service the CAEN V874B module which reads out
 		 the BaF2 counters of TAPS
+TEPICSmodule
+	07/02/13 Ken Livingstons new virtual module for EPICS communication

@@ -30,6 +30,8 @@
 #	JRM Annand	14th May 2008	Install dummy CAEN libs if not there
 #	JRM Annand	 3rd Jun 2008	Conditional comp for CAEN hardware
 #	JRM Annand	 2nd Oct 2008	Add TA2TOFApparatus
+#	Ken Livingston	11th Jan 2013	Add support for including EPICS in the data stream
+#	JRM Annand	 6th Mar 2013	Add TA2TAPSMk2Format
 #
 #----------------------------------------------------------------------------
 #
@@ -41,6 +43,7 @@ L = $(acqu_sys)/lib/$(ACQU_OS_NAME)
 AR = $(acqu_sys)/AcquRoot/src
 MC = $(acqu_sys)/AcquMC/src
 D = $(acqu_sys)/deps/$(ACQU_OS_NAME)
+EZCA = $(acqu_sys)/ezcaRoot/src
 #
 DAQ = $(acqu_sys)/AcquDAQ/src
 DAQV = $(acqu_sys)/AcquDAQ/vme
@@ -61,11 +64,20 @@ LDXXFLAGS = $(acqu_debug) -shared -o $L/$@
 #
 CLEANMOD = $B/AcquRoot $B/AcquMC $B/AcquDAQ
 #
+# Assume that if EPICS_EXTENSIONS is defined from environment epics is installed and can be compiled
+ifdef EPICS_EXTENSIONS
+	EPICSSO = libRootEzca.so
+	EZCALIBS = -L$(EPICS_BASE)/lib/$(EPICS_HOST_ARCH) -L$(EPICS_EXTENSIONS)/lib/$(EPICS_HOST_ARCH) -lca -lCom -lezca
+	EZCAINC = -I$(EZCA) -I$(EPICS_BASE)/include -I$(EPICS_BASE)/include/os/Linux -I$(EPICS_EXTENSIONS)/src/ezca
+	EPICSFLAGS = -DACQUROOT_EPICS $(EZCAINC)
+	EPICSLIB = -L$(L) -lRootEzca
+	EPICSLINKS = epicslinks
+endif
 #-----------------------------------------------------------------------------
 #
 #	Do the whole lot
 #
-all: AcquRoot AcquMC AcquDAQ docs
+all: AcquRoot AcquMC AcquDAQ RSupervise docs
 #
 #	Get rid of all binaries and obj 
 veryclean: clean
@@ -96,6 +108,8 @@ ultraclean: veryclean
 	@rm -f $(DAQ)/*.h~
 	@rm -f $(DAQ)/#*#
 	@rm -f $(DAQ)/../macros/*.C~
+	@rm -f $(EZCA)/ezcaRootDict.*
+	@rm -f $(EZCA)/.cc~
 	@echo  Acqu++ Purge Complete
 #
 clean:
@@ -115,6 +129,10 @@ archive:
 	$(Ad)/AcquDAQ/src/*.cc $(Ad)/AcquDAQ/src/*.h $(Ad)/AcquDAQ/macros/*.C \
 	$(Ad)/AcquDAQ/data/* \
 	$(Ad)/AcquDAQ/vme/*.h $(Ad)/AcquDAQ/vme/LinkCAENlibs \
+	$(Ad)/ezcaRoot/README \
+	$(Ad)/ezcaRoot/Uname \
+	$(Ad)/ezcaRoot/macros \
+	$(Ad)/ezcaRoot/src \
 	$(Ad)/bin/Acqu* $(Ad)/bin/DownloadRAM \
 	$(Ad)/User/Makefile $(Ad)/User/Makefile.user $(Ad)/User/.acqurc \
 	$(Ad)/User/.rootrc $(Ad)/User/.tcshrc \
@@ -147,7 +165,7 @@ ARClasses = \
 	TA2BitPattern TA2RateMonitor TA2ParticleID TA2Particle \
 	TA2RingBuffer \
 	TA2DataServer TA2DataSource TA2NetSource TA2FileSource TA2LocalSource \
-	TA2DataFormat TA2Mk1Format TA2Mk2Format TA2TAPSFormat \
+	TA2DataFormat TA2Mk1Format TA2Mk2Format TA2TAPSFormat TA2TAPSMk2Format \
 	HitD2A_t LongBar_t HitCluster_t GenHitCluster_t
 #
 ARClassesA = $(ARClasses) TA2H1 TA2H2 ARSocket_t ARFile_t
@@ -164,6 +182,35 @@ ARDep = $(addsuffix .d, $(ARModulesA))
 #ARDepD =  $(addprefix $(AR)/, $(ARDep))
 ARDepD =  $(addprefix $(D)/, $(ARDep))
 INCFLAGS += -I$(AR)
+
+
+##This is to build a ROOT shared library for EPICS (not acqu specific)
+
+libRootEzca.so: $(EZCA)/ezcaRootDict.cc $(O)/ezcaRoot.o $(O)/ezcaRootDict.o $(EPICSLINKS)
+	$(CCCOMP) $(LDXXFLAGS) $(EZCALIBS) $(O)/ezcaRoot.o $(O)/ezcaRootDict.o
+	@echo "$@ done"
+	@echo "##-----------------------------------------------------------"
+
+$(EZCA)/ezcaRootDict.cc: $(EZCA)/ezcaRoot.h $(EZCA)/ezcaRootLinkDef.h
+	@echo "Generating dictionary $@..."
+	@rootcint  -f $@ -c $^
+	@echo "##-----------------------------------------------------------"
+
+$(O)/ezcaRoot.o: $(EZCA)/ezcaRoot.cc  
+	$(CCCOMP) $(CXXFLAGS) $(EZCAINC) $(INCFLAGS) -o $@ -c $<
+
+$(O)/ezcaRootDict.o: $(EZCA)/ezcaRootDict.cc  
+	$(CCCOMP) $(CXXFLAGS) $(EZCAINC) $(INCFLAGS) -o $@ -c $<
+
+$(EPICSLINKS):
+#link the epics libraries into the acqusys/lib directory so users will pick them up with usermake, and running
+#remove old links first in case out of date
+	rm -f $(L)/libca.so 
+	rm -f $(L)/libCom.so
+	rm -f $(L)/libezca.so
+	ln -s $(EPICS_BASE)/lib/$(EPICS_HOST_ARCH)/libca.so $(L)/libca.so
+	ln -s $(EPICS_BASE)/lib/$(EPICS_HOST_ARCH)/libCom.so $(L)/libCom.so
+	ln -s $(EPICS_EXTENSIONS)/lib/$(EPICS_HOST_ARCH)/libezca.so $(L)/libezca.so
 
 libAcquRoot.so: $(ARObj)
 	$(CCCOMP) $(LDXXFLAGS) $(ARObjD)
@@ -203,7 +250,7 @@ DAQDep = $(patsubst $(DAQ)/%.cc, $(D)/%.d, $(DAQCl)) $(D)/MainAcquDAQ.d
 #DAQDepInc = -I$(DAQ) -I$(DAQV)
 INCFLAGS += -I$(DAQ) -I$(DAQV) -I$(IR)
 #
-libAcquDAQ.so: $(DAQObj)
+libAcquDAQ.so: $(DAQObj) $(EPICSSO)
 	$(CCCOMP) $(LDXXFLAGS) $(DAQObjD)
 	@echo "$@ done"
 	@echo "##-----------------------------------------------------------"
@@ -211,36 +258,36 @@ libAcquDAQ.so: $(DAQObj)
 #---------------------------------------------------------------------------
 # Programs
 
-AcquRoot:MainAcquRoot.o libAcquRoot.so libAcquDAQ.so
+AcquRoot:MainAcquRoot.o libAcquRoot.so libAcquDAQ.so $(EPICSSO)
 	$(CCCOMP) $(acqu_debug) $O/MainAcquRoot.o $L/libAcquRoot.so \
-	$(ROOTLIBS) -lThread \
+	$(ROOTLIBS) $(EPICSLIB) -lThread \
 	$(L)/libAcquDAQ.so \
 	$(CAENVME_LIB) \
 	-o $(B)/AcquRoot
 	@echo "$@ done"
 	@echo "##-----------------------------------------------------------"
 
-AcquMC: MainAcquMC.o libAcquMC.so libAcquRoot.so libAcquDAQ.so
+AcquMC: MainAcquMC.o libAcquMC.so libAcquRoot.so libAcquDAQ.so $(EPICSSO)
 #	@rm -f $(MC)/MCDict.*
 	$(CCCOMP) $(acqu_debug) $(O)/MainAcquMC.o \
 	$L/libAcquRoot.so $(L)/libAcquMC.so \
 	$L/libAcquDAQ.so \
 	$(CAENVME_LIB) \
-	$(ROOTLIBS) -lThread -lFoam \
+	$(ROOTLIBS) $(EPICSLIB) -lThread -lFoam \
 	-o $(B)/AcquMC
 	@echo "$@ done"
 	@echo "##-----------------------------------------------------------"
 
-AcquDAQ: MainAcquDAQ.o libAcquDAQ.so libAcquRoot.so
+AcquDAQ: MainAcquDAQ.o libAcquDAQ.so libAcquRoot.so $(EPICSSO)
 	$(CCCOMP) $(acqu_debug)  $(O)/MainAcquDAQ.o \
 	$(L)/libAcquDAQ.so $(L)/libAcquRoot.so \
 	$(CAENVME_LIB) \
-	$(ROOTLIBS) -lThread \
+	$(ROOTLIBS) $(EPICSLIB) -lThread \
 	-o $(B)/AcquDAQ
 	@echo "$@ done"
 	@echo "##-----------------------------------------------------------"
 
-AcquHV: MainHV.o libAcquDAQ.so libAcquRoot.so
+AcquHV: MainHV.o libAcquDAQ.so libAcquRoot.so  $(EPICSSO)
 	$(CCCOMP) $(acqu_debug)  $(O)/MainHV.o \
 	$(L)/libAcquDAQ.so $(L)/libAcquRoot.so \
 	$(CAENVME_LIB) \
@@ -249,10 +296,10 @@ AcquHV: MainHV.o libAcquDAQ.so libAcquRoot.so
 	@echo "$@ done"
 	@echo "##-----------------------------------------------------------"
 
-RSupervise: RSupervise.o libAcquRoot.so
+RSupervise: RSupervise.o libAcquRoot.so $(EPICSSO) $(EPICSLINKS)
 	$(CCCOMP) $(acqu_debug)  $(O)/RSupervise.o \
 	$(L)/libAcquRoot.so $(L)/libAcquDAQ.so $(CAENVME_LIB) \
-	$(ROOTLIBS) -lThread \
+	$(ROOTLIBS) $(EPICSLIB) -lThread \
 	-o $(B)/RSupervise
 	@echo "$@ done"
 	@echo "##-----------------------------------------------------------"
@@ -287,7 +334,7 @@ $(DAQ)/DAQDict.cc: $(DAQInc) AcquDAQLinkDef.h
 	@echo "##-----------------------------------------------------------"
 
 %.o: %.cc
-	$(CCCOMP) $(CXXFLAGS) $(INCFLAGS) $(CAENVME_COMP) -o $(O)/$@ -c $< 
+	$(CCCOMP) $(CXXFLAGS) $(EPICSFLAGS) $(INCFLAGS) $(CAENVME_COMP) -o $(O)/$@ -c $< 
 #
 # Need the explicit target directory for deps. vpath doesn't seem to work
 # for this

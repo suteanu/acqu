@@ -4,7 +4,11 @@
 //--Rev 	JRM Annand ... 9th Jun 2007   Upgrade module & error struct
 //--Rev 	JRM Annand ...21st Apr 2008   UpdateInfo(),ConstructHeader()
 //--Rev 	JRM Annand ...31st Aug 2012   Mk2 module info fNScChannel
-//--Update	JRM Annand ...21st Nov 2012   Stuff for merging data
+//--Rev 	JRM Annand ...21st Nov 2012   Stuff for merging data
+//--Rev 	K Livingston.. 7th Feb 2013   Support for handling EPICS buffers
+//--Rev 	JRM Annand ....1st Mar 2013   More stuff for merging data
+//--Rev 	JRM Annand ....4th Mar 2013   EpicsHeaderInfo_t time_t to UInt_t
+//--Update 	JRM Annand ....6th Mar 2013   Fix TAPS(foreign) ConstructHeader
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -34,7 +38,7 @@ TA2Mk2Format::TA2Mk2Format( Char_t* n, Int_t l, Int_t nsrc ) :
   // 0th data source offset = 4 byte (include event number)
   // ith data source offset = 8 byte (exclude event number)
   fIsHeader = ETrue;
-  if( nsrc ) fStartOffset = 8;
+  if( nsrc ) fStartOffset = 12;
   else fStartOffset = 4;
   fIsErrorSort = ETrue;
 }
@@ -145,8 +149,10 @@ void TA2Mk2Format::MergeHeader( void* h1, void* h2, Int_t orl, Int_t irl  )
     // Counters for the new merged buffer
     if( p2->fNADC > p1->fNADC ) p->fNADC = p2->fNADC;
     //    p->fNScaler = p1->fNScaler + p2->fNScaler;
-    if( p2->fNScaler > p2->fNScaler ) p->fNScaler = p2->fNScaler;
+    if( p2->fNScaler > p1->fNScaler ) p->fNScaler = p2->fNScaler;
     p->fNModule = p1->fNModule + p2->fNModule;
+    p->fNADCModule = p1->fNADCModule + p2->fNADCModule;
+    p->fNScalerModule = p1->fNScalerModule + p2->fNScalerModule;
 
     // accumulate hardware module info...contains adc/scaler info
     ModuleInfoMk2_t* m = (ModuleInfoMk2_t*)(p + 1);
@@ -195,6 +201,8 @@ void TA2Mk2Format::ConstructHeader( void* h )
   // Read and decode the parameter file
   // m is the non-comment line counter (and hence module counter)
   m = 0;
+  Char_t name[16];
+  Int_t dummy;
   while( (key = formatFile.ReadKey(kForeignFormat)) != -1 ){
     pline = formatFile.GetLine();
     switch( key ){
@@ -208,14 +216,15 @@ void TA2Mk2Format::ConstructHeader( void* h )
       break;
     case EForeignModule:
     //	One ADC/scaler module per line, 7 parameters read
-      nparm = sscanf(pline,"%s%d%d%d",
-		       cbuff, &(Pm->fAmin), &(Pm->fNChannel), &(Pm->fBits));
-      if(nparm < 5)
+      nparm = sscanf(pline,"%s%s%d%d%d%d%d",
+		     cbuff,name,&(Pm->fAmin),&(Pm->fModIndex),&dummy,
+		     &(Pm->fNChannel),&(Pm->fBits));
+      if(nparm < 7)
 	PrintError(pline,"<Foreign Data setup file format>",EErrFatal);
       // Flag the setup comes from config file, not from Acqu header in data
       // Set up module struct for each ADC/scaler
       // cbuff shows what kind of module
-      Pm->fModIndex = EID_Undef;
+      Pm->fNChannel += 1;
       if(strcmp(cbuff,"adc") == 0) Pm->fModType = EDAQ_ADC;
       else Pm->fModType = EDAQ_Scaler;
       Pm++;				    // update module ptr

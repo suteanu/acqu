@@ -38,7 +38,9 @@
 //                                          Move TCS reset slow ctrl loop
 //--Rev         JRM Annand    2nd Sep 2012  Add fEventSendMod..event ID send
 //--Rev         B. Oussena    9th Nov 2012  sleep(1) after launching data store
-//--Update      JRM Annand    9th Jan 2013  add CAEN V874 TAPS module
+//--Rev         JRM Annand    9th Jan 2013  add CAEN V874 TAPS module
+//--Rev 	K Livingston..7th Feb 2013  Support for writing EPICS buffers
+//--Update	JRM Annand    2nd Mar 2013  EPICS read in conditional block
 //
 //--Description
 //                *** AcquDAQ++ <-> Root ***
@@ -81,6 +83,7 @@
 #include "TVirtualModule.h"
 #include "TVME_VUPROM.h"
 #include "TVME_SIS3820.h"
+#include "TEPICSmodule.h"
 
 ClassImp(TDAQexperiment)
 
@@ -126,11 +129,15 @@ TDAQexperiment::TDAQexperiment( Char_t* name, Char_t* input, Char_t* log,
   fCtrlList = new TList;
   fSlowCtrlList = new TList;
   fCATCHList = NULL;
+  fEPICSList =  new TList;
+  fEPICSTimedList =  new TList;
+  fEPICSCountedList =  new TList;
   fIRQModName = fStartModName = fSynchModName = fEventSendModName = NULL;
   fIRQMod = fStartMod = fSynchMod = fCtrlMod = fEventSendMod = NULL;
   fSynchIndex = -1;
   fStartSettleDelay = 0;
-  fNModule = fNADC = fNScaler = fNCtrl = fNSlowCtrl = 0;
+  fNModule = fNADC = fNScaler = fNCtrl = fNSlowCtrl =
+    fNEPICS = fNEPICSTimed = fNEPICSCounted = 0;
   fDataOutMode = EStoreDOUndef;
   fScReadFreq = 0;
   fSlCtrlFreq = 0;
@@ -460,6 +467,16 @@ void TDAQexperiment::AddModule( Char_t* line )
     // Virtual Module...input line contains type (ADC, scaler etc.)
     mod = new TVirtualModule( name, file, fLogStream, line );
     break;
+  case EDAQ_Epics:
+    // Epics Module...input line contains type (ADC, scaler etc.)
+    if(!IsMk2Format()){   //Exit if trying to include EPICS with mk1 format.
+      PrintError( module, "EPICS modules can only be used in Mk2 format",EErrFatal);
+    }
+    else{
+      mod = new TEPICSmodule( name, file, fLogStream, line);
+    }
+    break;
+    
   default:
     PrintError( module, "<Unknown hardware module>" );
     return;
@@ -499,6 +516,18 @@ void TDAQexperiment::AddModule( Char_t* line )
   if( mod->IsType( EDAQ_SlowCtrl ) ){          // Slow control module
     fSlowCtrlList->AddLast( mod );
     fNSlowCtrl++;
+  }
+  if( mod->GetType() == EDAQ_Epics){          // EPICS module
+    fEPICSList->AddLast( mod );
+    ((TEPICSmodule *)mod)->SetEpicsIndex(fNEPICS++);
+    if( ((TEPICSmodule *)mod)->IsTimed()){
+      fEPICSTimedList->AddLast( mod );
+      fNEPICSTimed++;
+    }
+    else if(((TEPICSmodule *)mod)->IsCounted()){
+      fEPICSCountedList->AddLast( mod );
+      fNEPICSCounted++;
+    }
   }
   fModuleList->AddLast( mod );                 // all modules
   fNModule++;
@@ -586,14 +615,18 @@ void TDAQexperiment::RunIRQ()
   TIter nexta( fADCList );
   TIter nexts( fScalerList );
   TIter nextc( fSlowCtrlList );
+  TIter nexte( fEPICSList );
+  TIter nextet( fEPICSTimedList );
+  TIter nextec( fEPICSCountedList );
 
   TDAQmodule* mod;
   void* out;              // output buffer pointer
   Int_t scCnt = 0;
   Int_t slCtrlCnt = 0;
   Int_t* scLen;
-  Int_t* evLen;           // place to put event length
-  UShort_t* evID;         // place to put event ID info
+  Bool_t scEpicsFlag = kFALSE;    //for epics to know it was a scaler read. 
+  Int_t* evLen;                   // place to put event length
+  UShort_t* evID;                 // place to put event ID info
   // If in slave mode run the autostart procedure, bypass any local control
   if( (fSupervise->GetExpCtrlMode() == EExpCtrlSlave) ||
       (fSupervise->GetExpCtrlMode() == EExpCtrlNetSlave) )
@@ -635,6 +668,7 @@ void TDAQexperiment::RunIRQ()
 	fIRQMod->ScalerStore(&out, EScalerBuffer);// scaler-end marker
       }
       scCnt = 0;                                  // reset scaler counter
+      scEpicsFlag=kTRUE;   // flag for epics that this was a scaler read event
     }
     if( (slCtrlCnt == fSlCtrlFreq) && (fNSlowCtrl) ){
       nextc.Reset();
@@ -646,6 +680,56 @@ void TDAQexperiment::RunIRQ()
 	fStartMod->ResetTrigCtrl(); // trigger control reset
       }
     }
+    //------------------------------------------------------------------------
+    // Start of EPICS stuff
+    // Check if any timed EPICS reads due - a separate buffer for each 
+    // If there's more than one due (unlikely but possible)
+    // We'll only be here if it's Mk2 format, otherwise exited earlier fatally.
+    // Enter this block only if there is some EPICS in the system
+    if( fNEPICS ){
+      //if 1st event, read all EPICS modules then start timers & counters
+      if(fNEvent==0){
+	nexte.Reset();
+	while( ( mod = (TDAQmodule*)nexte() ) ){    // loop all epics modules
+	  fIRQMod->ScalerStore(&out, EEPICSBuffer); // epics-buffer marker
+	  ((TEPICSmodule*)mod)->WriteEPICS(&out);   // write 
+	}
+	//start any EPICS timers / counters
+	nextet.Reset();                             // ones timed in ms
+	while( ( mod = (TDAQmodule*)nextet() ) ){
+	  ((TEPICSmodule*)mod)->Start();
+	}
+	nextec.Reset();                         // ones counted in scaler reads
+	while( ( mod = (TDAQmodule*)nextec() ) ){
+	  ((TEPICSmodule*)mod)->Start();
+	}
+      }	
+      //
+      nextet.Reset();
+      while( ( mod = (TDAQmodule*)nextet() ) ){    // loop timed epics modules
+	if(((TEPICSmodule*)mod)->IsTimedOut()){    // Check if read is due
+	  fIRQMod->ScalerStore(&out, EEPICSBuffer);// epics-buffer marker
+	  ((TEPICSmodule*)mod)->WriteEPICS(&out);  // write 
+	  ((TEPICSmodule*)mod)->Start();           // restart the timer 
+	}
+      }
+      //
+      //Now if it was a scaler event, see in any scaler counted EPICS reads
+      if( (scEpicsFlag) && (fNScaler) ){
+	nextec.Reset();
+	while( ( mod = (TDAQmodule*)nextec() ) ){
+	  ((TEPICSmodule*)mod)->Count();             // increment EPICS counter
+	  if(((TEPICSmodule*)mod)->IsCountedOut()){  // if counted out
+	    fIRQMod->ScalerStore(&out, EEPICSBuffer);// epics-buffer marker
+	    ((TEPICSmodule*)mod)->WriteEPICS(&out);  // write
+	    ((TEPICSmodule*)mod)->Start();           // restart the counter
+	  }
+	}
+	scEpicsFlag=kFALSE;                          //reset the flag
+      }
+    }
+    //-end of EPICS block
+    //-----------------------------------------------------------------------
     if( IsMk2Format() ) *evLen = (Char_t*)out - (Char_t*)evLen;
     if( fSynchMod ){
       *evID = fSynchIndex; evID++;

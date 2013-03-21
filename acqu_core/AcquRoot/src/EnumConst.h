@@ -1,6 +1,7 @@
 //--Author	JRM Annand    9th Jan 2003
 //--Rev		JRM Annand...26th Feb 2003...1st "production" version
-//--Update	JRM Annand...21st Jan 2007...Included in TA2System
+//--Rev 	JRM Annand...21st Jan 2007...Included in TA2System
+//--Update	JRM Annand... 8th Feb 2013...Add EPICS buffer delimiter
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -40,6 +41,7 @@ enum{ EHeadBuff = 0x10101010,      // header buffer (experimental parameters
       EEndEvent = 0xFFFFFFFF,      // end of event marker
       EBufferEnd = 0xFFFFFFFF,     // end of file marker
       EScalerBuffer = 0xFEFEFEFE,  // start of scaler read out
+      EEPICSBuffer = 0xFDFDFDFD,   // start of EPICS read out
       EReadError = 0xEFEFEFEF,     // start of error block (hardware error)
       ENullADC = -1,               // undefined ADC value
       ENullHit = 0xFFFFFFFF,       // undefined hit index (end of hit buffer)

@@ -23,7 +23,8 @@
 //--Rev 	JRM Annand...25th Nov 2008...add GenericPhysics
 //--Rev 	JRM Annand...29th Apr 2009...fix TTree branch format strings
 //--Rev 	JRM Annand... 1st Sep 2009...delete[]
-//--Update	JRM Annand...29th Sep 2012   Add histogram of pattern #hits
+//--Rev 	JRM Annand...29th Sep 2012   Add histogram of pattern #hits
+//--Update	K Livingston..7th Feb 2013   Support for handling EPICS buffers
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -181,6 +182,10 @@ inline void TA2Analysis::Process( )
   fNEvent++;                        // Events processed
   fIsProcessComplete = EFalse;      // not passed cuts yet
   Periodic();                       // check if any period task due
+
+  if( gAR->IsEpicsRead() ){         // If it's an EPICS event 
+    Epicsodic();                    // Check if any epics task loaded
+  }
 
   switch ( gAR->GetProcessType() ){
   // Extract data from input stream provided by TAcquRoot

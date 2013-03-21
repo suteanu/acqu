@@ -38,7 +38,9 @@
 //                                          Move TCS reset slow ctrl loop
 //--Rev         JRM Annand    2nd Sep 2012  Add fEventSendMod..event ID send
 //--Rev         B. Oussena    9th Nov 2012  sleep(1) after launching data store
-//--Update      JRM Annand    9th Jan 2013  add CAEN V874 TAPS module
+//--Rev         JRM Annand    9th Jan 2013  add CAEN V874 TAPS module
+//--Rev 	K Livingston..7th Feb 2013  Support for writing EPICS buffers
+//--Update	JRM Annand    2nd Mar 2013  EPICS read in conditional block
 //
 //--Description
 //                *** AcquDAQ++ <-> Root ***
@@ -88,6 +90,9 @@ class TDAQexperiment : public TA2System {
   TList* fCtrlList;                 // linked list of all hardware controllers
   TList* fSlowCtrlList;             // linked list of all slow control 
   TList* fCATCHList;                // linked list of all CATCH modules
+  TList* fEPICSList;                // linked list of all EPICS modules
+  TList* fEPICSTimedList;           // EPICS modules with period in time (mn)
+  TList* fEPICSCountedList;         // EPICS mod with period in scaler counts
   Char_t* fIRQModName;              // name of Interrupt control module
   Char_t* fStartModName;            // name of Trigger start/stop module
   Char_t* fSynchModName;            // name of Event synchronisation module
@@ -107,6 +112,9 @@ class TDAQexperiment : public TA2System {
   Int_t fNScaler;                   // # Scalers
   Int_t fNCtrl;                     // # controllers
   Int_t fNSlowCtrl;                 // # slow control "modules"
+  Int_t fNEPICS;                    // # All EPICS "modules"
+  Int_t fNEPICSTimed;               // # EPICS "modules" periodic readout in ms
+  Int_t fNEPICSCounted;             // # EPICS "modules" periodic scaler counts
   Int_t fDataOutMode;               // mode of data output
   Int_t fScReadFreq;                // scaler read frequency (events)
   Int_t fSlCtrlFreq;                // slow control scan frequency (events)
@@ -160,6 +168,7 @@ class TDAQexperiment : public TA2System {
   Int_t GetRunStart(){ return fRunStart; }
   Int_t GetNModule(){ return fNModule; }
   Int_t GetNADC(){ return fNADC; }
+  Int_t GetNEPICS(){ return fNEPICS; }
   Int_t GetNScaler(){ return fNScaler; }
   Int_t GetNCtrl(){ return fNSlowCtrl; }
   Int_t GetNSlowCtrl(){ return fNSlowCtrl; }

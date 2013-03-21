@@ -15,8 +15,13 @@
 //--Rev 	JRM Annand...    1st May 2008   Process() no end record fix
 //--Rev 	JRM Annand...    3rd Jun 2008...const Char_t*...gcc 4.3
 //--Rev 	JRM Annand...    1st Sep 2009   delete[]
-//--Rev 	JRM Annand...   31st Aug 2012   Mk2 data buffer recognised in data merging
-//--Update	JRM Annand...   21st Nov 2012   More Mk2 data buffer recognised in data merging
+//--Rev 	JRM Annand...   31st Aug 2012   Mk2 data buffer recognised
+//                                              in data merging
+//--Rev 	JRM Annand...   21st Nov 2012   More Mk2 data buffer recognised
+//                                              in data merging
+//--Rev 	JRM Annand...    1st Mar 2013   More Mk2 merge debugging
+//--Update	JRM Annand...    6th Mar 2013   Add TA2TAPSMk2Format
+//				      
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -86,7 +91,7 @@ public:
   virtual Bool_t ProcessHeader();
   virtual void GetEvent(Int_t);
   virtual void CompareEvent();
-  virtual void MergeBuffers();
+  virtual void MergeBuffers(UInt_t = EDataBuff);
   virtual void FlushBuffers();
 
   // Inlined getters

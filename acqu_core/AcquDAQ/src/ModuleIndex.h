@@ -14,7 +14,8 @@
 //--Rev         JRM Annand   19th May 2012  Add Vuprom
 //--Rev         JRM Annand    1st Sep 2012  Add SIS 3820
 //--Rev         JRM Annand    3rd Sep 2012  EDAQ_ADC_Scaler added
-//--Update      JRM Annand    9th Jan 2013  ECAEN_V874 added
+//--Rev         JRM Annand    9th Jan 2013  ECAEN_V874 added
+//--Update	K Livingston..7th Feb 2013  Support for handling EPICS buffers
 //--Description
 //                *** AcquDAQ++ <-> Root ***
 // DAQ for Sub-Atomic Physics Experiments.
@@ -96,7 +97,8 @@ enum { E_BusUndef, E_VMEbus, E_CAMAC, E_FASTBUS, E_I2C, E_PCI, E_RS232 };
 // general types (functionality) of DAQ modules
 enum { EDAQ_Undef=0, EDAQ_ADC=0x1, EDAQ_Scaler=0x2, EDAQ_SlowCtrl=0x4,
        EDAQ_Ctrl=0x8, EDAQ_SCtrl=0x10, EDAQ_IRQ=0x20,
-       EDAQ_VADC=0x40, EDAQ_VScaler=0x80, EDAQ_ADC_Scaler=0x3};
+       EDAQ_VADC=0x40, EDAQ_VScaler=0x80, EDAQ_ADC_Scaler=0x3,
+       EDAQ_Epics=0x100 };
 
 // virtual module
 enum { EDAQ_Virtual=0xffff };
@@ -164,6 +166,7 @@ const Map_t kExpModules[] = {
   // I2C
   // PCI
   {"Virtual",    EDAQ_Virtual},
+  {"EPICS",      EDAQ_Epics},
 };
 
 #endif

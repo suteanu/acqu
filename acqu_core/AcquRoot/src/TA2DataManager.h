@@ -13,7 +13,8 @@
 //--Rev 	JRM Annand...26th Oct 2006...Local scalers
 //--Rev 	JRM Annand...29th Jan 2007...4v0 TA2System compatible
 //--Rev 	JRM Annand...25th Nov 2008...GetChildType() nth instance
-//--Update	JRM Annand... 1st Sep 2009   delete[]
+//--Rev 	JRM Annand... 1st Sep 2009   delete[]
+//--Update	K Livingston..7th Feb 2013   Support for handling EPICS buffers
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -79,6 +80,7 @@ class TA2DataManager : public TA2System {
   UInt_t fNPeriod;                       // periodic task event counter
   UInt_t fMaxPeriod;                     // # events between periodic tasks
   Char_t* fPeriodCmd;                    // period command to execute
+  Char_t* fEpicsCmd;                     // epics command to execute
   Char_t* fEndOfFileCmd;                 // end-of-file command to execute
   Char_t* fFinishCmd;                    // end-of-run command to execute
   Char_t* fTreeFileName;                 // reduced data tree file name
@@ -122,7 +124,9 @@ public:
   virtual void Cleanup( );             // end of event tasks
   virtual Bool_t UpdatePeriod( );      // check if period due
   virtual void Periodic( );            // tasks after n events
+  virtual void Epicsodic( );           // tasks after epics events
   virtual void ParsePeriod( Char_t* ); // parse period
+  virtual void ParseEpics( Char_t* );  // parse EPICS
   virtual void ParseEndOfFile( Char_t* ); // parse EOF macro
   virtual void ParseFinish( Char_t* ); // parse end of run macro
   virtual void SetEndOfFile();         // enable end-of-file tasks
@@ -169,6 +173,7 @@ public:
   UInt_t GetNPeriod(){ return fNPeriod; }        // periodic task counter
   UInt_t GetMaxPeriod(){ return fMaxPeriod; }    // events twixt periodic tasks
   Char_t* GetPeriodCmd(){ return fPeriodCmd; }   // period command
+  Char_t* GetEpicsCmd(){ return fPeriodCmd; }   // Epics command
   Char_t* GetEndOfFileCmd(){ return fEndOfFileCmd; }// end-of-file command
   Char_t* GetFinishCmd(){ return fFinishCmd; }   // end-of-run command
   Bool_t IsRawDecode(){ return fIsRawDecode; }           // decoding?

@@ -21,7 +21,8 @@
 //--Rev         JRM Annand    9th Jul 2012 Add ConfigVUPROM: command
 //--Rev         JRM Annand    1st Sep 2012 ExecKill..explicit kill GUI
 //--Rev         JRM Annand   29th Sep 2012 GetVUPROMparm()
-//--Update      JRM Annand    1st Oct 2012 Allow stop/go when storing
+//--Rev         JRM Annand    1st Oct 2012 Allow stop/go when storing
+//--Update      JRM Annand    2nd Mar 2013 VADC/VScalers Mk2 header counting
 //--Description
 //                *** AcquDAQ++ <-> Root ***
 // DAQ for Sub-Atomic Physics Experiments.

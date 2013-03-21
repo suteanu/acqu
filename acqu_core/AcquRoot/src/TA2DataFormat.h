@@ -7,7 +7,8 @@
 //--Rev 	JRM Annand...27th Apr 2007...Flexi header info getters
 //--Rev 	JRM Annand...11th Jun 2007...Error sort flag
 //--Rev 	JRM Annand...21st Apr 2008...UpdateInfo(),ConstructHeader()
-//--Update	JRM Annand...21st Nov 2012...Stuff for Mk2 merging
+//--Rev 	JRM Annand...21st Nov 2012...Stuff for Mk2 merging
+//--Update	JRM Annand... 8th Feb 2013...Add GetNEPICS() prototype
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -100,6 +101,7 @@ public:
   // Retrieve header info
   virtual Int_t GetNScaler(){ return 0; }
   virtual Int_t GetNADC(){ return 0; }
+  virtual Int_t GetNEPICS(){ return 0; }
   virtual Int_t GetNModule(){ return 0; }
   virtual Int_t GetModID(Int_t i){ return 0; }
   virtual Int_t GetModIndex(Int_t i){ return 0; }

@@ -15,8 +15,13 @@
 //--Rev 	JRM Annand...    1st May 2008   Process() no end record fix
 //--Rev 	JRM Annand...    3rd Jun 2008...const Char_t*...gcc 4.3
 //--Rev 	JRM Annand...    1st Sep 2009   delete[]
-//--Rev 	JRM Annand...   31st Aug 2012   Mk2 data buffer recognised in data merging
-//--Update	JRM Annand...   21st Nov 2012   More Mk2 data buffer recognised in data merging
+//--Rev 	JRM Annand...   31st Aug 2012   Mk2 data buffer recognised 
+//                                              in data merging
+//--Rev 	JRM Annand...   21st Nov 2012   More Mk2 data buffer recognised
+//                                              in data merging
+//--Rev 	JRM Annand...    1st Mar 2013   More Mk2 merge debugging
+//--Update	JRM Annand...    6th Mar 2013   Add TA2TAPSMk2Format
+//
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -34,6 +39,7 @@
 #include "TA2Mk1Format.h"
 #include "TA2Mk2Format.h"
 #include "TA2TAPSFormat.h"
+#include "TA2TAPSMk2Format.h"
 #include "ARFile_t.h"
 
 ClassImp(TA2DataServer)
@@ -45,7 +51,7 @@ enum {
   EDataSrvNetwork, EDataSrvFile, EDataSrvLocal,
   EDataSrvFileName, EDataSrvDirName,
   EDataSrvOpt,
-  EDataSrvMk1, EDataSrvMk2, EDataSrvTAPS,
+  EDataSrvMk1, EDataSrvMk2, EDataSrvTAPS, EDataSrvTAPSMk2
 };
 // Basic Server setup keys
 static const Map_t kDataSrvKeys[] = {
@@ -68,6 +74,7 @@ static const Map_t kDataSrvFormat[] = {
   {"Mk1",           EDataSrvMk1},
   {"Mk2",           EDataSrvMk2},
   {"TAPS",          EDataSrvTAPS},
+  {"TAPSMk2",       EDataSrvTAPSMk2},
   {NULL,          -1}
 };
 
@@ -222,6 +229,10 @@ void TA2DataServer::SetConfig( Char_t* line, int key )
     case EDataSrvTAPS:
       // TAPS format CB@Mainz experiments
       fDataFormat[n] = new TA2TAPSFormat((Char_t*)"TAPSFormat", fRecLen, n);
+      break;
+    case EDataSrvTAPSMk2:
+      // TAPS Mk2 format CB@Mainz experiments
+      fDataFormat[n] = new TA2TAPSMk2Format((Char_t*)"TAPSMk2Format", fRecLen, n);
       break;
     default:
       PrintError( line, "<DataServer unknown data format>", EErrFatal );
@@ -447,6 +458,7 @@ void TA2DataServer::MultiProcess()
 
   Bool_t finished = EFalse;
   void* inbuff;
+  UInt_t buffType;
 
   TA2DataSource* ds = fDataSource[0];        // data source handler
   TA2DataFormat* df = fDataFormat[0];        // data format handler
@@ -465,7 +477,8 @@ void TA2DataServer::MultiProcess()
       // Wait for it if not
       rb->WaitFull();
       inbuff = rb->GetStore();
-      switch( df->GetBufferType(inbuff) ){
+      buffType = df->GetBufferType(inbuff);
+      switch( buffType ){
       case EKillBuff:
 	PrintMessage("End of session detected...shuting down\n");
 	df->SendTerminate();
@@ -498,7 +511,7 @@ void TA2DataServer::MultiProcess()
       case EMk2DataBuff:
 	// Byte-swap the data buffer if necessary  and then do the merging
 	if( ds->IsSwap() )Swap4ByteBuff((UInt_t*)inbuff, recl);
-	MergeBuffers();
+	MergeBuffers(buffType);
 	break;
       }
       // Mark sub-buffer clear for further use and shift pointer
@@ -586,15 +599,14 @@ Bool_t TA2DataServer::ProcessHeader()
 }
 
 //---------------------------------------------------------------------------
-void TA2DataServer::MergeBuffers( )
+void TA2DataServer::MergeBuffers(UInt_t buffType)
 {
   // Merge events from multiple data streams
-
-    // Initial setup of buffer delimiters/pointers for the data merging process
+  // Initial setup of buffer delimiters/pointers for the data merging process
   if( !fOutBuff ){
     fSortBuff->WaitEmpty();
     fOutBuff = (UInt_t*)fSortBuff->GetStore();
-    *fOutBuff++ = EDataBuff;
+    *fOutBuff++ = buffType;
     fEndBuff = (Char_t*)fSortBuff->GetStore() + fRecLen - sizeof(UInt_t);
   }
   UInt_t* evstart;
@@ -634,10 +646,13 @@ void TA2DataServer::MergeBuffers( )
       evstart = fOutBuff;
     }
     CompareEvent();
+    UInt_t* lenMerged = fOutBuff + 1;
+    length = 0;                             // recalculate event length
     for( i=0; i<fNDataSource; i++ ){
       if( fEvStatus[i] == ESubEventOK ){
 	memcpy(fOutBuff, fEvStart[i], fEvLength[i]);
 	fOutBuff = (UInt_t*)((Char_t*)fOutBuff + fEvLength[i]);
+	length += fEvLength[i];
       }
       if( fEvStatus[i] != ESubEventHigh ){
 	if( !fEvTempStart[i] ){
@@ -647,6 +662,8 @@ void TA2DataServer::MergeBuffers( )
 	else fEvStart[i] = fEvTempStart[i];
       }
     }
+    // Mk2 format only
+    if( buffType == EMk2DataBuff ) *lenMerged = length - 4;
     *fOutBuff++ = EEndEvent;
   }
 }

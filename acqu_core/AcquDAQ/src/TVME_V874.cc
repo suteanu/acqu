@@ -1,6 +1,6 @@
 //--Author	JRM Annand   9th Jan 2013  Prototype version
 //--Rev 	
-//--Update  
+//--Update      B. Oussena   5th Feb 2013  Fix bug in ReadIRQ()
 //--Description
 //                *** AcquDAQ++ <-> Root ***
 // DAQ for Sub-Atomic Physics Experiments.
@@ -266,11 +266,13 @@ void TVME_V874::ReadIRQ( void** outBuffer )
     ResetData();
     return;
   }
+  Int_t j;                                  // added BAYA
   Int_t nword = (datum & 0x3f00) >> 8;      // # data channels recorded
   //
   UShort_t adcVal, adcIndex;                // adc value and index
-  for( i=1; i<=nword; i++ ){
-    datum = Read(i);
+  for( j=1; j<=nword; j++ ){
+    datum = Read(i);                        // i++ BAYA
+    i++;
     // id bits should be zero
     if( (datum & 0x7000000) ){              // data word? should be zero
       ErrorStore(outBuffer, EErrDataFormat);
@@ -299,7 +301,7 @@ void TVME_V874::PostInit( )
   // Call standard VME PostInit to map register addresses to virtual
   // memory system and read and check the firmware ID...fatal error if non-match
   if( fIsInit ) return;            // Init already done?
-  InitReg( V874reg );
+  InitReg( V874reg );              // Store register addesses
   TVMEmodule::PostInit();          // standard memory mapping & id check
   // Specialist V874
   Reset();                         // software reset
@@ -315,7 +317,7 @@ void TVME_V874::PostInit( )
   Write(EV874_IVset,fVset);                      // set TDC gain
   Write(EV874_IVoff,fVoff);                      // set TDC offset
   Write(EV874_IControl1, (UInt_t)0);             // ??
-  // Data threshold settings
+  // Data threshold (pedestal suppression) settings
   for(Int_t i=0,j=EV874_IThresh; i<32; i++,j++) { Write(j,fThresh[i]); }
   InitDAC();                      // Setup DACs on piggy back board
   Write(EV874_IBitSet2,0x100);    // Readout mode

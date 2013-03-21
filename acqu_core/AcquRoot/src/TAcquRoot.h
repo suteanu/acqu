@@ -32,7 +32,8 @@
 //--Rev 	JRM Annand...29th Nov 2007...LinkDataServer() j<nadc, #buffer
 //--Rev 	JRM Annand...12th Feb 2008...LinkDataServer() maxscaler
 //--Rev 	JRM Annand... 1st May 2008...SetDataServer()...check dataserver
-//--Update	JRM Annand... 1st Sep 2009...BuildName, delete[]
+//--Rev 	JRM Annand... 1st Sep 2009...BuildName, delete[]
+//--Update	K Livingston..7th Feb 2013   Support for handling EPICS buffers
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -69,6 +70,9 @@ enum { EMk1Process, EMCProcess, EPhysicsProcess };
 enum { EMaxTreeFiles = 1024 };
 enum { EMaxScaler = 65536 };
 enum { EMaxScalerBlock = 8 };
+
+// Max no of epics modules to handle (noramlly 0,1 or 2)
+enum {EMaxEpicsModules = 100 }; 
 
 void* A2RunThread( void* );
 
@@ -138,11 +142,18 @@ private:
   Bool_t fIsBatch;              // running batch mode?
   Bool_t fIsLocalDAQ;           // local DAQ thread?
 
+  //For EPICS buffers
+  Int_t fNEpics;                        //No of different epics event types
+  Char_t *fEpicsBuff[EMaxEpicsModules]; //Buffers for the EPICS data
+  Bool_t fIsEpicsRead;                  // set when EPICS read during event
+  Bool_t fEpicsIndex[EMaxEpicsModules]; //Flag EPICS indices read in EPICS event
+
    // Private functions to decode Acqu data buffer
   void Mk1EventLoop( UInt_t* );        // decode one Mk1 data record
   void Mk2EventLoop( UInt_t* );        // decode one Mk2 data record
   UInt_t* StoreScalers( UInt_t* );     // identify and store scalers Mk1 format
   UInt_t* StoreScalersMk2( UInt_t* );  // identify and store scalers Mk2 format
+  UInt_t* StoreEpics( UInt_t*);        // identify and store epics 
   void StoreOfflineScalers( Int_t );   // identify and store scalers from tree
   void StoreScalerBlock( UInt_t*, Int_t, Int_t);
   UInt_t* Mk1ErrorCheck( UInt_t* );    // identify and skip error record
@@ -238,11 +249,17 @@ public:
    Int_t GetRecLen(){ return fRecLen; };
    Int_t GetNDataBuffer(){ return fNDataBuffer; }
    Int_t GetProcessType(){ return fProcessType; }
+
+   Char_t** GetEpicsBuffer(){ return fEpicsBuff; }
+   Bool_t* GetEpicsIndex(){ return fEpicsIndex; }
+   Int_t   GetNEpics(){ return fNEpics; }
+   
    void SetIsOnline(){ fIsOnline = ETrue; }
    void SetRecLen( Int_t len ){ fRecLen = len; }
    void SetMulti(MultiADC_t** multi){ fMulti = multi; }
    Bool_t IsSortBusy(){ return fIsSortBusy; }
    Bool_t IsScalerRead(){ return fIsScalerRead; }
+   Bool_t IsEpicsRead(){ return fIsEpicsRead; }
    Bool_t IsOnline(){ return fIsOnline; }
    Bool_t* GetScalerRead(){ return &fIsScalerRead; }
    Bool_t IsFinished(){ return fIsFinished; }
@@ -322,6 +339,26 @@ inline UInt_t* TAcquRoot::StoreScalers( UInt_t* sc )
   }
   return endSc;
 }
+
+//----------------------------------------------------------------------------
+inline UInt_t* TAcquRoot::StoreEpics( UInt_t* ebuff )
+{
+  // Copy EPICS data block to the data stream
+  //
+  Char_t *lbuff;
+  //Copy from event to the relevant epics buffer
+  Char_t *ptr=(Char_t*)ebuff;
+  ptr+=sizeof(UInt_t); //past the header
+  
+  EpicsHeaderInfo_t *bhead=(EpicsHeaderInfo_t *)ptr;//buffer header
+  lbuff=fEpicsBuff[bhead->index];                   //copy to relevant buffer
+  for(int i=0;i<bhead->len;i++){
+    *lbuff++=*ptr++;
+  }
+  fEpicsIndex[bhead->index] = kTRUE;                //flag buffer was filled
+  return (UInt_t*)ptr;
+}
+
 //----------------------------------------------------------------------------
 inline UInt_t* TAcquRoot::StoreScalersMk2( UInt_t* sc )
 {

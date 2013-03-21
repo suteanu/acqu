@@ -4,7 +4,11 @@
 //--Rev 	JRM Annand ... 9th Jun 2007   Upgrade module & error struct
 //--Rev 	JRM Annand ...21st Apr 2008   UpdateInfo(),ConstructHeader()
 //--Rev 	JRM Annand ...31st Aug 2012   Mk2 module info fNScChannel
-//--Update	JRM Annand ...21st Nov 2012   Stuff for merging data
+//--Rev 	JRM Annand ...21st Nov 2012   Stuff for merging data
+//--Rev 	K Livingston.. 7th Feb 2013   Support for handling EPICS buffers
+//--Rev 	JRM Annand ....1st Mar 2013   More stuff for merging data
+//--Rev 	JRM Annand ....4th Mar 2013   EpicsHeaderInfo_t time_t to UInt_t
+//--Update 	JRM Annand ....6th Mar 2013   Fix TAPS(foreign) ConstructHeader
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -18,6 +22,7 @@
 #define _TA2Mk2Format_h_
 
 #include "TA2DataFormat.h"
+#include <time.h>        //since the time struct goes into EPICS buffer header
 
 // Array sizes
 enum { EMk2SizeTime = 32, EMk2SizeComment = 256, EMk2SizeFName = 128,
@@ -56,6 +61,27 @@ struct ReadErrorMk2_t {
   UInt_t fTrailer;              // end of error block marker
 };
 
+// time was originally a time_t, now changed to UInt_t
+// We found that time_t is 8-byte on a 64-bit machine and 4-byte on a 
+// 32-bit machine. Most front-end DAQ machines are 32-bit while
+// most analysis/storage systems are 64-bit.
+struct EpicsHeaderInfo_t {      //header for epics buffers and channels
+  Char_t name[32];              //Name of EPICs module
+  UInt_t time;                  //Time of buffer
+  Short_t index;                //index of module
+  Short_t period; //0 = start only, +ve =period in counts, -ve =-1*period in ns
+  Short_t id;                   //id of epics module (user set)
+  Short_t nchan;                //no of EPICs channels in module
+  Short_t len;                  //length of EPICS buffer
+};
+  
+struct EpicsChannelInfo_t{      //header for channel info
+  Char_t pvname[32];            //Process variable name
+  Short_t bytes;                //No of bytes for this channel
+  Short_t nelem;                //No of elements in array
+  Short_t type;                 //Type of element
+};
+ 
 //struct ScalerBlockMk2_t {
 //  UInt_t fID;
 //  UInt_t fCounts;
@@ -81,7 +107,7 @@ class TA2Mk2Format : public TA2DataFormat {
     else return EFalse;
   }
   virtual Bool_t IsDataBuff( void* b ){         // Data buffer ?
-    if( *(UInt_t*)b == EDataBuff ) return ETrue;
+    if( *(UInt_t*)b == EMk2DataBuff ) return ETrue;
     else return EFalse;
   }
   virtual Bool_t IsEndBuff( void* b ){          // Trailer buffer ?
@@ -114,33 +140,35 @@ inline Int_t TA2Mk2Format::GetEventLength( void* evbuff )
 {
   // Identify event's - worth of data and return event length (# of bytes )
   // Mk2 format....if 0th data source account for event number in data
-  //
-  Int_t length = 0;
-  UInt_t* event = (UInt_t*)evbuff;
-
+  // For 1st data stream evbuff points to event number
+  // for subsequent data streams evbuff points 2 (4-byte) words later
+  Int_t length;
+  UInt_t* event;
+  // 1st (master) data stream
   if( !fNsrc ){
-    fEventNumber = *event;
-    event++; length++;     // step past event #
+    event = (UInt_t*)evbuff;
+    length = 4;
   }
-  else fEventNumber = *(event-1);
-  if( fEventNumber == EEndEvent ){
-    return 0;
+  // Subsequent (slave) data streams
+  else{
+    event = (UInt_t*)evbuff - 2;
+    length = -4;
   }
-
+  fEventNumber = *event;
+  // Check for end of buffer
+  if( fEventNumber == EEndEvent ) return 0;
+  event++;
+  length += *event;
+  event++;
   // If final event read of scalers only
   // For now frig synch by discarding this event
   if( *event == EScalerBuffer ){
     return 0;
   }
-
   if( fEventIndex == *(UShort_t*)event )
     fEventID = *(UShort_t*)( (UShort_t*)event + 1 );
   else fEventID = 0xffff;
-
-  while( *event != EEndEvent ){
-    length++;    event++;
-  }
-  return (length * sizeof(UInt_t));
+  return (length);
 }
 
 #endif

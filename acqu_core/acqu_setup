@@ -52,8 +52,8 @@
 #  Set up values of required environment variables:
 #
 setenv acquversion 4v6
-setenv acquversionID 4v6.10.01.13
-setenv acqudate "10th January 2013"
+setenv acquversionID 4v6.04.03.13
+setenv acqudate "4th March 2013"
 echo ""
 echo "********** acqu_setup being executed  **********"
 echo "           version: " $acquversion

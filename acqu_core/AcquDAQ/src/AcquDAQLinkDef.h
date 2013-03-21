@@ -2,7 +2,9 @@
 //--Rev 	JRM Annand
 //--Rev 	JRM Annand...11th Jan 2008  V775 V1190 addition
 //--Rev 	B.Oussena    13th Jul 2010  FB-18XX, 4413SPILL addition
-//--Update	JRM Annand   25th Jan 2012  GSI4800 scaler addition
+//--Rev 	JRM Annand   25th Jan 2012  GSI4800 scaler addition
+//--Rev 	JRM Annand    9th Jan 2013  CAEN V874 (TAPS) addition
+//--Update	K Livingston..7th Feb 2013  Support for handling EPICS buffers
 //--Description
 //                *** AcquDAQ++ <-> Root ***
 // DAQ for Sub-Atomic Physics Experiments.
@@ -24,6 +26,7 @@
 //#pragma link C++ class TDAQmemmap+;
 #pragma link C++ class TDAQmodule+;
 #pragma link C++ class TVirtualModule+;
+#pragma link C++ class TEPICSmodule+;
 #pragma link C++ class TDAQcontrol+;
 #pragma link C++ class TDAQstore+;
 //#pragma link C++ class TDAQsocket+;

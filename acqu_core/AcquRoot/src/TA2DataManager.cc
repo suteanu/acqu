@@ -16,6 +16,7 @@
 //--Rev 	JRM Annand...29th Jan 2007...4v0 TA2System compatible
 //--Rev 	JRM Annand...25th Nov 2008...GetChildType() nth instance
 //--Update	JRM Annand... 1st Sep 2009   delete[]
+//--Update	K Livingston..7th Feb 2013   Support for handling EPICS buffers
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -68,7 +69,7 @@ TA2DataManager::TA2DataManager( const Char_t* name, const Map_t* comlist )
   fScalerAcc = NULL;
   fNPeriod = 0;
   fMaxPeriod = 0;
-  fPeriodCmd = fEndOfFileCmd = fFinishCmd = NULL;
+  fPeriodCmd = fEpicsCmd = fEndOfFileCmd = fFinishCmd = NULL;
   fTreeFileName = NULL;
   fIsRawDecode = fIsDecode = fIsReconstruct = EFalse;
   fIsRawDecodeOK = fIsDecodeOK = fIsReconstructOK = EFalse;
@@ -482,6 +483,33 @@ void TA2DataManager::ParsePeriod( Char_t* line)
 }
 
 //---------------------------------------------------------------------------
+void TA2DataManager::ParseEpics( Char_t* line)
+{
+  // Read Epics info from line of text
+  // Name of Macro file containing the periodic procedure
+  // Name of the periodic procedure to call
+  // including any parameters to pass to the
+  // periodic procedure
+
+  Char_t macro[256];
+  Char_t procedure[256];
+  Char_t* loadcmd;
+  
+  if( sscanf( line, "%s%s", macro,procedure ) < 2 ){
+    PrintError(line,"<Epics: Input Parse>");
+    return;
+  }
+  loadcmd = BuildName(".L ", macro);
+  fEpicsCmd = BuildName(procedure);    // save procedure string
+  
+  fprintf(fLogStream," %s Epics command: %s\n",
+	  this->ClassName(), fEpicsCmd);
+
+  gROOT->ProcessLine(loadcmd);          // load the macro
+  return;
+}
+
+//---------------------------------------------------------------------------
 void TA2DataManager::ParseEndOfFile( Char_t* line)
 {
   // Read any end-of-file macro spec
@@ -631,6 +659,23 @@ void TA2DataManager::Periodic( )
   TA2DataManager* child;
   while( ( child = (TA2DataManager*)nextchild() ) ){
     child->Periodic();
+  }
+}
+
+//-----------------------------------------------------------------------------
+void TA2DataManager::Epicsodic( )
+{
+  // Optional tasks to perform every time there's an EPICS event
+  // then step through the list of child analysis entities
+  // and call any defined child periodic macro
+
+  if( !fEpicsCmd ) return;       // no epicsodicdic procedure
+  MacroExe( fEpicsCmd );         // call any defined macro
+
+  TIter nextchild(fChildren);    // start loop throught children
+  TA2DataManager* child;
+  while( ( child = (TA2DataManager*)nextchild() ) ){
+    child->Epicsodic();
   }
 }
 

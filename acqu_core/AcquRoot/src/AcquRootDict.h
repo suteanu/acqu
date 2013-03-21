@@ -71,6 +71,7 @@ extern void G__set_cpp_environmentAcquRootDict();
 #include "/home/acqu/4v6/acqu/AcquRoot/src/TA2Mk1Format.h"
 #include "/home/acqu/4v6/acqu/AcquRoot/src/TA2Mk2Format.h"
 #include "/home/acqu/4v6/acqu/AcquRoot/src/TA2TAPSFormat.h"
+#include "/home/acqu/4v6/acqu/AcquRoot/src/TA2TAPSMk2Format.h"
 #include "/home/acqu/4v6/acqu/AcquRoot/src/HitD2A_t.h"
 #include "/home/acqu/4v6/acqu/AcquRoot/src/LongBar_t.h"
 #include "/home/acqu/4v6/acqu/AcquRoot/src/HitCluster_t.h"
@@ -190,5 +191,6 @@ extern G__linked_taginfo G__AcquRootDictLN_TA2FileSource;
 extern G__linked_taginfo G__AcquRootDictLN_TA2LocalSource;
 extern G__linked_taginfo G__AcquRootDictLN_TA2Mk1Format;
 extern G__linked_taginfo G__AcquRootDictLN_TA2TAPSFormat;
+extern G__linked_taginfo G__AcquRootDictLN_TA2TAPSMk2Format;
 
 /* STUB derived class for protected member access */

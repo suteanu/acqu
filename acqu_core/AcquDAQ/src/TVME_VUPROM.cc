@@ -12,7 +12,7 @@
 //--Rev 	JRM Annand   29th Nov 2012 Timeout 100 us Event ID read
 //--Rev  	JRM Annand    1st Dec 2012 Scaler read only, Ref TDC width ctrl
 //--Rev 	JRM Annand    2nd Dec 2012 Mod RAM download (buff size & <=) 
-//--Update 	JRM Annand    5th Dec 2012 ReadIRQ separate j++ 
+//--Update 	JRM Annand   28th Feb 2013 Modified L1,L2 prescale setup 
 //
 //--Description
 //                *** AcquDAQ++ <-> Root ***
@@ -77,8 +77,18 @@ VMEreg_t VUPROMreg[] = {
   {0x2250,      0x0,  'l', 0},       // RAM2 address
   {0x2260,      0x0,  'l', 0},       // RAM2 data
   {0x2270,      0x0,  'l', 0},       // RAM2 readback
+  /*
   {0x2280,      0x0,  'l', 0},       // L1 prescale
   {0x2290,      0x0,  'l', 0},       // L2 prescale
+  */
+  {0x2300,      0x0,  'l', 0},       // L1 prescale
+  {0x2310,      0x0,  'l', 0},       // L1 prescale-1
+  {0x2320,      0x0,  'l', 0},       // L1 prescale-2
+  {0x2330,      0x0,  'l', 0},       // L1 prescale-3
+  {0x2340,      0x0,  'l', 0},       // L2 prescale
+  {0x2350,      0x0,  'l', 0},       // L2 prescale-1
+  {0x2360,      0x0,  'l', 0},       // L2 prescale-2
+  {0x2370,      0x0,  'l', 0},       // L2 prescale-3
   {0x22a0,      0x0,  'l', 0},       // Input pattern read
   {0x22c0,      0x0,  'w', 0},       // Width of shaped L1 output
   {0x22d0,      0x0,  'w', 0},       // L1 strobe internal delay
@@ -206,7 +216,7 @@ void TVME_VUPROM::SetConfig( Char_t* line, Int_t key )
     if(sscanf(line,"%d%d%d%d%d%d%d%d",
 	      fL2Prescale,   fL2Prescale+1, fL2Prescale+2, fL2Prescale+3,
 	      fL2Prescale+4, fL2Prescale+5, fL2Prescale+6, fL2Prescale+7 ) != 8)
-      PrintError(line,"<L1 Prescale input Format>",EErrFatal);
+      PrintError(line,"<L2 Prescale input Format>",EErrFatal);
     break;
   case EVUP_EnPattRead:
     // Enable readout of L1, L2 and multiplicity input patterns
@@ -510,6 +520,7 @@ void TVME_VUPROM::SetDebugOut(Int_t i, Int_t j)
   return;
 }
 //
+
 //--------------------------------------------------------------------------
 void TVME_VUPROM::SetPrescale(Int_t section, Int_t chan, Int_t prescale)
 {
@@ -546,21 +557,34 @@ void TVME_VUPROM::SetPrescale(Int_t section, Int_t chan, Int_t prescale)
     printf("Invalid section %d\n",section);
     break;
   }
-  // compute prescale datum to write to register
-  for( Int_t i=0; i<nchan; i++ ){
-    offset = i * 4;
-    pre = start[i];
-    datum |= (pre & 0xf)<<offset;        // only 4 bits
+  // write trigger input prescale datum to register
+  if( section < 2 ){
+    for( Int_t i=0; i<nchan; i++ ){
+      offset = i * 4;
+      if( i == chan ) pre = start[i] = prescale; // take new value
+      else pre = start[i];                       // use preloaded value
+      datum |= (pre & 0xf)<<offset;              // only 4 bits
+    }
+    printf("Section %d prescale pattern: %x\n", section, datum);
+    Write(port, datum);       // write to the VUPROM prescale register
   }
-  printf("Original section %d prescale pattern: %x\n", section, datum);
-  if( chan > -1){
-    // modify it according to supplied channel and prescale value
-    offset = 4 * chan;
-    datum |= (prescale & 0xf)<<offset;
-    printf("Modified section %d prescale pattern: %x\n", section, datum);
-    start[chan] = prescale;               // save the prescale value
+  // write L1 or L2 prescale value to registers
+  else{
+    // Check for any new prescale value, else use preloaded values
+    for( Int_t i=0; i<nchan; i++ ){
+      if( i == chan ) start[i] = prescale; 
+    }
+    for( Int_t i=0; i<nchan; i+=2){
+      Int_t lsb = 0xffff - (start[i] & 0xffff);
+      Int_t msb = 0xffff - (start[i+1] & 0xffff);
+      datum = lsb | (msb << 16) ;
+      Int_t j = i/2;
+      printf("Section %d, Chan:%d Prescale:%d; Chan:%d Prescale:%d\n",
+	     section,i,start[i],i+1,start[i+1]);
+      Write(port+j,datum);
+    }
   }
-  Write(port, datum);                   // write to the VUPROM prescale register
+  return;
 }
 
 //--------------------------------------------------------------------------
@@ -726,7 +750,7 @@ void TVME_VUPROM::CmdExe(Char_t* input)
     }      
     SetPrescale(2, i, j);
     fL1Prescale[i] = j;
-    sprintf(fCommandReply,"L1 %d prescale set to 2^%d\n",i,(j&0xf));
+    sprintf(fCommandReply,"L1 %d prescale factor set to %d\n",i,(j+1));
     break;
   case EVUP_L2Prescale:
     // Prescale values for L2 output signals (4-bit)
@@ -740,7 +764,7 @@ void TVME_VUPROM::CmdExe(Char_t* input)
     }      
     SetPrescale(3, i, j);
     fL2Prescale[i] = j;
-    sprintf(fCommandReply,"L2 %d prescale set to 2^%d\n",i,(j&0xf));
+    sprintf(fCommandReply,"L2 %d prescale factor set to %d\n",i,(j+1));
     break;
   case EVUP_EnPattRead:
     // Enable pattern register read

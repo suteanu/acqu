@@ -21,7 +21,8 @@
 //--Rev         JRM Annand    9th Jul 2012 Add ConfigVUPROM: command
 //--Rev         JRM Annand    1st Sep 2012 ExecKill..explicit kill GUI
 //--Rev         JRM Annand   29th Sep 2012 GetVUPROMparm()
-//--Update      JRM Annand    1st Oct 2012 Allow stop/go when storing
+//--Rev         JRM Annand    1st Oct 2012 Allow stop/go when storing
+//--Update      JRM Annand    2nd Mar 2013 VADC/VScalers Mk2 header counting
 //--Description
 //                *** AcquDAQ++ <-> Root ***
 // DAQ for Sub-Atomic Physics Experiments.
@@ -730,12 +731,12 @@ void TDAQsupervise::CreateHeader( void* buff )
     mod->ReadHeader(m);
     m++;
     // If its an ADC find the maximum range of ADC indices
-    if( mod->IsType( EDAQ_ADC ) ){
+    if( mod->IsType(EDAQ_ADC) || mod->IsType(EDAQ_VADC) ){
       maxadc = mod->GetBaseIndex() + mod->GetNChannel();
       if( h->fNADC < maxadc ) h->fNADC = maxadc;    // max ADC index
     }
     // If its a scaler find the maximum range of Scaler indices
-    if( mod->IsType( EDAQ_Scaler ) ){
+    if( mod->IsType(EDAQ_Scaler) || mod->IsType(EDAQ_VScaler) ){
       maxscaler = mod->GetBaseIndex() + mod->GetNChannel();
       if( h->fNScaler < maxscaler ) h->fNScaler = maxscaler;// max Scaler index
     }

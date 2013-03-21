@@ -21,7 +21,8 @@
 //--Rev 	JRM Annand...22nd Dec 2009   Cleanup bug fix
 //--Rev 	DL Hornidge..27th Jan 2011   fixed array-termination bug
 //--Rev 	JRM Annand... 6th Jul 2011   PostInit (A.Mushkarenkov)
-//--Update	JRM Annand... 6th Oct 2012   DecodeBasic bug fix time hits
+//--Rev 	JRM Annand... 6th Oct 2012   DecodeBasic bug fix time hits
+//--Update	JRM Annand... 7th Mar 2013   DecodeBasic filter out time = -1
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 

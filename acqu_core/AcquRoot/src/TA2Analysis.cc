@@ -23,7 +23,8 @@
 //--Rev 	JRM Annand...25th Nov 2008...add GenericPhysics
 //--Rev 	JRM Annand...29th Apr 2009...fix TTree branch format strings
 //--Rev 	JRM Annand... 1st Sep 2009...delete[]
-//--Update	JRM Annand...29th Sep 2012   Add histogram of pattern #hits
+//--Rev 	JRM Annand...29th Sep 2012   Add histogram of pattern #hits
+//--Update	K Livingston..7th Feb 2013   Support for handling EPICS buffers
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -49,7 +50,7 @@ enum {
   // Main setup command keys
   ERARaw, ERADecode, ERAReconstruct, ERAPhysics,
   ERAApparatus, ERADisplay, ERAInitialise, ERAFlashADC, ERAMultiADC,
-  ERABitPattern, ERARateMonitor, ERAPeriod, ERAEndOfFile, ERAFinish,
+  ERABitPattern, ERARateMonitor, ERAPeriod, ERAEpics, ERAEndOfFile, ERAFinish,
   ERASaveEvent,
   // Valid Apparatus keys
   EA2GenericApparatus,
@@ -77,6 +78,7 @@ static const Map_t kRAKeys[] = {
   {"BitPattern:",           ERABitPattern},
   {"RateMonitor:",          ERARateMonitor},
   {"Period:",               ERAPeriod},
+  {"Epics:",                ERAEpics},
   {"EndFile:",              ERAEndOfFile},
   {"Finish:",               ERAFinish},
   {"Save-Event:",           ERASaveEvent},
@@ -277,6 +279,10 @@ void TA2Analysis::SetConfig(char* line, int key)
   case ERAPeriod:
     // Periodic procedures frequency specify
     ParsePeriod( line );
+    break;
+  case ERAEpics:
+    // Periodic procedures frequency specify
+    ParseEpics( line );
     break;
   case ERAEndOfFile:
     // Turn on end-of-file procedures

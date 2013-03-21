@@ -32,7 +32,8 @@
 //--Rev 	JRM Annand...29th Nov 2007...LinkDataServer() j<nadc, #buffer
 //--Rev 	JRM Annand...12th Feb 2008...LinkDataServer() maxscaler
 //--Rev 	JRM Annand... 1st May 2008...SetDataServer()...check dataserver
-//--Update	JRM Annand... 1st Sep 2009...BuildName, delete[]
+//--Rev 	JRM Annand... 1st Sep 2009...BuildName, delete[]
+//--Update	K Livingston..7th Feb 2013   Support for handling EPICS buffers
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data
@@ -181,10 +182,13 @@ TAcquRoot::TAcquRoot( const char* name, Bool_t batch )
   fIsHbookFile = EFalse;             // default NOT HBOOK input file
   fIsSortBusy = EFalse;
   fIsScalerRead = EFalse;            // no scalers read yet
+  fIsEpicsRead = EFalse;             // no epics read yet
   fIsFinished = EFalse;              // flag to show sort finished
   fIsBatch = batch;                  // save batch flag
   if( !batch ) SetLogFile( "AcquRoot.log" );
   fIsLocalDAQ = kFALSE;              // default no local DAQ
+
+  fNEpics = 0;                       //No of different epics "modules"
 
 }
 
@@ -255,6 +259,7 @@ void TAcquRoot::LinkDataServer( )
   fMaxADC = df->GetNADC();
 
   Int_t bits,i,j;
+  Int_t epicsIndex, epicsLength;
 
   // Check for foreign-format data...ADC's or scalers with indices > defined in
   // ACQU Mk1 data. maxadc accounts for these
@@ -276,7 +281,16 @@ void TAcquRoot::LinkDataServer( )
       if( maxscaler < iscaler ) maxscaler = iscaler + nscaler;
       else maxscaler += nscaler;
     }
+    if(df->GetModType(i)==EDAQ_Epics){   //if EPICS module make a buffer for it
+      epicsIndex=df->GetModBits(i);      //for EPICS this holds the EPICS index 
+      epicsLength=df->GetModAmin(i);     //holds the buffer length
+      fEpicsBuff[epicsIndex] = new Char_t[epicsLength];
+      fNEpics++;
+    }
   }
+  //init flags to zero for all epics module indices
+  for( i=0; i<fNEpics; i++){fEpicsIndex[i]=kFALSE;}
+
   if( maxadc < fMaxADC ) maxadc = fMaxADC;;
   if( maxscaler < fMaxScaler ) maxscaler = fMaxScaler;;
   fprintf(fLogStream," %d ADC channels and %d Scaler channels in data.\n\n",
@@ -999,6 +1013,10 @@ void TAcquRoot::Mk2EventLoop( UInt_t* startdata )
     // transfer event's worth of data into fEvent buffer
     while( *datum != EEndEvent ){
       switch( *(UInt_t*)datum ){
+      case EEPICSBuffer:                             // EPICS buffer
+	datum = StoreEpics( datum );
+	fIsEpicsRead=kTRUE;
+	break;
       case EScalerBuffer:			     // scaler array
 	if( !nScBlock ){
 	  for( Int_t i=0; i<fMaxScaler; i++ ) fScaler[i] = 0;
@@ -1022,6 +1040,8 @@ void TAcquRoot::Mk2EventLoop( UInt_t* startdata )
     fNEvent++;					     // event counter
     fAnalysis->Process();			     // analyse the event
     fIsScalerRead = EFalse;                          // reset scaler flag
+    fIsEpicsRead = EFalse;                           // reset scaler flag
+    for( int i=0;i<fNEpics;i++){fEpicsIndex[i]=EFalse;} // and epics index flags
     datum++;                                         // start next event
   }while( datum < end );                             // don't overrun buffer
 }
