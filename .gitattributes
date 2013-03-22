@@ -8,6 +8,7 @@
 *.h text
 *.cpp text
 *.cc text
+*.cxx text
 *.txt text
 
 # Declare files that will always have CRLF line endings on checkout.
