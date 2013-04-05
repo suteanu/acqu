@@ -9,7 +9,8 @@
 //--Rev 	JRM Annand... 3rd Dec 2008 Time walk options
 //--Rev 	JRM Annand... 1st Sep 2009 constructer no incr nelem
 //--Rev 	JRM Annand...11th Oct 2012 add time over threshold
-//--Update	JRM Annand....8th Nov 2012 init fA2, fT2 zero
+//--Rev 	JRM Annand....8th Nov 2012 init fA2, fT2 zero
+//--Update	JRM Annand...27th Mar 2013 Incorporate Basle mods
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -63,6 +64,7 @@ private:
   Int_t fNhit;                  // # TDC hits
   Int_t fIadc;                  // ADC index
   Int_t fItdc;                  // TDC index
+  Bool_t fIsIgnored;            // ignore this element
 public:
   HitD2A_t( char*, UInt_t, TA2Detector* );
   virtual ~HitD2A_t();
@@ -83,9 +85,28 @@ public:
   Double_t GetTimeLowThr(){ return fTimeLowThr; }
   Double_t GetTimeHighThr(){ return fTimeHighThr; }
   Double_t GetTimeOvThr(){ return fTimeOvThr; }
+  Double_t GetA0() { return fA0; }
+  Double_t GetA1() { return fA1; }
+  Double_t GetA2() { return fA2; }
+  Double_t GetT0() { return fT0; }
+  Double_t GetT1() { return fT1; }
+  Double_t GetT2() { return fT2; }
+  TimeWalk_t* GetTimeWalk() { return fWalk; }
+  Bool_t IsIgnored() { return fIsIgnored; }
+  void SetIgnored(Bool_t b) { fIsIgnored = b; }
   void SetWalk( Char_t* );
   void SetWalk( Double_t, Double_t );
   void SetToThr( Char_t*, TA2Detector* );
+  void SetEnergyLowThr(Double_t p) { fEnergyLowThr = p; }
+  void SetEnergyHighThr(Double_t p) { fEnergyHighThr = p; }
+  void SetTimeLowThr(Double_t p) { fTimeLowThr = p; }
+  void SetTimeHighThr(Double_t p) { fTimeHighThr = p; }
+  void SetA0(Double_t p) { fA0 = p; }
+  void SetA1(Double_t p) { fA1 = p; }
+  void SetA2(Double_t p) { fA2 = p; }
+  void SetT0(Double_t p) { fT0 = p; }
+  void SetT1(Double_t p) { fT1 = p; }
+  void SetT2(Double_t p) { fT2 = p; }
   Int_t GetMode(){ return fMode; }
   Int_t GetNMultihit(){ return fNMultihit; }
   Int_t GetNhit(){ return fNhit; }
@@ -171,7 +192,7 @@ inline Bool_t HitD2A_t::CheckTime( )
     }
     Double_t energyW = 0.0;
     if( fTDCtothr ){
-      if( CheckToThr(chan) ) energyW = fTimeOvThr;  // time of threshold?
+      if( CheckToThr(chan) ) energyW = fTimeOvThr;  // time over threshold?
     }
     else if( fADC ) energyW = *fEnergy;             // otherwise pulse height
     chan -= fT0;                                    // subtract offset

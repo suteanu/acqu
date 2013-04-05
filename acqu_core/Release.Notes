@@ -1193,6 +1193,7 @@ TA2LongScint
 HitD2A_t
 	11/10/12 Add stuff for time-over-threshold
 	 8/11/12 Initialise fA2, fT2
+	27/03/13 Basle mods...extra getters and setters
 TA2DataServer
 	21/11/12 Mk2 format data merging
 	01/03/13 Debuf Mk2 format data merging

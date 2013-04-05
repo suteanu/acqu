@@ -9,7 +9,8 @@
 //--Rev 	JRM Annand... 3rd Dec 2008 Time walk options
 //--Rev 	JRM Annand... 1st Sep 2009 constructer no incr nelem
 //--Rev 	JRM Annand...11th Oct 2012 add time over threshold
-//--Update	JRM Annand....8th Nov 2012 init fA2, fT2 zero
+//--Rev 	JRM Annand....8th Nov 2012 init fA2, fT2 zero
+//--Update	JRM Annand...27th Mar 2013 Incorporate Basle mods
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -53,6 +54,7 @@ HitD2A_t::HitD2A_t( char* line, UInt_t nelem, TA2Detector* det )
   fMode = 0;
   fNMultihit = 0;
   fTimeM = NULL;
+  fIsIgnored = kFALSE;
 
   Int_t i = sscanf( line, "%s%lf%lf%lf%lf%s%lf%lf%lf%lf%lf%lf%lf",
 		    adcstr, &fEnergyLowThr, &fEnergyHighThr, &fA0, &fA1,
