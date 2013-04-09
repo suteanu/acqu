@@ -69,7 +69,7 @@ public:
         strcpy(fFileName, fname);
 
         // try to open the file
-        void* file = gzopen(fFileName, "r");
+        gzFile file = gzopen(fFileName, "r");
         if (!file)
         {
             Error("Read", "Could not open '%s'", fFileName);
