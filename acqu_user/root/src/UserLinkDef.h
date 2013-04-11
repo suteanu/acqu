@@ -31,7 +31,7 @@
 #pragma link C++ class TA2CalArray+;
 #pragma link C++ class TA2FPMicro+;
 // TA2My... extension classes
-#pragma link C++ class TA2MyAnalysis+;
+//#pragma link C++ class TA2MyAnalysis+;
 #pragma link C++ class TA2MyCalibration+;
 #pragma link C++ class TA2MyCaLib+;
 #pragma link C++ class TA2MyClusterCalib+;
