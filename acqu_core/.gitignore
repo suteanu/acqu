@@ -7,3 +7,4 @@ bin/AcquDAQ
 bin/AcquMC
 bin/AcquRoot
 bin/RSupervise
+bin/AcquHV
