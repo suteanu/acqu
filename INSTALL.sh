@@ -19,7 +19,7 @@ make
 
 # 2) Build minimal acqu_user code
 cd $acqu
-make
+make AcquRoot
 
 cd $acqu_dir
 echo "You might want to add 'source $acqu_dir/setup.sh' to your ~/.bashrc"
