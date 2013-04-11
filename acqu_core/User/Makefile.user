@@ -103,7 +103,7 @@ UMCObj = $(notdir $(UMCObjD))
 UMCDep = $(patsubst $(UAR)/%.cc, $(D)/%.d, $(UMCCl)) $(UAR)/MainAcquMC.d
 UMCDepInc = -I$(UAR) -I$(AR) -I$(MC)
 #INCFLAGS += -I$(UAR) -I$(AR) -I$(MC)
-INCFLAGS += -I$(UAR) -I$(AR) -I$(MC) -I$(IR)
+INCFLAGS += -I$(UAR) -I$(AR) -I$(MC) -I$(IR) $(shell $(OSCAR)/bin/oscar-config --incdir)
 #
 #
 print:
@@ -134,7 +134,7 @@ AcquRoot: MainAcquRoot.o libUserRoot.so
 	$(CCCOMP) $(acqu_debug)  $(UO)/MainAcquRoot.o \
 	$L/libAcquRoot.so $(UL)/libUserRoot.so \
 	$L/libAcquDAQ.so $(CAENVME_LIB) \
-	$(ROOTLIBS) -lThread \
+	$(ROOTLIBS) -lThread -L$(OSCAR)/lib -lOSCAR \
 	-o $(B)/AcquRoot
 	@echo "$@ done"
 	@echo "##-----------------------------------------------------------"
