@@ -371,11 +371,11 @@ void TA2MyPhysics::SetConfig(Char_t* line, Int_t key)
         }
         case EMP_BAD_TAGG_CH:
         {   
-            Char_t fileName[256];
+            /*Char_t fileName[256];
 
             // read number of bad tagger channels
             if (sscanf(line, "%s", fileName))
-                fNBadTaggerChannels = TOLoader::LoadBadTaggerChannels(gSystem->ExpandPathName(fileName), fBadTaggerChannels);
+                fNBadTaggerChannels = TOLoader::LoadBadTaggerChannels(gSystem->ExpandPathName(fileName), fBadTaggerChannels);*/
             break;
         }
         case EMP_P2_TAGGER_RATIO:
