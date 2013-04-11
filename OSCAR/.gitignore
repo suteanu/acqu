@@ -1,5 +1,6 @@
 # some folders/files created by make
 bin/
 include/
+!*/include/
 lib/
 main/src/G__OSCAR.*

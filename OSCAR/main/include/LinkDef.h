@@ -69,5 +69,30 @@
 #pragma link C++ class TOArray2D-;
 #pragma link C++ class TOKinCut+;
 
+// Module Math
+#pragma link C++ class TOF1-;
+#pragma link C++ class TOF1H+;
+#pragma link C++ class TOdFCM+;
+#pragma link C++ class TOFuncManager+;
+#pragma link C++ class TOA2RecPi0Pi0+;
+#pragma link C++ class TOF1Expo+;
+#pragma link C++ class TOF1G+;
+#pragma link C++ class TOF1GaussTail+;
+#pragma link C++ class TOA2RecPi02g+;
+#pragma link C++ class TOF1Empty+;
+#pragma link C++ class TOA2RecEtaPi0+;
+#pragma link C++ class TOF1BW_S11_1535+;
+#pragma link C++ class TOA2RecEta2g+;
+#pragma link C++ class TOA2RecEta6g+;
+#pragma link C++ class TOF1BW+;
+#pragma link C++ class TOF1Pol+;
+#pragma link C++ class TOA2RecEtaPrime+;
+#pragma link C++ class TOF1LegPol+;
+#pragma link C++ class TOFCM+;
+#pragma link C++ class TOF1Gauss+;
+#pragma link C++ class TOPairCombinations+;
+#pragma link C++ class TOA2RecK0Lambda+;
+
+
 #endif
 

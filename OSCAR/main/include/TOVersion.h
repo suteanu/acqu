@@ -18,7 +18,7 @@
 
 
 // OSCAR modules
-#define OSCAR_MODULES "A2,analysis,main,MC,utils"
+#define OSCAR_MODULES "A2,analysis,main,MC,utils,math"
 
 // OSCAR version: convention is Year.Month.Minor_Release
 #define OSCAR_VERSION "13.01.0"

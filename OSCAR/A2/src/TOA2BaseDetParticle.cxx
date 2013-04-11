@@ -199,18 +199,13 @@ Double_t TOA2BaseDetParticle::CalculateTOFTagger(Double_t taggerTime, Bool_t isM
     // t_TAPS = t_trig - t_CFD
     // t_tagg = t_scint - t_trig
     // t = -(t_TAPS + t_tagg) = -(t_scint - t_CFD) = t_CFD - t_scint
-    if (fDetector == kTAPSDetector) 
-    {
-        tof = - (fTime + taggerTime);
-    }
+    if (fDetector == kTAPSDetector) tof = - (fTime + taggerTime);
+
     //
     // CB
     // t_CB = t_NaI - t_trig
     // t = t_CB - t_tagg = t_NaI - t_scint
-    else if (fDetector == kCBDetector) 
-    {
-        tof = fTime - taggerTime;
-    }
+    else if (fDetector == kCBDetector) tof = fTime - taggerTime;
 
     // calculate the time of flight for 1 meter [ns/1m]
     if (isMC)
@@ -236,17 +231,13 @@ Double_t TOA2BaseDetParticle::CalculateTOFCB(Double_t cbTime, Bool_t isMC)
     // t_CB = t_NaI - t_trig
     // t = -(t_TAPS + t_CB) = -(t_NaI - t_CFD) = t_CFD - t_NaI
     if (fDetector == kTAPSDetector) 
-    {
         tof = - (fTime + cbTime);
-    }
     //
     // CB
     // t_CB = t_NaI - t_trig
     // t = t_CB - t_CB_ref = t_NaI - t_NaI_ref
     else if (fDetector == kCBDetector) 
-    {
         tof = fTime - cbTime;
-    }
 
     // calculate the time of flight for 1 meter [ns/1m]
     if (isMC)
@@ -270,19 +261,14 @@ Double_t TOA2BaseDetParticle::CalculateTOFTAPS(Double_t tapsTime, Bool_t isMC)
     // TAPS
     // t_TAPS = t_trig - t_CFD
     // t = t_TAPS_ref - t_TAPS = t_CFD - t_CFD_ref
-    if (fDetector == kTAPSDetector) 
-    {
-        tof = tapsTime - fTime;
-    }
+    if (fDetector == kTAPSDetector) tof = tapsTime - fTime;
+
     //
     // CB
     // t_TAPS = t_trig - t_CFD
     // t_CB = t_NaI - t_trig
     // t = t_CB + t_TAPS = t_NaI - t_CFD
-    else if (fDetector == kCBDetector) 
-    {
-        tof = fTime + tapsTime;
-    }
+    else if (fDetector == kCBDetector) tof = fTime + tapsTime;
 
     // calculate the time of flight for 1 meter [ns/1m]
     if (isMC)

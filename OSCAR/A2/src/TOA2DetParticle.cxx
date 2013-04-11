@@ -1,4 +1,4 @@
-// SVN Info: $Id: TOA2DetParticle.cxx 1637 2013-01-31 22:58:35Z werthm $
+// SVN Info: $Id: TOA2DetParticle.cxx 1440 2012-11-09 07:55:46Z werthm $
 
 /*************************************************************************
  * Author: Dominik Werthmueller, 2008
@@ -143,14 +143,14 @@ Double_t TOA2DetParticle::CalcChi2IMError(TOA2DetParticle* p)
     Double_t cos_psi12 = TMath::Cos(v1.Angle(v2));
 
     // error of cos(psi12)
-    Double_t a = -TMath::Sin(th1)*TMath::Sin(th2)*TMath::Sin(ph1-ph2)*dph1;
-    Double_t b = -TMath::Sin(th1)*TMath::Sin(th2)*TMath::Sin(ph2-ph1)*dph2;
-    Double_t c = (TMath::Cos(th1)*TMath::Sin(th2)*TMath::Cos(ph1-ph2) - TMath::Sin(th1)*TMath::Cos(th2))*dth1;
-    Double_t d = (TMath::Sin(th1)*TMath::Cos(th2)*TMath::Cos(ph2-ph1) - TMath::Cos(th1)*TMath::Sin(th2))*dth2; 
-    Double_t dcos_psi12 = TMath::Sqrt(a*a + b*b + c*c + d*d);
-
+    Double_t dcos_psi12 = -TMath::Sin(th1)*TMath::Sin(th2)*TMath::Sin(ph1-ph2)*(dph1-dph2) +
+                           TMath::Sin(th1)*TMath::Cos(th2)*(TMath::Cos(ph1-ph2)-1.)*dth1 +
+                           TMath::Cos(th1)*TMath::Sin(th2)*(TMath::Cos(ph1-ph2)-1.)*dth2 -
+                           TMath::Sin(th1-th2)*TMath::Cos(ph1-ph2)*(dth1-dth2);
+    
     // return the relative error on the invariant mass
-    return 0.5 * TMath::Sqrt((de1*de1/e1/e1) + (de2*de2/e2/e2) + 
+    return 0.5 * TMath::Sqrt((de1*de1/e1/e1) + 
+                             (de2*de2/e2/e2) + 
                              (dcos_psi12*dcos_psi12/(1.-cos_psi12)/(1.-cos_psi12)));
 }
 
