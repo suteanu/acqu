@@ -1,0 +1,3 @@
+# ignore ROOT dictionaries
+root/src/*Dict.*
+
