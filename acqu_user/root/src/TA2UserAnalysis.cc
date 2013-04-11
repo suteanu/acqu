@@ -19,7 +19,7 @@
 #include "TA2MyCrystalBall.h"
 #include "TA2MyTAPS.h"
 #include "TA2GenericApp.h"
-#include "TA2MyAnalysis.h"
+//#include "TA2MyAnalysis.h"
 #include "TA2MyCalibration.h"
 #include "TA2MyCaLib.h"
 #include "TA2MyClusterCalib.h"
@@ -92,9 +92,9 @@ TA2DataManager* TA2UserAnalysis::CreateChild( const char* name, Int_t a )
   case EA2Physics:
     // Default (dummy physics)
     return new TA2Physics( name, this );
-  case EA2MyAnalysis:
+  //case EA2MyAnalysis:
     // my analysis
-    return new TA2MyAnalysis( name, this );
+    //return new TA2MyAnalysis( name, this );
   case EA2MyCalibration:
     // calibration
     return new TA2MyCalibration( name, this );
