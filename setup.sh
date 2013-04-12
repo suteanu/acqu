@@ -9,3 +9,6 @@ export OSCAR=$acqu_dir/OSCAR
 export CCCOMP=g++
 # acqu_dir is not needed
 acqu_dir=
+
+# add some library path
+LD_LIBRARY_PATH=$CALIB/lib:$LD_LIBRARY_PATH
