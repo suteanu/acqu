@@ -1,6 +1,6 @@
 # some folders/files created by make
 bin/
-include/
-!*/include/
+# but not include subfolders
+/include/
 lib/
 main/src/G__OSCAR.*
