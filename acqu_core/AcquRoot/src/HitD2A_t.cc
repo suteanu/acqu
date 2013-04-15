@@ -7,9 +7,7 @@
 //--Rev 	JRM Annand...30th Oct 2008 Multihit TDCs
 //--Rev 	JRM Annand...29th Nov 2008 Remove D2A_t and Cut_t
 //--Rev 	JRM Annand... 3rd Dec 2008 Time walk options
-//--Rev 	JRM Annand... 1st Sep 2009 constructer no incr nelem
-//--Rev 	JRM Annand...11th Oct 2012 add time over threshold
-//--Update	JRM Annand....8th Nov 2012 init fA2, fT2 zero
+//--Update	JRM Annand... 1st Sep 2009 constructer no incr nelem
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -41,14 +39,14 @@ HitD2A_t::HitD2A_t( char* line, UInt_t nelem, TA2Detector* det )
   Double_t* timeptr = det->GetTime();
   Double_t** timeMptr = det->GetTimeM();
   TVector3** posptr = det->GetPosition();
-  fEnergyScale = det->GetEnergyScale();   // global scale factor
+  fEnergyScalePtr = det->GetEnergyScalePtr();
+  fEnergyScale = det->GetEnergyScale();
 
   // Default "turn off" variables
   fIadc = fItdc = iadc = ENullADC;
-  fADC = fTDC = fTDCtothr = NULL;
+  fADC = fTDC = NULL;
   fTDCM = NULL;
   fIsMultiADC = fIsMultiTDC = EFalse;
-  fA0 = fA1 = fA2 = fT0 = fT1 = fT2 = 0.0;
   fWalk = NULL;
   fMode = 0;
   fNMultihit = 0;
@@ -166,27 +164,3 @@ void HitD2A_t::SetWalk( Char_t* line )
   }
   fWalk->SetWalk( wp );
 }
-
-//---------------------------------------------------------------------------
-void HitD2A_t::SetToThr( Char_t* line, TA2Detector* det )
-{
-  // Store Time-over-threshold TDC parameters
-  Char_t tdcstr[16];
-  Int_t n = sscanf(line, "%*d%s%lf%lf",tdcstr,&fToThr0,&fToThr1);
-  if( n < 3 ){
-    printf(" Error ignore HitD2A Time-over-Threshold input line:\n %s\n",line);
-    return;
-  }
-  Int_t iadc, madc;
-  n = sscanf(tdcstr,"%d%*c%d",&iadc,&madc);
-  // Normal TDC
-  if( n == 1 ){
-    UShort_t* adc = det->GetADC();
-    fTDCtothr =  adc + iadc;
-  }
-  // Multihit TDC
-  else if( n == 2 ){
-    fTDCtothr = (UShort_t*)(det->GetMulti(iadc))->GetHitPtr(madc);
-  }
-}
-
