@@ -1,6 +1,6 @@
 #!/bin/sh
 acqu_dir=$(dirname $(readlink -f ${BASH_SOURCE[0]}))
-echo $acqu_dir
+# echo $acqu_dir
 export acqu_sys=$acqu_dir/acqu_core
 export acqu=$acqu_dir/acqu_user
 export CALIB=$acqu_dir/CaLib
