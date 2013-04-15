@@ -1,0 +1,4 @@
+# ignore binary files
+
+A2/bin/*
+AR/bin/*

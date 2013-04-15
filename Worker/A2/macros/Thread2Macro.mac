@@ -1,0 +1,33 @@
+#
+# Macro file for the initialization phase of "exampleN03.cc"
+# when running in interactive mode
+#####Pre-Initialisation
+#Choose a physics list, for a full listing type /A2/physics/ListPhysics
+/A2/physics/Physics QGSP_BIC
+
+####Initialise
+/run/initialize
+
+/A2/physics/SetRegion CB
+/A2/physics/RegionCut  0.1 mm
+/A2/physics/SetRegion TAPS
+/A2/physics/RegionCut  0.1 mm
+/A2/physics/SetRegion TAPSV
+/A2/physics/RegionCut 0.01 mm
+/A2/physics/SetRegion PID
+/A2/physics/RegionCut 0.01 mm
+/A2/physics/SetRegion MWPC
+/A2/physics/RegionCut 0.1 mm
+
+#Set the number of particles to be tracked from the input ntuple
+/A2/generator/NToBeTracked 2
+#give the indexes of the particles to be tracked
+#(have a look at the branch names in the input file)
+/A2/generator/Track 1
+/A2/generator/Track 2
+
+/A2/generator/Relocate 2
+
+#Open the file and set up the ntuple for reading, open the output file for writing
+/A2/generator/InputFile  /datapool/ppi0_simulation/ppi0_6.root
+/A2/event/setOutputFile  /datapool/ppi0_simulation/ppi0_6_sim.root
