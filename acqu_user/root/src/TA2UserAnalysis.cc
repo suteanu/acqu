@@ -48,7 +48,6 @@ enum { EA2Calorimeter,
        EA2Physics, EA2UserPhysics, EA2MesonPhysics, EA2BasePhysics, EA2TriggerPhysics,
        EA2MyCrystalBall, 
        EA2MyTAPS,
-       EA2GenericApp, 
        EA2MyAnalysis, 
        EA2MyCalibration, 
        EA2MyCaLib, 
@@ -179,30 +178,3 @@ TA2DataManager* TA2UserAnalysis::CreateChild(const char* name, Int_t a)
   }
   return NULL;
 }
-
-//-----------------------------------------------------------------------------
-void TA2UserAnalysis::LoadVariable( )
-{
-  // Input name - variable pointer associations for any subsequent
-  // cut or histogram setup.
-  // LoadVariable( "name", pointer-to-variable, type-spec );
-  // NB scaler variable pointers need the preceeding &
-  //    array variable pointers do not.
-  // type-spec ED prefix for a Double_t variable
-  //           EI prefix for an Int_t variable
-  // type-spec SingleX for a single-valued variable
-  //           MultiX  for a multi-valued variable
-
-  //                            name     pointer          type-spec
-  //  TA2DataManager::LoadVariable("Mmiss",  &fMmiss,         EDSingleX);
-  TA2Analysis::LoadVariable();
-}
-
-//-----------------------------------------------------------------------------
-void TA2UserAnalysis::ParseDisplay( char* line )
-{
-  TA2Analysis::ParseDisplay( line );            // standard parse
-  //  if( !fIsConfigPass ) return;              // was it a standard command?
-  //  TA2HistManager::ParseDisplay( line );
-}
-
