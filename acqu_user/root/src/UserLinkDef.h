@@ -75,4 +75,3 @@
 #pragma link C++ class TA2MwpcIntersection++;
 
 #endif
->>>>>>> user/schumann
