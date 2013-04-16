@@ -47,7 +47,7 @@ HitD2A_t::HitD2A_t( char* line, UInt_t nelem, TA2Detector* det )
 
   // Default "turn off" variables
   fIadc = fItdc = iadc = ENullADC;
-  fADC = fTDC = NULL;
+  fADC = fTDC = fTDCtothr = NULL;
   fTDCM = NULL;
   fIsMultiADC = fIsMultiTDC = EFalse;
   fWalk = NULL;
