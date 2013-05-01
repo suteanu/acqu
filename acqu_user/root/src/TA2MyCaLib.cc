@@ -292,6 +292,10 @@ void TA2MyCaLib::PostInit()
                                       1000, 0, 1000, fNelemCB, 0, fNelemCB);
         fHCalib_CB_IM_Neut = new TH2F("CaLib_CB_IM_Neut", "CaLib_CB_IM_Neut;2#gamma invariant mass [MeV];CB element", 
                                       1000, 0, 1000, fNelemCB, 0, fNelemCB);
+        fHCalib_CB_IM_2Neut = new TH2F("CaLib_CB_IM_2Neut", "CaLib_CB_IM_2Neut;2#gamma invariant mass [MeV];CB element", 
+                                      1000, 0, 1000, fNelemCB, 0, fNelemCB);
+        fHCalib_CB_IM_2Neut1Char = new TH2F("CaLib_CB_IM_2Neut1Char", "CaLib_CB_IM_2Neut1Char;2#gamma invariant mass [MeV];CB element", 
+                                      1000, 0, 1000, fNelemCB, 0, fNelemCB);
     }
     
     // prepare for CB quadratic energy correction
@@ -559,6 +563,20 @@ void TA2MyCaLib::ReconstructPhysics()
                 {
                     fHCalib_CB_IM_Neut->Fill(im, fPartCB[i]->GetCentralElement());
                     fHCalib_CB_IM_Neut->Fill(im, fPartCB[j]->GetCentralElement());
+                }
+                
+                // fill invariant mass for only 2 neutral hits
+                if (fCBNCluster == 2 && fNCharged == 0 && fPartCB[i]->GetPIDEnergy() == 0 && fPartCB[j]->GetPIDEnergy() == 0)
+                {
+                    fHCalib_CB_IM_2Neut->Fill(im, fPartCB[i]->GetCentralElement());
+                    fHCalib_CB_IM_2Neut->Fill(im, fPartCB[j]->GetCentralElement());
+                }
+                
+                // fill invariant mass for 2 neutral hits and one charged hit
+                if (fCBNCluster == 3 && fNCharged == 1 && fPartCB[i]->GetPIDEnergy() == 0 && fPartCB[j]->GetPIDEnergy() == 0)
+                {
+                    fHCalib_CB_IM_2Neut1Char->Fill(im, fPartCB[i]->GetCentralElement());
+                    fHCalib_CB_IM_2Neut1Char->Fill(im, fPartCB[j]->GetCentralElement());
                 }
             }
         }

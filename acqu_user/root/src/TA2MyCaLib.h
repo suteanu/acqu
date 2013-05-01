@@ -86,6 +86,8 @@ private:
     Int_t fCalib_CB_Energy;                                 // CB energy calibration toggle
     TH2* fHCalib_CB_IM;                                     // CB invariant mass vs element
     TH2* fHCalib_CB_IM_Neut;                                // CB invariant mass (from neutral hits) vs element
+    TH2* fHCalib_CB_IM_2Neut;                               // CB invariant mass (from 2 neutral hits) vs element
+    TH2* fHCalib_CB_IM_2Neut1Char;                          // CB invariant mass (from 2 neutral hits & 1 charged hit) vs element
 
     // -------------------------- CB quadratic energy correction --------------------------- 
     Int_t fCalib_CB_Quad;                                   // CB quadratic energy correction toggle
