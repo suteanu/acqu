@@ -23,6 +23,7 @@
 #include "../../include/TCMySQLManager.h"
 #include "TLine.h"
 #include "TGraph.h"
+#include "../../include/TCFitTools.h"
 
 
 class TCReadARCalib;
@@ -34,7 +35,7 @@ TList* gFiles;
 void CheckPedestals(const Char_t* loc)
 {
     // Some old pedestal checking method.
-
+	
     Char_t t[256];
 
     // number of runs
@@ -90,8 +91,9 @@ void CheckPedestals(const Char_t* loc)
             //else h->GetXaxis()->SetRange(90, 115);
             //if (j == 27112) h->GetXaxis()->SetRange(60, 110);
             //else h->GetXaxis()->SetRange(60, 99);
-            h->GetXaxis()->SetRangeUser(60, 120);
-            Double_t maxPos = h->GetXaxis()->GetBinCenter(h->GetMaximumBin());
+            //h->GetXaxis()->SetRangeUser(60, 120);
+            //Double_t maxPos = h->GetXaxis()->GetBinCenter(h->GetMaximumBin());
+            Double_t maxPos = PedFinder(h);
             
             h->GetXaxis()->SetRangeUser(60, 150);
             func->SetParameters(1, maxPos, 0.1);
@@ -184,7 +186,7 @@ void TAPSPed()
     
     // configuration (Aug 2012)
     const Char_t calibration[] = "ETAP_Aug_12";
-    const Char_t* fLoc = "/daten/out/Step2";
+    const Char_t* fLoc = "/home/calib/calibrationData/out/";
     const Char_t* fAR = "/home/ott/acqu/data/TAPS/BaF2_PWO.dat";
     //const Char_t* fAR = "/home/ott/acqu/data/TAPS/Veto.dat";
 
