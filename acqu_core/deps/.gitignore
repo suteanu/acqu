@@ -1,3 +1,0 @@
-# the directory "deps" is needed, otherwise make fails
-# but the content does not belong in a repo
-*.d

@@ -1,4 +1,2 @@
 # ignore generated files
-bin/
-lib/
 src/G__CaLib.*

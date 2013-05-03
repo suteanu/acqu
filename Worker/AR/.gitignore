@@ -1,6 +1,2 @@
-# ignore binary files
-/bin
-/obj
-/deps
 # ignore generated dictionaries
-/src/*Dict.h
+/src/*Dict.*

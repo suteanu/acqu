@@ -14,3 +14,10 @@
 *.lai
 *.la
 *.a
+
+# CMake
+# only build dirs are ignored
+/build*/
+
+# QtCreator
+CMakeLists.txt.user

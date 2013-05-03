@@ -1,6 +1,1 @@
-# some folders/files created by make
-bin/
-# but not include subfolders
-/include/
-lib/
 main/src/G__OSCAR.*

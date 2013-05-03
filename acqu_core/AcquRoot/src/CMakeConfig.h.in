@@ -1,0 +1,14 @@
+// here we define preprocessor variables which
+// are set by CMake
+
+#define CMAKE_ACQU_VERSION "@ACQU_VERSION@"
+#define CMAKE_ACQU_DATE "@ACQU_DATE@"
+#define CMAKE_ACQU_VERSION_ID "@ACQU_DATE@.@ACQU_DATE@"
+
+// the path to the ROOT installation which has been
+// used to build it
+#define CMAKE_ROOTSYS "@ROOTSYS@"
+
+// the path to the core/sys AcquRoot and to the user part
+#define CMAKE_ACQU_SYSCORE "@ACQU_SYSCORE_PATH@"
+#define CMAKE_ACQU_USER "@ACQU_USER_PATH@"
