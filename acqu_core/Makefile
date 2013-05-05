@@ -251,7 +251,7 @@ DAQDep = $(patsubst $(DAQ)/%.cc, $(D)/%.d, $(DAQCl)) $(D)/MainAcquDAQ.d
 INCFLAGS += -I$(DAQ) -I$(DAQV) -I$(IR)
 #
 libAcquDAQ.so: $(DAQObj) $(EPICSSO)
-	$(CCCOMP) $(LDXXFLAGS) $(DAQObjD)
+	$(CCCOMP) $(LDXXFLAGS) $(DAQObjD) $(ROOTLIBS)
 	@echo "$@ done"
 	@echo "##-----------------------------------------------------------"
 #

@@ -89,7 +89,7 @@ headers:
 $(B)/oscar-config: $(LIB_OSCAR) main/$(S)/MainOSCARConfig.cxx
 	@echo "Building the oscar-config tool"
 	@mkdir -p $(B)
-	@$(CCCOMP) $(CXXFLAGS) $(ROOTGLIBS) $(CURDIR)/$(LIB_OSCAR) -o $(B)/oscar-config main/$(S)/MainOSCARConfig.cxx
+	@$(CCCOMP) $(CXXFLAGS) $(CURDIR)/$(LIB_OSCAR) -o $(B)/oscar-config main/$(S)/MainOSCARConfig.cxx $(ROOTGLIBS)
 
 main/$(O)/G__OSCAR.o: main/$(S)/G__OSCAR.cxx
 	@echo "Compiling Dict"
