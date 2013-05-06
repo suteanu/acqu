@@ -1,6 +1,6 @@
 #!/bin/sh
 
-acqu_dir=$(dirname $(readlink -f $BASH_SOURCE)) #${BASH_SOURCE%/*} to get relative path
+acqu_dir=$(dirname $(readlink -f ${BASH_SOURCE:-$0})) #${BASH_SOURCE%/*} to get relative path
 
 acqu_sys=$acqu_dir/acqu_core
 acqu=$acqu_dir/acqu_user
