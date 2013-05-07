@@ -93,7 +93,7 @@ void CheckPedestals(const Char_t* loc)
             //else h->GetXaxis()->SetRange(60, 99);
             //h->GetXaxis()->SetRangeUser(60, 120);
             //Double_t maxPos = h->GetXaxis()->GetBinCenter(h->GetMaximumBin());
-            Double_t maxPos = PedFinder(h);
+            Double_t maxPos = TCUtils::PedFinder(h);
             
             h->GetXaxis()->SetRangeUser(60, 150);
             func->SetParameters(1, maxPos, 0.1);

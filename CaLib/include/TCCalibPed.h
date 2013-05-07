@@ -25,6 +25,7 @@
 #include "TCCalib.h"
 #include "TCReadARCalib.h"
 #include "TCFileManager.h"
+#include "TCFitTools.h"
 
 
 class TCCalibPed : public TCCalib
