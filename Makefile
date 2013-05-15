@@ -13,21 +13,7 @@ export OSCAR := $(acqu_dir)/OSCAR
 export Worker := $(acqu_dir)/Worker/AR
 export LD_LIBRARY_PATH := $(LD_LIBRARY_PATH):$(CALIB)/lib:$(OSCAR)/lib
 
-all:
-#	check for ncurses
-	@if [ ! -f /usr/include/ncurses.h ]; then echo "ncurses.h not found! Please install libncurses dev package."; exit 1; fi
-#	ensure that you execute this script in a ROOT enabled shell
-	@if [ "x$(ROOTSYS)" = "x" ]; then echo "ERROR: \$$ROOTSYS not found, shell not ROOT enabled?"; exit 1; fi
-#	check if root is build with mysql support
-	@if [ -z "$(filter mysql,$(shell root-config --features))" ]; then echo "ROOT built without MySQL support! Please install mysql(client) dev package and make ROOT again."; exit 1; fi #filter ignores matching strings in the middle of others in contrast to findstring which searches for a matching string everywhere
-	@echo Start compiling...
-	@echo
-	$(MAKE) -C $(acqu_sys) AcquRoot
-	$(MAKE) -C $(acqu_sys) AcquMC
-	$(MAKE) -C $(OSCAR)
-	$(MAKE) -C $(CALIB)
-	$(MAKE) -C $(acqu) AcquRoot
-	$(MAKE) -C $(Worker)
+all: check acqu_core calib worker acqu_user 
 	@echo
 	@echo
 	@echo "#########################################################################"
@@ -37,19 +23,32 @@ all:
 	@echo "This automatically sets the appropriate environment variables to run acqu"
 	@echo
 
-#CaLib is needed to run properly
-acqu:
+check:
+#	check for ncurses
+	@if [ ! -f /usr/include/ncurses.h ]; then echo "ncurses.h not found! Please install libncurses dev package."; exit 1; fi
+#	ensure that you execute this script in a ROOT enabled shell
 	@if [ "x$(ROOTSYS)" = "x" ]; then echo "ERROR: \$$ROOTSYS not found, shell not ROOT enabled?"; exit 1; fi
+#	check if root is build with mysql support
+	@if [ -z "$(filter mysql,$(shell root-config --features))" ]; then echo "ROOT built without MySQL support! Please install mysql(client) dev package and make ROOT again."; exit 1; fi #filter ignores matching strings in the middle of others in contrast to findstring which searches for a matching string everywhere
+
+acqu_DAQ: check
+	$(MAKE) -C $(acqu_sys) AcquDAQ
+
+acqu_core: check
 	$(MAKE) -C $(acqu_sys) AcquRoot
+	$(MAKE) -C $(acqu_sys) AcquMC
+
+acqu_user: check
 	$(MAKE) -C $(acqu) AcquRoot
 
-worker:
+calib: check
+	$(MAKE) -C $(OSCAR)
+	$(MAKE) -C $(CALIB)
+
+worker: check
 	$(MAKE) -C $(Worker)
 
-user:
-	$(MAKE) -C $(acqu) AcquRoot
-
-clean:
+clean: check
 	$(MAKE) -C $(acqu_sys) clean
 	$(MAKE) -C $(OSCAR) clean
 	$(MAKE) -C $(CALIB) clean
