@@ -1,10 +1,12 @@
 # ignore ROOT Dictionaries in source directories
-*/src/*Dict.*
+/*/src/*Dict.*
 # ignore some compiled bins
 # I'm not sure at the moment if the rest can be compiled as well,
 # so keep it for the moment
-bin/AcquDAQ
-bin/AcquMC
-bin/AcquRoot
-bin/RSupervise
-bin/AcquHV
+/bin/AcquDAQ
+/bin/AcquMC
+/bin/AcquRoot
+/bin/RSupervise
+/bin/AcquHV
+
+*.log
