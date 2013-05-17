@@ -154,6 +154,7 @@ void TA2System::PrintError( const Char_t* line, const Char_t* operation,
     fprintf(fLogStream, " Error in setup of class %s at command line:\n%s\n",
 	     this->ClassName(), line );
   fIsError = kTRUE;
+  fflush(fLogStream);
   if( errorlevel == EErrFatal ){
     fprintf(fLogStream, " FATAL ERROR...exiting AcquRoot\n\n" );
     printf("AcquRoot FATAL ERROR...please examine .log files\n");
