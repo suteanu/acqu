@@ -40,8 +40,8 @@
 // Recognised apparatus classes.
 // The "standard" set is held in TA2Analysis
 enum { EA2Calorimeter,
-       EA2KensTagger, EA2Tagger, EA2CosmicCal,
-       EA2CrystalBall, EA2CB, EA2TAPS, EA2Taps,
+       EA2Tagger, EA2CosmicCal,
+       EA2CrystalBall, EA2CB, EA2Taps,
        EA2CentralApparatus, EA2GenericApp,
        EA2Physics, EA2UserPhysics, EA2MesonPhysics, EA2BasePhysics, EA2TriggerPhysics,
        EA2MyCrystalBall, 
