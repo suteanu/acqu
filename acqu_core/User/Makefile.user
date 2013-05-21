@@ -76,7 +76,8 @@ ultraclean: veryclean
 #
 clean:
 	@rm -f $(UO)/* core*
-	@echo Binaries and Cores deleted
+	@rm -f $(D)/*.d
+	@echo Binaries, Dependencies and Cores deleted
 #
 vpath %.cc $(UAR)
 vpath %.h $(UAR):$(AR):$(MC)
