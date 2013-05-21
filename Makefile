@@ -57,3 +57,7 @@ clean:
 	$(MAKE) -C $(acqu) clean
 	$(MAKE) -C $(Worker) clean
 
+ultraclean: clean
+	$(MAKE) -C $(acqu_sys) ultraclean
+	$(MAKE) -C $(acqu) ultraclean
+
