@@ -160,6 +160,8 @@ private:
     Int_t fCalib_PID_Phi;                                   // PID Phi calibration toggle
     TH2* fHCalib_PID_CBPhi_ID;                              // CB cluster Phi vs PID element index
     TH2* fHCalib_PID_CBPhi_ID_1Cryst;                       // CB cluster (1 crystal) Phi vs PID element index
+    TH1D* fHCalib_PID_CBPhi_ID_Pi0_IM;                      // Invariant Mass of detected Pi0
+    TH2* fHCalib_PID_CBPhi_ID_Pi0;                          // CB cluster Phi vs PID element index for detected Pi0
     
     // ------------------------------------- PID energy ------------------------------------ 
     Int_t fCalib_PID_Energy;                                // PID energy calibration toggle

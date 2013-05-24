@@ -408,6 +408,10 @@ void TA2MyCaLib::PostInit()
                                                720, -360, 360, fNelemPID, 0, fNelemPID);
         fHCalib_PID_CBPhi_ID_1Cryst = new TH2F("CaLib_PID_CBPhi_ID_1Cryst", "CaLib_PID_CBPhi_ID_1Cryst;CB cluster #Phi angle [deg];PID element", 
                                                720, -360, 360, fNelemPID, 0, fNelemPID);
+        fHCalib_PID_CBPhi_ID_Pi0_IM = new TH1D("CaLib_PID_CBPhi_ID_Pi0_IM", "CaLib_PID_CBPhi_ID_Pi0_IM;Invariant mass Pi0 [MeV]", 
+                                               300, 0, 300);
+        fHCalib_PID_CBPhi_ID_Pi0	= new TH2F("CaLib_PID_CBPhi_ID_Pi0", "CaLib_PID_CBPhi_ID_Pi0;CB cluster #Phi angle [deg];PID element", 
+                                               720, -360, 360, fNelemPID, 0, fNelemPID);
     }
     
     // prepare for PID energy calibration
@@ -974,6 +978,41 @@ void TA2MyCaLib::ReconstructPhysics()
             if (fPartCB[0]->GetClusterSize() == 1)
                 fHCalib_PID_CBPhi_ID_1Cryst->Fill(fPartCB[0]->GetPhi()*TMath::RadToDeg(), fPIDHits[0]);
         }
+        else if (fCBNCluster == 3 && fPIDNhits == 1)
+        {
+			TLorentzVector	lVec[3];
+			fPartCB[0]->Calculate4Vector(&lVec[0], 0.0);
+			fPartCB[1]->Calculate4Vector(&lVec[1], 0.0);
+			fPartCB[2]->Calculate4Vector(&lVec[2], 0.0);
+			Double_t		invMass[3];
+			Double_t		ChiSqr[3];
+			invMass[0]		= (lVec[0] + lVec[1]).M();
+			invMass[1]		= (lVec[1] + lVec[2]).M();
+			invMass[2]		= (lVec[2] + lVec[0]).M();
+			ChiSqr[0]		= 134.9766-invMass[0];
+			ChiSqr[1]		= 134.9766-invMass[1];
+			ChiSqr[2]		= 134.9766-invMass[2];
+			int			best = 0;
+			Double_t	lowest = ChiSqr[0];
+			int			pro = 2;
+			if(ChiSqr[1]<lowest)
+			{
+				best = 1;
+				lowest = ChiSqr[1];
+				pro = 0;
+			}
+			if(ChiSqr[2]<lowest)
+			{
+				best = 2;
+				lowest = ChiSqr[2];
+				pro = 1;
+			}
+			
+			fHCalib_PID_CBPhi_ID_Pi0_IM->Fill(invMass[best]);
+			
+			if(invMass[best]>100 && invMass[best]<170)
+				fHCalib_PID_CBPhi_ID_Pi0->Fill(fPartCB[pro]->GetPhi()*TMath::RadToDeg(), fPIDHits[0]);
+		}
     }
  
 
