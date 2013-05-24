@@ -17,9 +17,11 @@
 
 ClassImp(TCReadACQU)
 
-
+TCReadACQU::TCReadACQU(const Bool_t isFileMk2) : fPath(0), fFiles(0), isMk2(isFileMk2)
+{
+}
 //______________________________________________________________________________
-TCReadACQU::TCReadACQU(const Char_t* path) 
+TCReadACQU::TCReadACQU(const Char_t* path, const Bool_t isFileMk2) : isMk2(isFileMk2)
 {
     // Constructor using the path of the raw files 'path'.
     
@@ -77,7 +79,7 @@ void TCReadACQU::ReadFiles()
             Info("ReadFiles", "Reading '%s/%s'", fPath, f->GetName());
             
             // create file object
-            TCACQUFile* acqufile = new TCACQUFile();
+            TCACQUFile* acqufile = new TCACQUFile(isMk2);
             acqufile->ReadFile(fPath, f->GetName());
             
             // check file 

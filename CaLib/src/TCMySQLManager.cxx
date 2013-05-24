@@ -33,6 +33,7 @@ TCMySQLManager::TCMySQLManager()
     fData->SetOwner(kTRUE);
     fTypes = new THashList();
     fTypes->SetOwner(kTRUE);
+    isMk2	= kFALSE;
 
     // read CaLib data
     if (!ReadCaLibData())
@@ -962,7 +963,7 @@ void TCMySQLManager::AddRunFiles(const Char_t* path, const Char_t* target)
     // using the target specifier 'target'.
 
     // read the raw files
-    TCReadACQU r(path);
+    TCReadACQU r(path, isMk2);
     Int_t nRun = r.GetNFiles();
     
     // ask for user confirmation
@@ -983,6 +984,17 @@ void TCMySQLManager::AddRunFiles(const Char_t* path, const Char_t* target)
     for (Int_t i = 0; i < nRun; i++)
     {
         TCACQUFile* f = r.GetFile(i);
+        
+        /*printf("INSERT INTO %s SET, run = %d, path = %s, filename = %s, description = %s, run_note = %s, size = %lld, target = %s",
+											TCConfig::kCalibMainTableName, 
+                                            f->GetRun(),
+                                            path,
+                                            f->GetFileName(),
+                                            f->GetTime(),
+                                            f->GetDescription(),
+                                            f->GetRunNote(),
+                                            f->GetSize(),
+                                            target);*/
         
         // prepare the insert query
         TString ins_query = TString::Format("INSERT INTO %s SET "
@@ -1006,7 +1018,7 @@ void TCMySQLManager::AddRunFiles(const Char_t* path, const Char_t* target)
 
         // try to write data to database
 	//printf( "\n %s \n", ins_query.Data());
-
+		//printf(ins_query.Data());
         TSQLResult* res = SendQuery(ins_query.Data());
         if (res == 0)
         {

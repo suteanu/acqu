@@ -36,9 +36,10 @@ private:
     UShort_t fRun;                  // run number
     Long64_t fSize;                 // file size in bytes
     Char_t fFileName[256];          // actual filename
+    Bool_t isMk2;					// if kTRUE Mk2 file system is used
 
 public:
-    TCACQUFile() : TObject()
+    TCACQUFile(const Bool_t isFileMk2) : TObject(), isMk2(isFileMk2)
     {
         memset(fStartMarker, 0, sizeof(fStartMarker));
         fTime[0] = '\0';
@@ -76,47 +77,132 @@ public:
             return;
         }
         
-        // read start marker
-        gzread(file, fStartMarker, sizeof(fStartMarker));
-        
-        // read time
-        gzread(file, fTime, sizeof(fTime));
-        RemoveLineBreak(fTime, sizeof(fTime)/sizeof(Char_t));
-        
-        // skip tab
-        gzseek(file, sizeof(Char_t), SEEK_CUR);
+        if(isMk2)
+        {
+			Info("ReadFiles", "using Mk2 file format");
+			
+			// read start marker
+			gzread(file, fStartMarker, 2*sizeof(fStartMarker));
+			
+			// read time
+			gzread(file, fTime, sizeof(fTime));
+			RemoveLineBreak(fTime, sizeof(fTime)/sizeof(Char_t));
+			//printf("fTime: %s\n", fTime);
+			
+			// skip nonsense char
+			char  chr;
+			gzread(file, &chr, 1);
+			while(chr == '\0')
+			{
+				gzread(file, &chr, 1);
+			}
+			gzseek(file, -1, SEEK_CUR);
 
-        // read description (minus 1 byte)
-        gzread(file, fDescription, sizeof(fDescription)-1);
-        RemoveLineBreak(fDescription, sizeof(fDescription)/sizeof(Char_t));
-        
-        // trim description
-        TString s(fDescription);
-        s.Remove(TString::kBoth, ' ');
-        strcpy(fDescription, s.Data());
+			// read description (minus 1 byte)
+			gzread(file, fDescription, sizeof(fDescription)-1);
+			RemoveLineBreak(fDescription, sizeof(fDescription)/sizeof(Char_t));
+			//printf("fDescription: %s\n", fDescription);
+			
+			// trim description
+			TString s(fDescription);
+			s.Remove(TString::kBoth, ' ');
+			strcpy(fDescription, s.Data());
+			
+			// skip nonsense char
+			gzread(file, &chr, 1);
+			while(chr == '\0')
+			{
+				gzread(file, &chr, 1);
+			}
+			gzseek(file, -1, SEEK_CUR);
 
-        // read run note
-        gzread(file, fRunNote, sizeof(fRunNote));
-        RemoveLineBreak(fRunNote, sizeof(fRunNote)/sizeof(Char_t));
-        
-        // trim run note
-        s = fRunNote;
-        s.Remove(TString::kBoth, ' ');
-        strcpy(fRunNote, s.Data());
-        
-        // read output file
-        gzread(file, fOutFile, sizeof(fOutFile));
-        
-        // read run number
-        gzread(file, &fRun, sizeof(UShort_t));
-        
-        // close the file
-        gzclose(file);
-        
-        // set file size
-        FileStat_t fileinfo;
-        gSystem->GetPathInfo(fFileName, fileinfo);
-        fSize = fileinfo.fSize;
+			// read run note
+			gzread(file, fRunNote, sizeof(fRunNote));
+			RemoveLineBreak(fRunNote, sizeof(fRunNote)/sizeof(Char_t));
+			//printf("fRunNote: %s\n", fRunNote);
+			
+			// trim run note
+			s = fRunNote;
+			s.Remove(TString::kBoth, ' ');
+			strcpy(fRunNote, s.Data());
+			
+			// skip nonsense char
+			gzread(file, &chr, 1);
+			while(chr == '\0')
+			{
+				gzread(file, &chr, 1);
+			}
+			gzseek(file, -1, SEEK_CUR);
+			
+			// read output file
+			gzread(file, fOutFile, sizeof(fOutFile));
+			//printf("fOutFile: %s\n", fOutFile);
+			
+			// skip nonsense char
+			gzread(file, &chr, 1);
+			while(chr == '\0')
+			{
+				gzread(file, &chr, 1);
+			}
+			gzseek(file, -1, SEEK_CUR);
+			
+			
+			// read run number
+			gzread(file, &fRun, sizeof(UShort_t));
+			//printf("fRun: %d\n", fRun);
+		}
+        else
+        {
+			Info("ReadFiles", "using Mk1 file format");
+		
+			// read start marker
+			gzread(file, fStartMarker, sizeof(fStartMarker));
+			
+			// read time
+			gzread(file, fTime, sizeof(fTime));
+			RemoveLineBreak(fTime, sizeof(fTime)/sizeof(Char_t));
+			//printf("fTime: %s\n", fTime);
+			
+			// skip tab
+			gzseek(file, sizeof(Char_t), SEEK_CUR);
+
+			// read description (minus 1 byte)
+			gzread(file, fDescription, sizeof(fDescription)-1);
+			RemoveLineBreak(fDescription, sizeof(fDescription)/sizeof(Char_t));
+			//printf("fDescription: %s\n", fDescription);
+			
+			// trim description
+			TString s(fDescription);
+			s.Remove(TString::kBoth, ' ');
+			strcpy(fDescription, s.Data());
+
+			// read run note
+			gzread(file, fRunNote, sizeof(fRunNote));
+			RemoveLineBreak(fRunNote, sizeof(fRunNote)/sizeof(Char_t));
+			//printf("fRunNote: %s\n", fRunNote);
+			
+			// trim run note
+			s = fRunNote;
+			s.Remove(TString::kBoth, ' ');
+			strcpy(fRunNote, s.Data());
+			
+			// read output file
+			gzread(file, fOutFile, sizeof(fOutFile));
+			//printf("fOutFile: %s\n", fOutFile);
+			
+			// read run number
+			gzread(file, &fRun, sizeof(UShort_t));
+			//printf("fRun: %s\n", fRun);
+			
+		}
+			
+		// close the file
+		gzclose(file);
+			
+		// set file size
+		FileStat_t fileinfo;
+		gSystem->GetPathInfo(fFileName, fileinfo);
+		fSize = fileinfo.fSize;
     }
   
     void Print()
@@ -164,12 +250,13 @@ class TCReadACQU
 private:
     Char_t* fPath;                  // path of files
     TList* fFiles;                  // list of files
+    Bool_t  isMk2;					// if true Mk2 file system is used
 
     void ReadFiles();
 
 public:
-    TCReadACQU() : fPath(0), fFiles(0) { }
-    TCReadACQU(const Char_t* path);
+    TCReadACQU(const Bool_t isFileMk2 = kFALSE);
+    TCReadACQU(const Char_t* path, const Bool_t isFileMk2 = kFALSE);
     virtual ~TCReadACQU();
     
     TList* GetFiles() const { return fFiles; }

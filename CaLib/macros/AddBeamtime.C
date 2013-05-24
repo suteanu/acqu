@@ -22,21 +22,28 @@ void AddBeamtime()
  
     // macro configuration: just change here for your beamtime and leave
     // the other parts of the code unchanged
-    const Char_t rawfilePath[]      = "/daten/august.2012";
+    const Char_t rawfilePath[]      = "/data/RAID0_a2datastore1_a2cb/2013_04_UnpolPi0";
+    const Bool_t fileSystemMk2      = kTRUE;
     const Char_t target[]           = "LH";
-    const Int_t firstRun            = 41950;
-    const Int_t lastRun             = 41960;
-    const Char_t calibName[]        = "ETAP_Aug_12";
-    const Char_t calibDesc[]        = "Standard calibration for August 2012 beamtime";
+    const Int_t firstRun            = 1445;
+    const Int_t lastRun             = 1455;
+    const Char_t calibName[]        = "UnPol_Pi0";
+    const Char_t calibDesc[]        = "Standard calibration for unpolarized Pi0 May 2013 beamtime";
 
-    const Char_t calibFileTagger[]  = "/home/ott/acqu/data/Tagger/EPT_FP.dat";
-    const Char_t calibFileCB[]      = "/home/ott/acqu/data/CB/NaI.dat";
-    const Char_t calibFileTAPS[]    = "/home/ott/acqu/data/TAPS/BaF2_PWO.dat";
-    const Char_t calibFilePID[]     = "/home/ott/acqu/data/PID/PID.dat";
-    const Char_t calibFileVeto[]    = "/home/ott/acqu/data/TAPS/Veto.dat";
+    const Char_t calibFileTagger[]  = "/home/peter/acqu/acqu_user/data/Tagger/FP.dat";
+    const Char_t calibFileCB[]      = "/home/peter/acqu/acqu_user/data/CB/NaI.dat";
+    const Char_t calibFileTAPS[]    = "/home/peter/acqu/acqu_user/data/TAPS/BaF2_PWO.dat";
+    const Char_t calibFilePID[]     = "/home/peter/acqu/acqu_user/data/PID/PID.dat";
+    const Char_t calibFileVeto[]    = "/home/peter/acqu/acqu_user/data/TAPS/Veto.dat";
 
+
+	// Set file System
+	if(fileSystemMk2)
+		TCMySQLManager::GetManager()->SetMk2();
+	
     // add raw files to the database
     TCMySQLManager::GetManager()->AddRunFiles(rawfilePath, target);
+    
     
     // read AcquRoot calibration of tagger
     TCMySQLManager::GetManager()->AddCalibAR(kDETECTOR_TAGG, calibFileTagger,
