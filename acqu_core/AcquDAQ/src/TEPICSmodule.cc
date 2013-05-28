@@ -291,7 +291,7 @@ void TEPICSmodule::DumpBuffer(Char_t *buffer, Char_t *outfile){
   if(outfile){
     if( (fp=fopen(outfile,"a")) == NULL){
       fprintf(stderr,"FATAL ERROR failed to open %s\n",outfile);
-      exit;
+      exit(1);
     }
   }
 
