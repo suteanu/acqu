@@ -671,8 +671,7 @@ void TA2Taps::SetConfig(char* line, int key)
         sscanf(line, "%s", fTAPS_dEvE_Proton_CutName);
         fTAPS_dEvE_CutFile = new TFile(fTAPS_dEvE_Cuts, "READ");
         CutPtr = (TCutG*)fTAPS_dEvE_CutFile->Get(fTAPS_dEvE_Proton_CutName);
-        fTAPS_dEvE_ProtonCut = new TCutG;
-        *fTAPS_dEvE_ProtonCut = *CutPtr;
+        fTAPS_dEvE_ProtonCut = CutPtr;
         fTAPS_dEvE_CutFile->Close();
       }
     }
@@ -693,8 +692,7 @@ void TA2Taps::SetConfig(char* line, int key)
         sscanf(line, "%s", fTAPS_dEvE_ChPion_CutName);
         fTAPS_dEvE_CutFile = new TFile(fTAPS_dEvE_Cuts, "READ");
         CutPtr = (TCutG*)fTAPS_dEvE_CutFile->Get(fTAPS_dEvE_ChPion_CutName);
-        fTAPS_dEvE_ChPionCut = new TCutG;
-        *fTAPS_dEvE_ChPionCut = *CutPtr;
+        fTAPS_dEvE_ChPionCut = CutPtr;
         fTAPS_dEvE_CutFile->Close();
       }
     }
@@ -716,8 +714,7 @@ void TA2Taps::SetConfig(char* line, int key)
         sscanf(line, "%s", fTAPS_dEvE_Electron_CutName);
         fTAPS_dEvE_CutFile = new TFile(fTAPS_dEvE_Cuts, "READ");
         CutPtr = (TCutG*)fTAPS_dEvE_CutFile->Get(fTAPS_dEvE_Electron_CutName);
-        fTAPS_dEvE_ElectronCut = new TCutG;
-        *fTAPS_dEvE_ElectronCut = *CutPtr;
+        fTAPS_dEvE_ElectronCut = CutPtr;
         fTAPS_dEvE_CutFile->Close();
       }
     }
@@ -756,8 +753,7 @@ void TA2Taps::SetConfig(char* line, int key)
         sscanf(line, "%s", fTAPS_TOF_Nucleon_CutName);
         fTAPS_TOF_CutFile = new TFile(fTAPS_TOF_Cuts, "READ");
         CutPtr = (TCutG*)fTAPS_TOF_CutFile->Get(fTAPS_TOF_Nucleon_CutName);
-        fTAPS_TOF_NucleonCut = new TCutG;
-        *fTAPS_TOF_NucleonCut = *CutPtr;
+        fTAPS_TOF_NucleonCut = CutPtr;
         fTAPS_TOF_CutFile->Close();
       }
     }
