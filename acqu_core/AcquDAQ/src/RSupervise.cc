@@ -17,7 +17,7 @@
 #include <sys/select.h>
 
 // Input command keys
-static Char_t *cmd[] = {
+const static Char_t *cmd[] = {
   "Start:",
   "Go:",
   "Run:",

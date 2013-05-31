@@ -58,7 +58,7 @@ protected:
   UShort_t fEventIndex;         // "adc" index of marker channel
   UInt_t fEventNumber;          // Event Number  
 public:
-  TA2DataFormat(Char_t*, Int_t, Int_t=0);
+  TA2DataFormat(const Char_t*, Int_t, Int_t=0);
   virtual ~TA2DataFormat(){}
 
   virtual void Initialise( void*, TA2RingBuffer*, TA2RingBuffer*, UInt_t );
@@ -73,7 +73,7 @@ public:
   virtual void SendData();		        // process data buffer
   virtual void SendEOF();			// signal end-of-file
   virtual void SendTerminate();			// signal end-of-analysis
-  virtual void SetFileName( AcquExptInfo_t*, char* = "/", int = 0 );
+  virtual void SetFileName( AcquExptInfo_t*, const char* = "/", int = 0 );
   virtual char* GetFileName(){ return fDataFileName; }
   virtual Int_t HeaderSize( void*);		// no. bytes in header
   virtual Int_t GetEventLength( void* );

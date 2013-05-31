@@ -73,7 +73,7 @@ static Map_t kModTypes[] = {
 };
 
 //-----------------------------------------------------------------------------
-TDAQmodule::TDAQmodule( Char_t* name, Char_t* file, FILE* log ):
+TDAQmodule::TDAQmodule(const Char_t* name, const Char_t* file, FILE* log ):
   TA2System( name, kModuleKeys, file, log )
 {
   // Basic initialisation

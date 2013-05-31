@@ -134,7 +134,7 @@ class TDAQexperiment : public TA2System {
   Bool_t fIsStore;                  // Data storage enabled?
   Bool_t fIsLocalAR;                // DAQ is run as thread of AcquRoot
  public:
-  TDAQexperiment( Char_t*, Char_t*, Char_t*, TAcquRoot* = NULL,
+  TDAQexperiment(const Char_t*, Char_t*, const Char_t*, TAcquRoot* = NULL,
 		  Int_t = EExpInit0 );
   virtual ~TDAQexperiment();
   void SetConfig( Char_t*, Int_t );   // configure experiment

@@ -31,7 +31,7 @@ static const Map_t kForeignFormat[] = {
 ClassImp(TA2DataFormat)
 
 //---------------------------------------------------------------------------
-TA2DataFormat::TA2DataFormat(Char_t* n, Int_t l, Int_t nsrc) :
+TA2DataFormat::TA2DataFormat(const Char_t* n, Int_t l, Int_t nsrc) :
   TA2System(n,NULL)
 {
   // Basic setup format class.
@@ -68,13 +68,13 @@ void TA2DataFormat::Initialise( void* head, TA2RingBuffer* sort,
 }
 
 //---------------------------------------------------------------------------
-void TA2DataFormat::SetFileName( AcquExptInfo_t* A, Char_t* filename, 
+void TA2DataFormat::SetFileName( AcquExptInfo_t* A, const Char_t* filename, 
 				 Int_t run )
 {
   // Write the file name in an ACQU-formated header buffer.
   // Some options about the most appropriate name are tested
   //
-  Char_t* a;
+  const Char_t* a;
   Int_t s = sizeof(A->fOutFile) - 1;	// max string length in header
   A->fOutFile[s] = '\0';	      	// ensure null termination
 

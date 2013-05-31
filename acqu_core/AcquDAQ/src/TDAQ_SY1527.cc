@@ -29,7 +29,7 @@ static Map_t kSY1527Keys[] = {
 
 
 //-----------------------------------------------------------------------------
-TDAQ_SY1527::TDAQ_SY1527( Char_t* name, Char_t* file, FILE* log ):
+TDAQ_SY1527::TDAQ_SY1527(const Char_t* name, const Char_t* file, FILE* log ):
   TDAQmodule( name, file, log )
 {
 #ifdef AD_CAENHV

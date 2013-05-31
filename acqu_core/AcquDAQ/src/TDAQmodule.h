@@ -95,7 +95,7 @@ class TDAQmodule : public TA2System {
   Bool_t fIsError;                   // any error
  public:
   friend class TDAQcontrol;          // access to protected variables
-  TDAQmodule( Char_t*, Char_t*, FILE* );
+  TDAQmodule(const Char_t*, const Char_t*, FILE* );
   virtual ~TDAQmodule();
   virtual void SetConfig( Char_t*, Int_t ); // configure module
   virtual void PostInit();                  // 2nd phase initialisation

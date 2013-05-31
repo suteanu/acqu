@@ -110,7 +110,7 @@ static Map_t kExpKeys[] = {
 };
 
 //-----------------------------------------------------------------------------
-TDAQexperiment::TDAQexperiment( Char_t* name, Char_t* input, Char_t* log,
+TDAQexperiment::TDAQexperiment(const Char_t* name, Char_t* input, const Char_t* log,
 				TAcquRoot* ar, Int_t initLevel):
   TA2System( name, kExpKeys, input, log )
 {

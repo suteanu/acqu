@@ -49,7 +49,7 @@ class TDAQ_SY1527 : public TDAQmodule {
   Bool_t* fIsSlotOccupied;
   Bool_t* fIsSlotConfigured;
  public:
-  TDAQ_SY1527( Char_t*, Char_t*, FILE* );
+  TDAQ_SY1527(const Char_t*, const Char_t*, FILE* );
   virtual ~TDAQ_SY1527();
   void SetConfig( Char_t*, Int_t );         // configure v2718
   virtual void PostInit();

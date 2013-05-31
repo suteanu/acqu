@@ -53,15 +53,15 @@ class TA2System : public TNamed {
   ARFile_t* fInputFile;                    // config input file if any
   ARFile_t* fLogFile;                      // diagnostic log file
   FILE* fLogStream;                        // file ptr for logging output
-  void BaseInit( const Map_t*, Char_t* );  // 1st-level initialisation
+  void BaseInit( const Map_t*, const Char_t* );  // 1st-level initialisation
   void PrintError( const Char_t*, const Char_t* = NULL, Int_t = EErrNonFatal );
   void PrintMessage( const Char_t* );      // general message
   Bool_t fIsInit;                          // initialisation complete?
   Bool_t fIsError;                         // any setup errors?
   Bool_t fIsConfigPass;                    // depreciated config handler
  public:
-  TA2System( const Char_t*, const Map_t*, Char_t* = NULL, Char_t* = NULL );
-  TA2System( const Char_t*, const Map_t*, Char_t*, FILE* );
+  TA2System( const Char_t*, const Map_t*, const Char_t* = NULL, const Char_t* = NULL );
+  TA2System( const Char_t*, const Map_t*, const Char_t*, FILE* );
   virtual ~TA2System();
   Int_t Map2Key( Char_t*, const Map_t* = NULL);    // get key from string
   Int_t Map2Key( Char_t*, const Map_t**);          // get key from string
@@ -79,7 +79,7 @@ class TA2System : public TNamed {
 		     const Char_t* = NULL, const Char_t* = NULL,
 		     const Char_t* = NULL, const Char_t* = NULL,
 		     const Char_t* = NULL);          // string construction
-  Char_t* CheckName( Char_t* name );
+  const Char_t* CheckName(const Char_t* name );
   // Inlined getters
   ARFile_t* GetInputFile(){ return fInputFile; }
   ARFile_t* GetLogFile(){ return fLogFile; }

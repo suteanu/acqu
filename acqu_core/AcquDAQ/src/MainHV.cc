@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 {
   // Run AcquHV
 
-  Char_t* file;
+  const Char_t* file;
   FILE* logfile = fopen("AcquHV.log","w");
   if( argc > 1 ) file = argv[1];
   else file = "AcquHV.dat";

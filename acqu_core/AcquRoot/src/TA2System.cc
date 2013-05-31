@@ -30,7 +30,7 @@ ClassImp(TA2System)
 
 //-----------------------------------------------------------------------------
 TA2System::TA2System( const Char_t* name, const Map_t* maplist,
-			Char_t* file, Char_t* log ):
+			const Char_t* file, const Char_t* log ):
   TNamed( name, "AcquRoot" )
 {
   // Base initialisation of Acqu++ object
@@ -54,7 +54,7 @@ TA2System::TA2System( const Char_t* name, const Map_t* maplist,
 
 //-----------------------------------------------------------------------------
 TA2System::TA2System( const Char_t* name, const Map_t* maplist,
-			Char_t* file, FILE* log ):
+			const Char_t* file, FILE* log ):
   TNamed( name, "AcquRoot" )
 {
   // Base initialisation of Acqu++ object
@@ -67,7 +67,7 @@ TA2System::TA2System( const Char_t* name, const Map_t* maplist,
 }
 
 //-----------------------------------------------------------------------------
-void TA2System:: BaseInit( const Map_t* maplist, Char_t* file )
+void TA2System:: BaseInit( const Map_t* maplist, const Char_t* file )
 {
   // Basic initialisation of AcquRoot class
   // Open config file if name supplied
@@ -328,12 +328,12 @@ Char_t* TA2System::BuildName( const Char_t* c0, const Char_t* c1,
 }
 
 //---------------------------------------------------------------------------
-Char_t*  TA2System::CheckName( Char_t* name )
+const Char_t*  TA2System::CheckName(const Char_t* name )
 {
   // Basic file-name checker.
   // Strips off device/directory spec, brief check for tape spec.
   //
-  Char_t* a;
+  const Char_t* a;
   
   if((a = strrchr(name,'/')) == NULL)  // check for last '/'
     a = name;                          // not found, start at 1st char
