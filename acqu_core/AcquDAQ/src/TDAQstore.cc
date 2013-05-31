@@ -65,11 +65,14 @@ void TDAQstore::PostInit( )
   // Create buffers and data path(s)
   //  fOutBuff = new TA2RingBuffer( fRecLen, fRingSize );
   //    fOutBuff = new TA2RingBuffer( fStore->GetOutBuff() );
-  Char_t* lhost;
+  const Char_t* lhost;
   switch( fMode ){
   case EStoreDONet:
     if( (!fPacLen) || (fPacLen > fRecLen) ) fPacLen = fRecLen;
     lhost = getenv("HOST");
+    // if there's no HOST variable set, use localhost by default
+    if(lhost==NULL)
+        lhost = "localhost";
     fSocket = new ARSocket_t( "DAQ-Net-Socket", lhost, 
 			      fPort, ESkLocal, fRecLen, fPacLen, this );
     printf("<Waiting to connect to data receiver>\n");
