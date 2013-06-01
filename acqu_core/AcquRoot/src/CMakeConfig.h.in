@@ -10,5 +10,19 @@
 #define CMAKE_ROOTSYS "@ROOTSYS@"
 
 // the path to the core/sys AcquRoot and to the user part
+// the former $acqu_sys env variable
 #define CMAKE_ACQU_SYSCORE "@ACQU_SYSCORE_PATH@"
+// the former $acqu env variable
 #define CMAKE_ACQU_USER "@ACQU_USER_PATH@"
+
+
+// this is a small macro which checks for environment
+// variables and falls back to above defined strings if
+// not found
+// we do NOT use local variables to cache getenv(...) call
+// since it is a preprocessor macro
+#define ENV_OR_CMAKE(env_var, cmake_def) getenv(env_var)==NULL ? cmake_def : getenv(env_var)
+// example to obtain the path to acqu_core:
+// ENV_OR_CMAKE("acqu_sys", CMAKE_ACQU_SYSCORE)
+
+

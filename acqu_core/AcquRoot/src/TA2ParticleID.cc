@@ -18,6 +18,7 @@
 
 #include "TA2ParticleID.h"
 #include "TA2Analysis.h"
+#include "CMakeConfig.h"
 
 R__EXTERN TA2Analysis*  gAN;
 
@@ -56,7 +57,7 @@ TA2ParticleID::TA2ParticleID( char* line ) :
     break;
   }
   fPDG = new TDatabasePDG();
-  char* dbname = BuildName( getenv("ROOTSYS"), "/etc/pdg_table.txt" );
+  char* dbname = BuildName(ENV_OR_CMAKE("ROOTSYS", CMAKE_ROOTSYS), "/etc/pdg_table.txt" );
   fPDG->ReadPDGTable(dbname);
   delete[] dbname;
   fPDGtype = new Int_t[fMaxType];

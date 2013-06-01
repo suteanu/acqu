@@ -21,6 +21,8 @@
 
 #include "TA2Mk2Format.h"
 #include "ARFile_t.h"
+#include "CMakeConfig.h"
+
 
 // Foreign data setup file keys
 static const Map_t kForeignFormat[] = {
@@ -200,7 +202,7 @@ void TA2Mk2Format::ConstructHeader( void* h )
   
   // ADC info file name to be $acqu/data/XXX_setup.dat, where XXX
   // is the name of the particular calling (TNamed) class
-  Char_t* fn = BuildName(getenv("acqu"),"/data/",(char*)GetName(),"Setup.dat");
+  Char_t* fn = BuildName(ENV_OR_CMAKE("acqu",CMAKE_ACQU_USER),"/data/",(char*)GetName(),"Setup.dat");
   ARFile_t formatFile(fn, "r", this);
   delete fn;
 

@@ -39,6 +39,7 @@
 #include "TParticle.h"
 #include "TBenchmark.h"
 #include "TLeaf.h"
+#include "CMakeConfig.h"
 
 
 ClassImp(TMCGenerator)
@@ -94,7 +95,7 @@ TMCGenerator::TMCGenerator( const Char_t* name, Int_t seed )
   fNrun = 1;
   fRand = new TRandom( seed );
   fPDG = new TDatabasePDG();
-  char* dbname = BuildName( getenv("ROOTSYS"), "/etc/pdg_table.txt" );
+  char* dbname = BuildName(ENV_OR_CMAKE("ROOTSYS", CMAKE_ROOTSYS), "/etc/pdg_table.txt" );
   fPDG->ReadPDGTable(dbname);
   delete[] dbname;
   fTargetMass = fTargetRadius = fTargetLength = 0.0;
@@ -628,7 +629,7 @@ void TMCGenerator::InitParticleDist( Char_t* line, TMCParticle* particle,
   if( n == 3 ){
     Char_t* distfile;
     if( strchr( dist, '/' ) ) distfile = BuildName( dist );
-    else distfile = BuildName(getenv("acqu"), "/data/", dist);
+    else distfile = BuildName(ENV_OR_CMAKE("acqu",CMAKE_ACQU_USER), "/data/", dist);
     ARFile_t distf( distfile, "r", this );
     delete[] distfile;
     Char_t* line;

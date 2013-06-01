@@ -30,6 +30,8 @@
 #include "TA2Analysis.h"
 #include "TA2DataServer.h"
 #include "TDAQexperiment.h"
+#include "CMakeConfig.h"
+
 
 // Global pointers to main Classes
 TAcquRoot* gAR = NULL;
@@ -152,8 +154,8 @@ void TA2Control::PrintLogo()
 
   Printf("\n\n");
   Printf("  ****** Acqu - Root Analyser ******\n");
-  Printf("          Version: %s",getenv("acquversion") );
-  Printf("            Dated: %s",getenv("acqudate") );
+  Printf("          Version: %s",ENV_OR_CMAKE("acquversion", CMAKE_ACQU_VERSION));
+  Printf("            Dated: %s",ENV_OR_CMAKE("acqudate", CMAKE_ACQU_DATE));
   Printf("   Linked to Root: %s\n\n",gROOT->GetVersion());
   Printf("   See .log files for all AcquRoot progress/error messages\n\n");
 

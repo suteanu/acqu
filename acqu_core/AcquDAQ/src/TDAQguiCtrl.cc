@@ -25,6 +25,8 @@
 #include "TA2Analysis.h"
 #include "TA2DataServer.h"
 #include "TColor.h"
+#include "CMakeConfig.h"
+
 
 ClassImpQ(TDAQguiCtrl)
 
@@ -215,8 +217,8 @@ TDAQguiCtrl::TDAQguiCtrl( TDAQsupervise* s, const TGWindow* w )
 		     uGC->GetGC(),Helv24B->GetFontStruct(),darkBlue);
   fMGr->SetTitlePos(TGGroupFrame::kCenter);
   fMGr->SetLayoutBroken(kTRUE);
-  Char_t* logoG = s->BuildName(getenv("acqu_sys"),"/AcquDAQ/data/GlaLogo1.jpg");
-  Char_t* logoM = s->BuildName(getenv("acqu_sys"),"/AcquDAQ/data/MzLogo.jpg");
+  Char_t* logoG = s->BuildName(ENV_OR_CMAKE("acqu_sys",CMAKE_ACQU_SYSCORE),"/AcquDAQ/data/GlaLogo1.jpg");
+  Char_t* logoM = s->BuildName(ENV_OR_CMAKE("acqu_sys",CMAKE_ACQU_SYSCORE),"/AcquDAQ/data/MzLogo.jpg");
   TGIcon *gla = new TGIcon(fMGr, logoG);
   TGIcon *mz = new TGIcon(fMGr, logoM);
   delete[] logoG;
@@ -313,7 +315,7 @@ TDAQguiCtrl::TDAQguiCtrl( TDAQsupervise* s, const TGWindow* w )
   		 "AcquDAQ>",70,"IssueCmd()");
    
   fMsg = new TGTextView(fDial,520,216);
-  Char_t* initMsg = fSupervise->BuildName("AcquDAQ ",getenv("acquversionID"),
+  Char_t* initMsg = fSupervise->BuildName("AcquDAQ ",ENV_OR_CMAKE("acquversionID", CMAKE_ACQU_VERSION_ID),
 			      " Messages:\n");
   fMsg->LoadBuffer(initMsg);
   fSupervise->SetGUIBuffer( (Char_t*)fMsg->GetText() );
