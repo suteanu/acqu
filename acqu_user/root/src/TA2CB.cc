@@ -15,8 +15,8 @@ ClassImp(TA2CB)
 
 //-----------------------------------------------------------------------------
 
-TA2CB::TA2CB(const char* name, TA2System* analysis)
-      :TA2Apparatus(name, analysis, kValidDetectors)
+TA2CB::TA2CB(const char* name, TA2System* analysis)  : TA2Apparatus(name, analysis, kValidDetectors),
+    fPIDCuts()
 {
   //Initialise/clear detector pointers
   fCal = NULL;
@@ -174,7 +174,7 @@ void TA2CB::DoParticleIdent()
       //Check if DEvE is inside any of the cuts for this PID element
       for(Int_t c=0; c<nPIDCuts; c++)
         if(fPIDIndex==fPIDElement[c])
-          if(fPIDCut[c].IsInside(fECrystal[fPIDIndex], fEPlastic[fPIDIndex]))
+          if(fPIDCuts[c]->IsInside(fECrystal[fPIDIndex], fEPlastic[fPIDIndex]))
           {
             fType[t] = fPIDCode[c];                       //Set particle ID code...
             fMass = fParticleID->GetMassMeV(fPIDCode[c]); //...and particle mass
@@ -383,7 +383,7 @@ inline void TA2CB::ParseMisc(char* line)
   Int_t Element;
   Int_t Code;
   TFile* PIDCutFile;
-  TCutG* PIDCutPtr;
+
 
   //Get keyword
   if(sscanf(line, "%s", sWord)!=1)
@@ -519,7 +519,7 @@ inline void TA2CB::ParseMisc(char* line)
   {
     sscanf(line, "%*s %d", &nPIDCuts);
     printf("Using %d PID cuts\n", nPIDCuts);
-    fPIDCut = new TCutG[nPIDCuts];
+    //fPIDCut.resize(nPIDCuts);
     fPIDCode = new Int_t[nPIDCuts];
     fPIDElement = new Int_t[nPIDCuts];
     return;
@@ -529,11 +529,11 @@ inline void TA2CB::ParseMisc(char* line)
   {
     sscanf(line, "%*s %d %d %s %s", &Element, &Code, CutName, FileName);
     PIDCutFile = new TFile(FileName, "READ");
-    PIDCutPtr = (TCutG*)PIDCutFile->Get(CutName);
-    fPIDCut[nPIDCount] = *PIDCutPtr;
+    TCutG* PIDCutPtr = (TCutG*)PIDCutFile->Get(CutName);
+    fPIDCuts.push_back(PIDCutPtr);
     fPIDCode[nPIDCount] = Code;
     fPIDElement[nPIDCount] = Element;
-    printf("Cut %s enabled for PDG ID %d and PID element %d\n", fPIDCut[nPIDCount].GetName(), fPIDCode[nPIDCount], fPIDElement[nPIDCount]);
+    printf("Cut %s enabled for PDG ID %d and PID element %d\n", fPIDCuts[nPIDCount]->GetName(), fPIDCode[nPIDCount], fPIDElement[nPIDCount]);
     PIDCutFile->Close();
     nPIDCount++;
     return;

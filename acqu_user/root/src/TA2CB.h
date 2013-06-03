@@ -20,7 +20,7 @@ class TA2CB : public TA2Apparatus
   TA2Detector* fTracker;    //Charged-particle tracker
   TA2Particle* fParticles;  //Used to store particle information
 
-  TCutG* fPIDCut;     //Pointer to DeltaE-E cut
+  std::vector<TCutG*> fPIDCuts;     //Pointer to DeltaE-E cut
   Int_t* fPIDElement; //Indices of PID strips cuts are defined for
   Int_t* fPIDCode;    //PDG particle ID code to produce if inside cut
   Int_t nPIDCuts;     //Total number of defined cuts
