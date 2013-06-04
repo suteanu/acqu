@@ -63,7 +63,7 @@ public:
   Double_t GetMass( Int_t i ){ return fMass[i]; }
   Double_t* GetCharge(){ return fCharge; }
   Double_t GetCharge( Int_t i ){ return fCharge[i]; }
-  void SetP4( TLorentzVector*, Int_t, Double_t, TVector3* );
+  void SetP4( TLorentzVector*, Int_t, Double_t, const TVector3* );
   void SetP4tof( TLorentzVector*, Int_t, Double_t, TVector3* );
   void SetMassP4( TLorentzVector*, Int_t );
   Double_t GetMassMeV( Int_t ipdg )
@@ -74,7 +74,7 @@ public:
 
 //----------------------------------------------------------------------------
 inline void TA2ParticleID::SetP4( TLorentzVector* p4, Int_t ipdg, Double_t T,
-					   TVector3* pos )
+					   const TVector3* pos )
 {
   // return pointer to 4 vector for particle i in event
   // particle id ipdg, kinetic energy T, direction pos

@@ -221,7 +221,7 @@ class TA2Particle : public TObject
   void SetP4(TLorentzVector pP4){ fP4 = pP4; }
   void SetP4(TLorentzVector* pP4){ if(pP4) fP4 = *pP4; }
   void SetP4(Int_t pParticleID, Double_t pT, TVector3 pP_);
-  void SetP4(Int_t pParticleID, Double_t pT, TVector3* pP_){
+  void SetP4(Int_t pParticleID, Double_t pT, const TVector3* pP_){
     if(pP_) SetP4(pParticleID, pT, *pP_); }
   void SetParticleID(Int_t pParticleID);
   void SetParticleIDA(Int_t pParticleID){ fParticleID = pParticleID; }
