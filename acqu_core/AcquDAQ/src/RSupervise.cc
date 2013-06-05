@@ -3,6 +3,7 @@
 //--Rev  	JRM Annand...  18th Feb 2005..Run to TA2Control
 //--Rev 	Baya Oussena...28th Jun 2012..Control valid typed commands
 //--Update	JRM Annand...  09th Jul 2012..Allow commands with parameters
+//--Update  A Neiser...   6th June 2013  Make char_t* const
 
 //--Description
 //                *** Acqu++ <-> Root ***

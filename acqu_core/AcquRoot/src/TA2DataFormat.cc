@@ -9,6 +9,7 @@
 //--Rev 	JRM Annand...21st Apr 2008...UpdateInfo(),ConstructHeader()
 //--Rev 	JRM Annand...21st Nov 2012...Stuff for Mk2 merging
 //--Update	JRM Annand... 8th Feb 2013...Add GetNEPICS() prototype
+//--Update  A Neiser...   6th June 2013  Make char_t* const
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 

@@ -29,6 +29,7 @@
 //--Rev         JRM Annand    2nd Sep 2012  Add fEventSendMod
 //--Rev         JRM Annand    3rd Sep 2012  Module types changes SetConfig
 //--Update      JRM Annand    6th Jun 2013  Save fBaseIndex in error block
+//--Update  A Neiser...   6th June 2013  Make char_t* const
 //--Description
 //                *** AcquDAQ++ <-> Root ***
 // DAQ for Sub-Atomic Physics Experiments.

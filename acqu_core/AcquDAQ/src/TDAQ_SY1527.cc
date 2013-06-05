@@ -2,6 +2,7 @@
 //--Rev 	JRM Annand...
 //--Rev 	JRM Annand... 3rd Jun 2008  Conditional compilation
 //--Update	JRM Annand... 6th Jul 2011  gcc4.6-x86_64 warning fix
+//--Update  A Neiser...   6th June 2013  Make char_t* const
 //--Description
 //                *** AcquDAQ++ <-> Root ***
 // DAQ for Sub-Atomic Physics Experiments.

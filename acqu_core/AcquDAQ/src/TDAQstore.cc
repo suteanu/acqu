@@ -4,6 +4,7 @@
 //--Rev 	JRM Annand... 7th Sep 2010  getenv("HOST") not "localhost"
 //--Rev 	JRM Annand... 9th Sep 2010  add data no-store
 //--Update	JRM Annand... 1st Oct 2012  print message when connecting
+//--Update  A Neiser...   6th June 2013  Make char_t* const
 //--Description
 //                *** AcquDAQ++ <-> Root ***
 // DAQ for Sub-Atomic Physics Experiments.

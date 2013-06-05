@@ -1,6 +1,7 @@
 //--Author	JRM Annand    4th Apr 2003
 //--Rev 	JRM Annand... 8th Jan 2004..TA2Control mod.
 //--Update	JRM Annand...18th Feb 2005..Run to TA2Control
+//--Update  A Neiser...   6th June 2013  Make char_t* const
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 

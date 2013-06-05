@@ -7,6 +7,8 @@
 //--Rev 	JRM Annand...14th Aug 2007...Include TMath.h,TROOT.h Root 5.16
 //--Rev 	JRM Annand... 3rd Jun 2008...const Char_t*...gcc 4.3
 //--Update	JRM Annand... 1st Sep 2009   delete[], cstdlib?
+//--Update  A Neiser...   6th June 2013  Make char_t* const
+//--Update  A Neiser...   6th June 2013  Always add filename to fatal fopen 
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 

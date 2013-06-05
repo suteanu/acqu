@@ -7,6 +7,7 @@
 //--Rev 	JRM Annand...22nd Jan 2007 4v0 update
 //--Rev 	JRM Annand... 6th Feb 2008 P4 from TOF
 //--Update	JRM Annand... 1st Sep 2009 delete[], zap fP4
+//--Update  A Neiser...   6th June 2013  Make char_t* const
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 

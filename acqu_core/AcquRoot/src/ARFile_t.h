@@ -11,6 +11,7 @@
 //--Rev 	JRM Annand	29th Nov 2007	Open-fail non fatal,check-del
 //--Rev 	JRM Annand	 3rd Jun 2008	const Char_t* gcc 4.3
 //--Update	JRM Annand	 1st Sep 2009	delete[]
+//--Update  A Neiser...   6th June 2013  Always add filename to fatal fopen 
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 

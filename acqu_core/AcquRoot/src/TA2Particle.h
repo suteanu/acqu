@@ -3,6 +3,7 @@
 //--Rev         JRM Annand   23rd Apr 2009 call TObj constructor
 //--Rev         S Schumann   19th Jun 2009 add Reset() function
 //--Update      JRM Annand   23rd Apr 2013 MWPC stuff when? not by JRMA
+//--Update  A Neiser...   6th June 2013  Make char_t* const
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data
