@@ -193,7 +193,8 @@ void TA2System::FileConfig( Char_t* filename )
     Char_t* inputName;
     if( strchr( filename, '/' ) ) inputName = BuildName( filename );
     else inputName = BuildName("./data/", filename);
-    cfile = new ARFile_t(inputName,"r",this);
+    // make setup file open fatal, prevents segfault
+    cfile = new ARFile_t(inputName,"r",this, kTRUE);
     delete[] inputName;
   }
   Int_t key;

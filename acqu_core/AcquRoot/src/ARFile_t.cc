@@ -21,6 +21,7 @@
 //---------------------------------------------------------------------------
 
 #include "ARFile_t.h"
+#include <sstream>
 
 //---------------------------------------------------------------------------
 ARFile_t::ARFile_t( const Char_t* name, const Char_t* mode, TA2System* sys,
@@ -35,9 +36,12 @@ ARFile_t::ARFile_t( const Char_t* name, const Char_t* mode, TA2System* sys,
   if( !sys ) fName = NULL;
   else fName = sys->BuildName((Char_t*)name);     // save file name
   fStart = fopen(fName, mode);
-  if( isFatal ){
-    if(fStart == NULL)
-      PrintError("<ERROR ARFile_t: fopen failed>\n", EErrFatal);
+  if( isFatal ) {
+    if(fStart== NULL) {
+      std::stringstream errMsg;
+      errMsg << "<ERROR ARFile_t: fopen failed, FileName: " << fName << ">";
+      PrintError(errMsg.str().c_str(), EErrFatal);
+    }
   }
 }
 

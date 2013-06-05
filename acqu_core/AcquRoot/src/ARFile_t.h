@@ -36,7 +36,7 @@ extern "C"{
 #include <fcntl.h>
 }
 enum{ EZiped, EBZiped, EGZiped };       // for compressed file open for read
-
+ 
 class ARFile_t{
  private:
   FILE* fStart;		        	// file pointer from fopen();
@@ -49,7 +49,7 @@ class ARFile_t{
  public:
   // open for text I/O using fopen(), default read only
   ARFile_t( const Char_t*, const Char_t* = "r", TA2System* = NULL,
-	    Bool_t = EFalse );
+	    Bool_t = kFALSE );
   // open for binary I/O using open(), default create if non-existent r/w
   ARFile_t( const Char_t*, Int_t=O_RDWR|O_CREAT, 
 	    mode_t=S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH, TA2System* = NULL );
