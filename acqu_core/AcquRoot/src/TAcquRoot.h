@@ -34,7 +34,8 @@
 //--Rev 	JRM Annand... 1st May 2008...SetDataServer()...check dataserver
 //--Rev 	JRM Annand... 1st Sep 2009...BuildName, delete[]
 //--Rev 	K Livingston..7th Feb 2013   Support for handling EPICS buffers
-//--Update 	JRM Annand...22nd Apr 2013...Explicit Mk2 format flag
+//--Rev  	JRM Annand...22nd Apr 2013...Explicit Mk2 format flag
+//--Update 	JRM Annand... 6nd Jun 2013...Optional hardware error printout
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
@@ -143,6 +144,7 @@ private:
   Bool_t fIsBatch;              // running batch mode?
   Bool_t fIsLocalDAQ;           // local DAQ thread?
   Bool_t fIsMk2Format;          // flag Mk2 data format
+  Bool_t fIsPrintError;         // flag printout of hardware errors
 
   //For EPICS buffers
   Int_t fNEpics;                        //No of different epics event types
@@ -270,6 +272,7 @@ public:
    Bool_t IsFinished(){ return fIsFinished; }
    Bool_t IsBatch(){ return fIsBatch; }
    Bool_t IsLocalDAQ(){ return fIsLocalDAQ; }
+   Bool_t IsPrintError(){ return fIsPrintError; }
   
    void PrintTree(){ if( fTree ) fTree->Print(); }
 
@@ -479,8 +482,12 @@ inline UInt_t* TAcquRoot::Mk2ErrorCheck( UInt_t* datum )
   //
   ReadErrorMk2_t* rerror = (ReadErrorMk2_t*)datum;      // error block in data
   if( rerror->fTrailer != EReadError ) return (UInt_t*)rerror;
-  fHardwareError[fHardError] = *rerror;              // store error block
-  fHardError++;			              // register error
+  fHardwareError[fHardError] = *rerror;                 // store error block
+  if(fIsPrintError)
+    fprintf(fLogStream,
+	"Hardware Error  Event:%d  Mod-ID:%x  Mod-Index:%d  Error-Code:%d\n",
+	    fCurrEvent, rerror->fModID, rerror->fModIndex, rerror->fErrCode );
+  fHardError++;			                        // register error
   rerror++;                                   // advance past error block
   return (UInt_t*)rerror;
 }

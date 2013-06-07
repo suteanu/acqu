@@ -22,7 +22,8 @@
 //--Rev         JRM Annand   28th Aug 2012  SendEventID()
 //--Rev         JRM Annand   29th Aug 2012  Add fNScalerChan
 //--Rev         JRM Annand    2nd Sep 2012  Add fEventSendMod
-//--Update      JRM Annand    3rd Sep 2012  Module types changes SetConfig
+//--Rev         JRM Annand    3rd Sep 2012  Module types changes SetConfig
+//--Update      JRM Annand    6th Jun 2013  Save fBaseIndex in error block
 //--Description
 //                *** AcquDAQ++ <-> Root ***
 // DAQ for Sub-Atomic Physics Experiments.
@@ -352,12 +353,13 @@ inline void TDAQmodule::ErrorStore( void** out, Int_t errcode )
 {
   // Write error block to data buffer
   // 2/9/10 Check if Mk1 or Mk2 data format
+  // 6/6/13 Mk2 format, write fBaseIndex instead if fModIndex
   //
   if( fEXP->IsMk2Format() ){
     ReadErrorMk2_t* errbl = (ReadErrorMk2_t*)(*out); // Mk2 format
     errbl->fHeader = EReadError;
     errbl->fModID = fID;
-    errbl->fModIndex = fIndex;
+    errbl->fModIndex = fBaseIndex;
     errbl->fErrCode = errcode;
     errbl->fTrailer = EReadError;
     *out = errbl + 1;

@@ -34,7 +34,8 @@
 //--Rev 	JRM Annand... 1st May 2008...SetDataServer()...check dataserver
 //--Rev 	JRM Annand... 1st Sep 2009...BuildName, delete[]
 //--Rev 	K Livingston..7th Feb 2013   Support for handling EPICS buffers
-//--Update 	JRM Annand...22nd Apr 2013...Explicit Mk2 format flag
+//--Rev  	JRM Annand...22nd Apr 2013...Explicit Mk2 format flag
+//--Update 	JRM Annand... 6nd Jun 2013...Optional hardware error printout
 //--Description
 //                *** Acqu++ <-> Root ***
 // Online/Offline Analysis of Sub-Atomic Physics Experimental Data
@@ -61,7 +62,7 @@ enum { ERootName, ERootBranch, ETreeDir, ERootAnalysisType,
        ERootAnalysisSetup, ERootServerSetup, ERootSetADC, ERootScalerClr,
        ERootEventSize, ERootEventIndex, ERootTreeFile, ERootHbookFile,
        ERootADC, ERootUDS, ERootUDP, ERootMDS, ERootMDP, ERootEVENT,
-       ERootBatchDir, ERootSplitScaler, ERootLocalDAQ,
+       ERootBatchDir, ERootSplitScaler, ERootLocalDAQ, ERootLogHardError,
        ERootEND};
 static const Map_t ConfigMap[] = {
   {"Name:",           ERootName},
@@ -85,6 +86,7 @@ static const Map_t ConfigMap[] = {
   {"BatchDir:",       ERootBatchDir},
   {"SplitScaler:",    ERootSplitScaler},
   {"Local-DAQ:",      ERootLocalDAQ},
+  {"Log-Hard-Error:", ERootLogHardError},
   {NULL,              -1}
 };
 
@@ -188,7 +190,8 @@ TAcquRoot::TAcquRoot( const char* name, Bool_t batch )
   fIsBatch = batch;                  // save batch flag
   if( !batch ) SetLogFile( "AcquRoot.log" );
   fIsLocalDAQ = kFALSE;              // default no local DAQ
-  fIsMk2Format = kFALSE;
+  fIsMk2Format = kFALSE;             // default not Mk2 format
+  fIsPrintError = kFALSE;            // default no error printout
 
   fNEpics = 0;                       //No of different epics "modules"
 
@@ -603,6 +606,10 @@ void TAcquRoot::SetConfig( char* line, int key )
       PrintError(line, "<No DAQ config file given>", EErrFatal);
     fLocalDAQSetup = BuildName(name);
     fIsLocalDAQ = kTRUE;
+    break;
+  case ERootLogHardError:
+    // flag to turn on print out of hardware errors
+    fIsPrintError = kTRUE;
     break;
   default:
     fprintf(fLogStream," Ignored unrecognised Acqu-Root parameter\n%s\n",

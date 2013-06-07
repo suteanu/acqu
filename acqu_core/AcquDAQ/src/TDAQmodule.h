@@ -27,7 +27,8 @@
 //--Rev         JRM Annand   28th Aug 2012  SendEventID()
 //--Rev         JRM Annand   29th Aug 2012  Add fNScalerChan
 //--Rev         JRM Annand    2nd Sep 2012  Add fEventSendMod
-//--Update      JRM Annand    3rd Sep 2012  Module types changes SetConfig
+//--Rev         JRM Annand    3rd Sep 2012  Module types changes SetConfig
+//--Update      JRM Annand    6th Jun 2013  Save fBaseIndex in error block
 //--Description
 //                *** AcquDAQ++ <-> Root ***
 // DAQ for Sub-Atomic Physics Experiments.
