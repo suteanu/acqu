@@ -15,7 +15,7 @@
 
 #include "TCReadConfig.h"
 
-ClassImp(TCReadConfig)
+ClassImp(TCReadConfig);
 
 
 // init static class members

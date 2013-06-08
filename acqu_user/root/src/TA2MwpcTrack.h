@@ -60,7 +60,7 @@ inline void TA2MwpcTrack::SetIinters(const Int_t i0, const Int_t i1)
 }
 
 //_________________________________________________________________________________________
-inline void TA2MwpcTrack::SetIinters(const Int_t i[2])
+inline void TA2MwpcTrack::SetIinters(const Int_t* i)
 {
   fIinters[0] = i[0];
   fIinters[1] = i[1];

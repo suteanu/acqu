@@ -15,7 +15,7 @@
 
 #include "TCMySQLManager.h"
 
-ClassImp(TCMySQLManager)
+ClassImp(TCMySQLManager);
 
 
 // init static class members
