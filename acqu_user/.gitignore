@@ -1,7 +1,14 @@
 # ignore ROOT dictionaries
 /root/src/*Dict.*
-/data*
+
+# ignore some commonly used 
+# data output/input folders
+# the "data" directory itself 
+# shall only contain 
+# configuration text files!
 /scratch
+/output
+/batch
 /Thread*.txt
 *.log
-/result/
+/result
