@@ -46,7 +46,7 @@ BitPattern:  Trigger.Pat
 Apparatus:	TAGG		TA2Tagger		Tagger_855.dat
 Apparatus:	CB		TA2CrystalBall		CB.dat
 #Apparatus:	CentApp		TA2CentralApparatus	CentralApparatus.dat
-#Apparatus:	TAPS		TA2Taps			TAPS.dat
+Apparatus:	TAPS		TA2Taps			TAPS.dat
 ##
 ## Turn on apparatus-level reconstruction
 Reconstruct-Analysis:
@@ -55,7 +55,7 @@ Reconstruct-Analysis:
 ##			Name	Class		Config File
 #Physics-Analysis:	COMP	TA2Compton	ComptonPhysics.dat
 #Physics-Analysis:	THR	TA2ThreshPi0	ThrPi0Physics.dat
-Physics-Analysis:	CRIS	TA2Cristina	Cristina.dat
+#Physics-Analysis:	CRIS	TA2Cristina	Cristina.dat
 #Physics-Analysis:	PaPr	TA2ParaPerpTest	Cristina.dat
 #Physics-Analysis:	TRIG	TA2Trigger	Trigger.dat
 #Physics-Analysis:	CRIS	TA2CristinaCompton	Trigger.dat
