@@ -80,7 +80,7 @@ class TA2CrystalBall : public TA2Apparatus
   Double_t            GetCBMeanTime();
   TA2Particle*        GetParticles() { return fParticle; }
   TA2Particle         GetParticles(Int_t index){ return fParticle[index]; }
-
+  Int_t GetNparticle(){ return fNparticle; }
 
   // Root needs this line for incorporation in dictionary
   ClassDef(TA2CrystalBall,1)

@@ -152,6 +152,7 @@ public:
 
   TA2Particle* GetParticles(){ return particles; }                    // return array with all particles
   TA2Particle GetParticles(Int_t index){ return particles[index]; } // return a single particle
+  Int_t GetNparticle(){ return fNparticle; }
 
   TA2ClusterDetector* GetCal(){ return fBaF2; }
   TA2Detector* GetVeto(){ return fVeto; }

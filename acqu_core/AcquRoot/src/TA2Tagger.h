@@ -198,6 +198,7 @@ public:
   virtual Bool_t IsHelicityAmbiguous(){ return fIsHelicityAmbiguous; }
   TA2Particle* GetParticles(){ return fParticles; }
   TA2Particle GetParticles(Int_t index){ return fParticles[index]; }
+  Int_t GetNparticle(){ return fNparticle; }
   void SetParticleInfo( Int_t );
 
   Bool_t IsLinPol(){ return fIsLinPol; }
@@ -293,7 +294,6 @@ inline void TA2Tagger::SetParticleInfo(Int_t pNum)
 
   fParticles[pNum].SetLinState(ELinNone);
   fParticles[pNum].SetLinDegree(1.0);
-  if(fADC)
     if((fADC[30]==1)||(fADC[30]==2)) fParticles[pNum].SetLinState(fADC[30]);
 
   fParticles[pNum].SetSigmaTime(0.75);
