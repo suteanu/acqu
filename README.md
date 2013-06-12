@@ -16,7 +16,7 @@ your personal changes if there useful by providing pull requests.
 Prerequisites
 -------------
 
-* CERN ROOT > 5.30 with MySQL support (enabled by default)
+* CERN ROOT > 5.30 with MySQL support (enabled by default, if you have mysql development files installed)
 * CMake > 2.8 (most Linux distributions provide packages) 
 * Zlib and Ncurses development packages (see also troubleshooting)
 * git 
@@ -25,6 +25,13 @@ Prerequisites
 You probably want to create a GitHub account and fork from this
 repository. Then clone this personal "acqu" distribution (it is still
 very easy to get updates later).
+
+If you have a working ROOT installation you can use these commands to get
+ready to build acqu:
+
+Ubuntu 10.04.4:
+ `sudo apt-get install git-core cmake zlib1g-dev doxygen libncurses-dev`
+
 
 
 Installation
