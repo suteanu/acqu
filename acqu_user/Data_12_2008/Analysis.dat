@@ -3,7 +3,7 @@
 ##--Update	JRM Annand...13th Jul 2007
 ##--Description
 ##                *** Acqu++ <-> Root ***
-## Online/Offline Analysis of Sub-Atomic Physics Experimental Data 
+## Online/Offline Analysis of Sub-Atomic Physics Experimental Data
 ##
 ## Parameter File: Analysis.dat (specified in A2.Offline)
 ## Setup basic parameters of analysis to be used
@@ -67,7 +67,7 @@ Initialise:
 ## The procedures are usually held in macro script files
 ## Period...every N events
 ##		N	Macro File	Macro Procedure
-Period:	1000	PeriodMacro.C	PeriodMacro()
+Period:	1000	root/macros/PeriodMacro.C	PeriodMacro()
 #Period:	100000	PeriodMacro.C	PeriodMacro()
 ##
 ## EndFile...each time an input data file is closed
@@ -114,7 +114,7 @@ Period:	1000	PeriodMacro.C	PeriodMacro()
 #Finish:		Finish.C	FinishData("Full/20859")
 #Finish:		Finish.C	FinishData("Full/20862")
 #Finish:		Finish.C	FinishData("Empty/SomeEmpty")
-Finish:  	        FinishMacro.C   FinishMacro("21015.root")
+Finish:  	        root/macros/FinishMacro.C   FinishMacro("21015.root")
 #Finish:		ParaPerpFinish.C	ParaPerpFinish()
 ##
 ## Save all accepted events (ie those which pass all data cuts) to a
@@ -202,9 +202,9 @@ Display: Pattern	1 16 0 16
 ##
 ##
 ## TAPS discriminator pattern
-Display: Pattern        2 384 0 384 
-Display: Pattern        3 384 0 384 
-Display: Pattern        4 384 0 384 
+Display: Pattern        2 384 0 384
+Display: Pattern        3 384 0 384
+Display: Pattern        4 384 0 384
 ##
 #Display: 2D 1000 100 0 4000 2112M0 100 -1000 -400
 #

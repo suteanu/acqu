@@ -9,7 +9,7 @@
 ##	  Name         Class Name		Setup file                  ##
 ##############################################################################
 Detector: BaF2          TA2TAPS_BaF2		BaF2.dat
-Detector: VetoBaF2      TA2PlasticPID		VetoBaF2.dat
+Detector: VetoBaF2      TA2TAPS_Veto		VetoBaF2.dat
 #
 #
 #
