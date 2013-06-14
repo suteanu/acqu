@@ -12,6 +12,8 @@ else()
   set(DOXYGEN_INPUT_DIR "${CMAKE_SOURCE_DIR}")
 endif()
 
+set(DOXYGEN_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/doc)
+
 # since we could some Qt documentation
 # we check for that, don't know if Qt3 works as well
 find_package(Qt4)
@@ -19,8 +21,8 @@ if(QT_FOUND)
   set(DOXYGEN_MAKE_QTHELP "YES")
   find_program(QT_HELPGENERATOR_EXE qhelpgenerator ${QT_BINARY_DIR})
   find_program(QT_ASSISTANT_EXE assistant-qt4 ${QT_BINARY_DIR})
-  set(DOXYGEN_QCH_FILE ${CMAKE_BINARY_DIR}/doc/qthelp.qch)
-  set(DOXYGEN_QHP_FILE ${CMAKE_BINARY_DIR}/doc/html/index.qhp)  
+  set(DOXYGEN_QCH_FILE ${DOXYGEN_OUTPUT_DIR}/qthelp.qch)
+  set(DOXYGEN_QHP_FILE ${DOXYGEN_OUTPUT_DIR}/html/index.qhp)  
   # if we're not Linux, we cannot patch the QHP file
   # otherwise we do the complicated business below
   if(NOT CMAKE_SYSTEM_NAME MATCHES Linux)
@@ -28,6 +30,16 @@ if(QT_FOUND)
     message(STATUS "QtCreator help might miss images") 
     set(DOXYGEN_QCH_GEN ${QT_HELPGENERATOR_EXE})
   endif()
+endif()
+
+# we look for Graphviz, if found, we enable the
+# include graph generation
+find_program(DOXYGEN_DOT_EXE dot)
+if(DOXYGEN_DOT_EXE)
+  set(DOXYGEN_DOT_FOUND "YES")
+else()
+  message(STATUS "Install Graphviz package to enable include graph generation")
+  set(DOXYGEN_DOT_FOUND "NO")
 endif()
 
 # we use one global Doxyfile
@@ -38,8 +50,8 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/Doxyfile.in
 # it always outputs a symbolic doc dir to avoid clashing
 # with the target "doc"
 add_custom_command(OUTPUT "DoxyfileDocDir"
-  COMMAND ${DOXYGEN_EXECUTABLE}
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   COMMENT "Running Doxygen...")
 set_source_files_properties("DoxyfileDocDir" PROPERTIES SYMBOLIC "on")
 
@@ -84,7 +96,7 @@ if(QTCREATOR_HELP_FILE)
     COMMAND
     ${QT_ASSISTANT_EXE} -register ${DOXYGEN_QCH_FILE}
     -collectionFile ${QTCREATOR_HELP_FILE} > /dev/null
-    DEPENDS ${DOXYGEN_QCH_FILE} 
+    DEPENDS ${DOXYGEN_QCH_FILE}
     COMMENT "Registering Qt help...") 
   set_source_files_properties("QtAssistantRegistration" PROPERTIES SYMBOLIC "on")
   # finally we can make it saying "make doc"
