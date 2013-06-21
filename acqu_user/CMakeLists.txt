@@ -16,14 +16,16 @@ add_library("lib${MOD}" SHARED ${SRCS})
 target_link_libraries("lib${MOD}" ${ROOT_LIBRARIES} libAcquMC libAcquRoot libAcquDAQ)
 set_target_properties("lib${MOD}" PROPERTIES LIBRARY_OUTPUT_NAME ${MOD})
 
-# the above defined additional "Dict" targets
-# prevents rootcint going crazy only because building Dict's
-# twice the same time in the same directory in parallel make
+# we add many additional files marked as "headers"
+# so they appear automatically in QtCreator
+file(GLOB_RECURSE ADDITIONAL_FILES "root/macros/*" "data*/*")
+set_source_files_properties(${ADDITIONAL_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
 
 
 # build finally the two executables which many people need desperately ^-^
+# it's enough to add the addtional files to the commonly used AcquRoot
 set(MOD "AcquRoot")
-add_executable(${MOD} "root/src/Main${MOD}.cc")
+add_executable(${MOD} "root/src/Main${MOD}.cc" ${ADDITIONAL_FILES})
 target_link_libraries(${MOD} libUserRoot)
 
 set(MOD "AcquMC")

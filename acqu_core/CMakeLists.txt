@@ -70,6 +70,11 @@ endforeach()
 # now build the binaries (but only if DAQ mode is on!),
 # the libs EG and Foam are yet another ROOT libraries
 if(ACQU_DAQ)
+  # we add many additional files marked as "headers"
+  # so they appear automatically in QtCreator
+  file(GLOB_RECURSE ADDITIONAL_FILES "*/macros/*" "*/data/*")
+  set_source_files_properties(${ADDITIONAL_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
+
   foreach(exesrc ${CORE_EXESRCS})
     # guess the executable name from the source file.
     # Remove leading "Main" (if any) and trailing ".cc"
@@ -81,7 +86,7 @@ if(ACQU_DAQ)
     # add the exe as target, only in DAQ mode
     # so targets here do not to interfere with
     # targets in acqu_user
-    add_executable(${EXENAME} ${exesrc})
+    add_executable(${EXENAME} ${exesrc} ${ADDITIONAL_FILES})
     set_target_properties(${EXENAME}
       PROPERTIES OUTPUT_NAME ${EXENAME})
     target_link_libraries(${EXENAME} ${CORE_LIBS})
