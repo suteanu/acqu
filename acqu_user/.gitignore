@@ -1,7 +1,3 @@
-# ignore ROOT dictionaries
-/root/src/UserDict.*
-/root/src-mc/MCDict.*
-
 # ignore some commonly used 
 # data output/input folders
 # the "data" directory itself 

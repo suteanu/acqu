@@ -11,6 +11,9 @@ function (ROOT_GENERATE_DICTIONARY HEADERS LINKDEF_FILE DICTFILE INCLUDE_DIRS)
   get_filename_component(DICTFILENAME ${DICTFILE} NAME)
   set(DICTFILES ${DICTFILE} "${DICTFILEDIR}/${DICTFILENAME_WE}.h")
 
+  # and ensure the output directory exists
+  file(MAKE_DIRECTORY ${DICTFILEDIR})
+  
   # prepare rootcint command
   if(CMAKE_SYSTEM_NAME MATCHES Linux)
     set(LDPREFIX "LD_LIBRARY_PATH")
@@ -73,7 +76,7 @@ function(ROOT_PREPARE_LIB SOURCEDIRS INCDIRS LINKDEFDIR DICTNAME
   #message("---- Setting up ROOT Dict ${DICTIONARY} from ${LINKDEFREL}")
 
   # make it absolute
-  set(DICTIONARY "${CMAKE_CURRENT_SOURCE_DIR}/${DICTIONARY}")
+  set(DICTIONARY "${CMAKE_CURRENT_BINARY_DIR}/${DICTIONARY}")
   
   foreach(s ${SOURCEDIRS})
     #message("Scanning ${s} for sources...")

@@ -158,5 +158,5 @@ Find_Program(RLIBMAP_EXECUTABLE
   NO_DEFAULT_PATH
   )
 
-Include(ROOTHelpers)
+Include(FindROOTHelpers)
 

@@ -3,18 +3,13 @@ message(STATUS "Configuring acqu_core...")
 # the following feature helps us to get rid of
 # getenv("acqu"), getenv("acqu_sys"), getenv("ROOTSYS")
 # because we define this variables now at "configure" time!
-# note that the folder AcquRoot/src is already included
-# and we force the creation inside the source directory
-# to support correct out-of-source builds
-SET(ACQU_CONFIG_FILE "AcquRoot/src/CMakeConfig.h")
-file(REMOVE "${CMAKE_CURRENT_SOURCE_DIR}/${ACQU_CONFIG_FILE}")
-configure_file("${ACQU_CONFIG_FILE}.in"
-  "${CMAKE_CURRENT_SOURCE_DIR}/${ACQU_CONFIG_FILE}")
+set(ACQU_CONFIG_FILE "AcquRoot/src/CMakeConfig.h")
+configure_file("${CMAKE_SOURCE_DIR}/cmake/CMakeConfig.h.in" "${ACQU_CONFIG_FILE}")
 
 # use all "src" subfolders as include directories
 # this is also used by ROOT_PREPARE_LIB as arguments to rootcint 
 file(GLOB ALLSRCDIRS "*/src")
-include_directories(${ALLSRCDIRS})
+include_directories(${ALLSRCDIRS} "${CMAKE_CURRENT_BINARY_DIR}/AcquRoot/src")
 
 # This builds automagically all the ROOT-enabled libraries
 macro(CompileCoreLib MOD)
