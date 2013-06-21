@@ -5,6 +5,7 @@
 //--Rev 	JRM Annand... 9th Sep 2010  add data no-store
 //--Update	JRM Annand... 1st Oct 2012  print message when connecting
 //--Update  A Neiser...   6th June 2013  Make char_t* const
+//--Update  A Neiser...   21st June 2013 If no HOST set, listen on all devices
 //--Description
 //                *** AcquDAQ++ <-> Root ***
 // DAQ for Sub-Atomic Physics Experiments.
@@ -71,9 +72,9 @@ void TDAQstore::PostInit( )
   case EStoreDONet:
     if( (!fPacLen) || (fPacLen > fRecLen) ) fPacLen = fRecLen;
     lhost = getenv("HOST");
-    // if there's no HOST variable set, use localhost by default
+    // if there's no HOST variable set, listen on all interfaces by default
     if(lhost==NULL)
-        lhost = "localhost";
+        lhost = "0.0.0.0";
     fSocket = new ARSocket_t( "DAQ-Net-Socket", lhost, 
 			      fPort, ESkLocal, fRecLen, fPacLen, this );
     printf("<Waiting to connect to data receiver>\n");
