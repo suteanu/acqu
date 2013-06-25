@@ -1,0 +1,13 @@
+Stripped down version of AcquRoot that runs on:
+
+	- Monte Carlo data from the A2Geant simulation
+	- Data from December 2008
+	- Data from December 2012
+
+It will be updated to also run on May/June 2013 data very soon.
+
+It is based on Cristina Collicott's physics analysis.
+
+
+Dave Hornidge
+25.05.2013

@@ -61,7 +61,7 @@ Period:  5000         root/macros/PeriodMacro.C   PeriodMacro()
 #EndFile: root/macros/EndFileMacro.C   EndFileMacro()
 #        Macro file name              Macro funcion
 #Finish:  root/macros/FinishMacro.C    FinishMacro()
-Finish:  root/macros/FinishTree.C    FinishTree()
+#Finish:  root/macros/FinishTree.C    FinishTree()
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
