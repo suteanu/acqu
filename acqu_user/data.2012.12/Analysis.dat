@@ -50,22 +50,16 @@ BitPattern:  Trigger.Pat.dat
 ## Apparatus setup....
 ## Raw analysis may be performed without Apparati
 ##              Name            Class           	Setup file
-#Apparatus:      Misc	        TA2GenericApp  		TrigMisc.dat.13.07.07
 Apparatus:      TAGG            TA2Tagger   		Tagger_883.dat
 Apparatus:      CB              TA2CrystalBall		CB_PID.dat
-#Apparatus:      MWPC	        TA2GenericApp  		MWPC_Hits.dat
-#Apparatus:      TAPS            TA2Taps		  	TAPS.14.12.06.dat
-#Apparatus:      APPEPT	        TA2Tagger  		EPT_1604.dat
+Apparatus:      TAPS            TA2Taps		  	Taps.dat
 ##
 ## Turn on apparatus-level reconstruction
 Reconstruct-Analysis:
 ##
 ## Specify physics analysis
 ##			Name	Class		Config File
-#Physics-Analysis:	EtaM	TA2PhotoPhysics	CBTaggPhysics.dat
-#Physics-Analysis:	TRIG	TA2Trigger		Trigger.dat
 #Physics-Analysis:	Pi0	TA2PhotoPhysics	CBTaggPi0Physics.dat
-#Physics-Analysis:	PaPr	TA2ParaPerpTest	Cristina.dat
 Physics-Analysis:	Cris	TA2Cristina	Cristina.dat
 ##
 ## Do some post initialisation...usually necessary
@@ -75,7 +69,7 @@ Initialise:
 ## The procedures are usually held in macro script files
 ## Period...every N events
 ##		N	Macro File	Macro Procedure
-Period:	10000	PeriodMacro.C	PeriodMacro()
+Period:	50000	PeriodMacro.C	PeriodMacro()
 ##
 #Period:		1000	linPolMacro.C	linPolMacro()
 ##
@@ -84,9 +78,6 @@ Period:	10000	PeriodMacro.C	PeriodMacro()
 ##
 ## Finish...when all input data files processed
 #Finish:		FinishMacro.C	FinishMacro()
-Finish:  	        FinishMacro.C   FinishMacro("MainFile.root")
-#Finish:		ParaPerpFinish.C	ParaPerpFinish()
-#Finish:  
 ##
 ## Save all accepted events (ie those which pass all data cuts) to a
 ## ROOT file. Data saved in RAW format (ie ADC indices and values
@@ -116,11 +107,11 @@ Display: ADC 20401
 #
 ##
 ########### edited by Patrik
-########### EPT QDC's                  
-Display: ADC 1216 1263 
+########### EPT QDC's
+#Display: ADC 1216 1263 
 ########### EPT CATCH TDC's, 1st hit                  
-Display: MultiHit 1784 1799 300 -10000 5000 0   
-Display: MultiHit 1816 1847 300 -10000 5000 0             
+#Display: MultiHit 1784 1799 300 -10000 5000 0   
+#Display: MultiHit 1816 1847 300 -10000 5000 0             
 #
 ##########
 #
@@ -132,14 +123,14 @@ Display: MultiHit 1816 1847 300 -10000 5000 0
 #Display: MultiHit 1401 1751 1000 -3500 -2500 0
 #Display: MultiHit 1408 1431 1000 -2500 00 0
 #Display: MultiHit 1408 1431 2000 -10000  10000 0
-Display: MultiHit 1880 1911 3000 -20000  10000 0
+#Display: MultiHit 1880 1911 3000 -20000  10000 0
 #
 #Display: MultiHit 30252 30276 1000 -5000 5000 0
 ####Display: MultiHit 30201 30276 1000 -10000 0 0   backup
 ##
 ## PID TDCs
-Display: MultiHit 2001 2006 1000 -3000 2000 0
-Display: MultiHit 2008 2031 1000 -5000 -2000 0
+#Display: MultiHit 2001 2006 1000 -3000 2000 0
+#Display: MultiHit 2008 2031 1000 -5000 -2000 0
 ##
 ## Tagger CATCH TDC's, 2nd hit
 #Display: MultiHit 1000 1127 2000 -1000 1000 0
@@ -156,7 +147,7 @@ Display: MultiHit 2008 2031 1000 -5000 -2000 0
 #####Display: MultiHit 2032 2752 2000 -3000 -1000 0
 #
 ## CATCH TDCs CB input by Marc and Michaela
-Display: MultiHit 2032 2752 3000 -3000 3000 0
+#Display: MultiHit 2032 2752 3000 -3000 3000 0
 #
 # Hitogramming of MWPC ADC & TDCS added by E.J.D. 20/02/09
 #

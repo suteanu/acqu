@@ -601,6 +601,8 @@ void TA2Cristina::Reconstruct()
 			fTaggerPi0Time[fNTaggNPi0] 	= taggerphoton.GetTime() - fPi0Time[i];
 			TA2Particle pi0   	 	= *fPi0[i];
 
+//			std::cout << taggerphoton.GetE() << std::endl;
+
 			TLorentzVector p4incident , p4missing, p4;
  			p4	   = pi0.GetP4();
 			p4incident = fP4target[0] + taggerphoton.GetP4();

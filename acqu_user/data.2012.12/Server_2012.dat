@@ -16,7 +16,7 @@ Input-Streams:	1		32768		0
 ##
 ## Optional directory spec. If not specified File-Names must contain the full
 ## directory path
-File-Directory:	scratch/
+File-Directory:	/data1/CBTAPS_data/December2012/
 ##
 ## Specify each input stream
 ## From disk file, ACQU (Mk1) format, save any output to file (save=1)
