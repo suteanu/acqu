@@ -27,6 +27,7 @@
 #include "TA2MesonPhysics.h"
 #include "TA2BasePhysics.h"
 #include "TA2TriggerPhysics.h"
+#include "TA2Pi0Compton.h"
 #include "TA2Cristina.h"
 #include "TA2MyCrystalBall.h"
 #include "TA2MyTAPS.h"
@@ -40,10 +41,19 @@
 // Recognised apparatus classes.
 // The "standard" set is held in TA2Analysis
 enum { EA2Calorimeter,
-       EA2Tagger, EA2CosmicCal,
-       EA2CrystalBall, EA2CB, EA2Taps,
-       EA2CentralApparatus, EA2GenericApp,
-       EA2Physics, EA2UserPhysics, EA2MesonPhysics, EA2BasePhysics, EA2TriggerPhysics,
+       EA2Tagger,
+		 EA2CosmicCal,
+       EA2CrystalBall,
+		 EA2CB,
+		 EA2Taps,
+       EA2CentralApparatus,
+		 EA2GenericApp,
+       EA2Physics,
+		 EA2UserPhysics,
+		 EA2MesonPhysics,
+		 EA2BasePhysics,
+		 EA2TriggerPhysics,
+       EA2Pi0Compton,
        EA2Cristina,
        EA2MyCrystalBall, 
        EA2MyTAPS,
@@ -67,7 +77,8 @@ static const Map_t kKnownChild[] =
   {"TA2MyCrystalBall",    EA2MyCrystalBall},
   {"TA2MyTAPS",           EA2MyTAPS},
   //Physics
-  {"TA2Cristina",	  EA2Cristina},
+  {"TA2Pi0Compton",       EA2Pi0Compton},
+  {"TA2Cristina",         EA2Cristina},
   {"TA2Physics",          EA2Physics},
   {"TA2UserPhysics",      EA2UserPhysics},
   {"TA2MesonPhysics",     EA2MesonPhysics},
@@ -137,6 +148,9 @@ TA2DataManager* TA2UserAnalysis::CreateChild(const char* name, Int_t a)
     return new TA2MyTAPS( name, this );
 
    //Physics stuff:
+   case EA2Pi0Compton:
+    // Dave's Physics class
+    return new TA2Pi0Compton( name, this );
    case EA2Cristina:
     // Cristina's Physics class
     return new TA2Cristina( name, this );

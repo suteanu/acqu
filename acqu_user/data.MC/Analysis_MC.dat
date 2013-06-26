@@ -24,7 +24,6 @@ MultiADC:       3            5000          5319        30    30    30
 #           Name     Class		           Configuration file
 Apparatus:  TAGG     TA2Tagger       		   Tagger_MC.dat
 Apparatus:  CB	     TA2CrystalBall		   CB_MC.dat
-#Apparatus:  CB       TA2CentralApparatus           CentralApparatus_MC.dat
 Apparatus:  TAPS     TA2Taps         		   TAPS_MC.dat
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #
@@ -37,11 +36,7 @@ Reconstruct-Analysis:
 #High-level physics analysis, processing 4-vectors produced by apparatus
 #classes.
 ##                 Name      Class                  Configuration File
-#Physics-Analysis:  Phys      TA2PhysicsPMartel      PhysicsPMartel_MC.dat
-#Physics-Analysis:  Phys      TA2MesonPhysics      BasePhysics_MC.dat
-#Physics-Analysis:  Phys      TA2PhysicsPMartel      BasePhysics_MC.dat
-#Physics-Analysis:  Phys      TA2BasePhysics      BasePhysics_MC.dat
-Physics-Analysis:   Phys	TA2Cristina	Cristina_MC.dat
+Physics-Analysis:   Phys	TA2Pi0Compton	Pi0Compton_MC.dat
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
