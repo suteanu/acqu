@@ -47,10 +47,10 @@ class TA2Pi0Compton : public TA2Physics {
 	TA2PlasticPID	*fVeto; 	// TAPS Vetos
 
 // Tree Files
-	TFile* 		fCristinaFile;
-	TTree* 		fCristinaTree;
+//	TFile* 		fCristinaFile;
+//	TTree* 		fCristinaTree;
 
-// Cristina Class Variables
+// Pi0Compton Class Variables
 	UInt_t 		fBasicVariable;	// BasicVariable
 	Double_t 	fInput;		
 	UInt_t 		i,j;
@@ -161,18 +161,18 @@ class TA2Pi0Compton : public TA2Physics {
 		virtual void SetConfig(Char_t*, Int_t);
 		virtual void Reconstruct();	// reconstruct detector info
 		virtual TA2DataManager* CreateChild( const char*, Int_t ){ return NULL;}
-		virtual void CloseTrees();
+//		virtual void CloseTrees();
 	ClassDef(TA2Pi0Compton,1)
 };
 
-// ----------------------------------------------------------------------------
-
+/*
 inline void TA2Pi0Compton::CloseTrees() {
 
     fCristinaFile->cd();
     fCristinaTree->Write();
     fCristinaFile->Close();
 
-}	
+}
+*/
 
 #endif

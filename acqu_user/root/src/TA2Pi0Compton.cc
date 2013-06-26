@@ -1,10 +1,7 @@
-//--Author	Cristina C   14th Nov 2011   Basic Form
-// PDG codes of particles generlly observed MAMI-B
-// kElectron 11,     kPositron -11
-// kMuonMinus 13     kMuonPlus -13      kGamma 22
-// kPi0 111          kPiPlus 211        kPiMinus -211       kEta 221
-// kProton 2212      kNeutron 2112
-// 
+//--Author	Dave H   26 June 2013
+//
+//				Based on TA2Cristina
+//
 
 #include "TA2Pi0Compton.h"
 
@@ -32,10 +29,7 @@ TA2Pi0Compton::TA2Pi0Compton( const char* name, TA2Analysis* analysis )
 	fBaF2			= NULL;	// BaF2
 	fVeto			= NULL; // TAPS Vetos
 
-// Imported Variables
-
-
-// Cristina Variables
+// Physics Variables
 	fBasicVariable 		= 0;
 
 	// Particle Counters
@@ -116,8 +110,10 @@ TA2Pi0Compton::~TA2Pi0Compton()
 {
 
 // Delete Tree Files
-	delete fCristinaTree;
-	delete fCristinaFile;
+
+// Shut off for now
+//	delete fCristinaTree;
+//	delete fCristinaFile;
 
 }
 	
@@ -261,8 +257,8 @@ void TA2Pi0Compton::PostInit()
 	fPi0PhiPrompt		= new Double_t[352*fMaxNParticle*fMaxNParticle];
 	fPi0PhiRandom		= new Double_t[352*fMaxNParticle*fMaxNParticle];
 
+/*
 // Create Tree Files, Define Branches
-
 	fCristinaFile = new TFile("TA2Pi0Compton.root", "RECREATE", "Cristina", 3);
 	fCristinaTree = new TTree("TA2Pi0ComptonTree", "Compton Kinematics");
 	fCristinaTree->Branch("BasicVariable",	&fBasicVariable,"BasicVariable/I");
@@ -325,6 +321,7 @@ void TA2Pi0Compton::PostInit()
 	fCristinaTree->Branch("Pi0PhiRandom",		fPi0PhiRandom, 		"Pi0PhiRandom[NRandomPi0]/D");
 
 	gROOT->cd();
+*/
 	
 	// Default physics initialisation
 	TA2Physics::PostInit();
@@ -676,9 +673,11 @@ void TA2Pi0Compton::Reconstruct()
 	fPi0PhiPrompt[fNPromptPi0]		= EBufferEnd;
 	fPi0PhiRandom[fNRandomPi0]		= EBufferEnd;
 
+/*
 // Fill Tree File
 	fBasicVariable = 4; 
 	fCristinaTree->Fill();
+*/
 
 }
 
