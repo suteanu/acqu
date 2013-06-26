@@ -32,7 +32,7 @@ void TProcessor::Run()
   Running = true;
 
   sprintf(Log, "Thread%XLog.txt", Number);
-  sprintf(Line, "$acqu/bin/AcquRoot --batch %s >> %s 2>&1", Config, Log);
+  sprintf(Line, "AcquRoot --batch %s >> %s 2>&1", Config, Log);
   gSystem->Exec(Line);
 
   Running = false;
