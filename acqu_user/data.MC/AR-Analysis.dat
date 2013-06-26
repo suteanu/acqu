@@ -1,6 +1,5 @@
 #------------------------------------------------------------------------------
 #                    Configuration file for MC analysis
-#             (AcquRoot 4v4 user package demonstration analysis)
 #------------------------------------------------------------------------------
 #
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -22,9 +21,9 @@ MultiADC:       3            5000          5319        30    30    30
 #Set-up of apparatus classes (CB, TAPS, Tagger). See their configuration files
 #for details of detector (PID, NaI, BaF2, ...) options
 #           Name     Class		           Configuration file
-Apparatus:  TAGG     TA2Tagger       		   Tagger_MC.dat
-Apparatus:  CB	     TA2CrystalBall		   CB_MC.dat
-Apparatus:  TAPS     TA2Taps         		   TAPS_MC.dat
+Apparatus:  TAGG     TA2Tagger       		   AR-Analysis-Tagger.dat
+Apparatus:  CB	     TA2CrystalBall		   AR-Analysis-CB.dat
+Apparatus:  TAPS     TA2Taps         		   AR-Analysis-TAPS.dat
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -36,7 +35,7 @@ Reconstruct-Analysis:
 #High-level physics analysis, processing 4-vectors produced by apparatus
 #classes.
 ##                 Name      Class                  Configuration File
-Physics-Analysis:   Phys	TA2Pi0Compton	Pi0Compton_MC.dat
+Physics-Analysis:   PHYS	TA2Pi0Compton	AR-Analysis-Pi0Compton.dat
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -64,4 +63,3 @@ Period:  5000         root/macros/PeriodMacro.C   PeriodMacro()
 #file. Data is saved in RAW format (i.e. only ADC indices and values).
 #Save-Event:
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#

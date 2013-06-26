@@ -50,7 +50,7 @@ TreeFile:  simfiles/compton/LH2_10cm/compton_p_200_out.root
 #
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #Directory to save any created ROOT files (include final '/')
-Directory:  output/
+Directory:  saved/
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -65,6 +65,5 @@ SetADC:  40000   640	 12
 #Class name for analysis class to be used in further processing
 Analysis:      TA2UserAnalysis
 #Configuration file for selected analysis class
-AnalysisSetup: Analysis_MC.dat
+AnalysisSetup: AR-Analysis.dat
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#
