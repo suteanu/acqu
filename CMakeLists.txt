@@ -47,7 +47,7 @@ add_subdirectory(acqu_core)
 if(NOT ACQU_DAQ)
   add_subdirectory(OSCAR)
   add_subdirectory(CaLib)
-  add_subdirectory(Worker/AR)
+  add_subdirectory(Worker)
   add_subdirectory(acqu_user)
 endif()
 
