@@ -1,6 +1,9 @@
-//--Author	Dave H   26 June 2013
 //
-//				Based on TA2Cristina
+//  TA2Pi0Compton
+//
+//  Basic physics class for pi0 production and Compton scattering.
+//
+//--Author	Dave Hornidge   26 June 2013
 //
 
 #include "TA2Pi0Compton.h"
@@ -30,7 +33,6 @@ TA2Pi0Compton::TA2Pi0Compton( const char* name, TA2Analysis* analysis )
 	fVeto			= NULL; // TAPS Vetos
 
 // Physics Variables
-	fBasicVariable 		= 0;
 
 	// Particle Counters
 	fNPhotTemp		= 0;
@@ -261,7 +263,6 @@ void TA2Pi0Compton::PostInit()
 // Create Tree Files, Define Branches
 	fCristinaFile = new TFile("TA2Pi0Compton.root", "RECREATE", "Cristina", 3);
 	fCristinaTree = new TTree("TA2Pi0ComptonTree", "Compton Kinematics");
-	fCristinaTree->Branch("BasicVariable",	&fBasicVariable,"BasicVariable/I");
 	fCristinaTree->Branch("NPhotTemp",	&fNPhotTemp, 	"NPhotTemp/I");
 	fCristinaTree->Branch("NPhoton",	&fNPhoton, 	"NPhoton/I");
 	fCristinaTree->Branch("NProton",	&fNProton, 	"NProton/I");
@@ -334,7 +335,6 @@ void TA2Pi0Compton::LoadVariable( )
 // Input name - variable pointer associations for any subsequent cut/histogram setup
 
 	TA2Physics::LoadVariable();
-	TA2DataManager::LoadVariable("BasicVariable", 		&fBasicVariable, 		EISingleX);
 
 	TA2DataManager::LoadVariable("NPhoton", 		&fNPhoton,			EISingleX);
 	TA2DataManager::LoadVariable("PhotonTheta", 		fPhotonTheta,			EDMultiX);
@@ -672,12 +672,6 @@ void TA2Pi0Compton::Reconstruct()
 	fPi0ThetaRandom[fNRandomPi0]		= EBufferEnd;
 	fPi0PhiPrompt[fNPromptPi0]		= EBufferEnd;
 	fPi0PhiRandom[fNRandomPi0]		= EBufferEnd;
-
-/*
-// Fill Tree File
-	fBasicVariable = 4; 
-	fCristinaTree->Fill();
-*/
 
 }
 
