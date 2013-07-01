@@ -526,12 +526,21 @@ void TA2Cristina::Reconstruct()
 	fNPrompt	= 0;
 	fNRandom	= 0;
 
-	fPhotTimePL = -190;
-	fPhotTimePR = -165;
-	fPhotTimeRL1 = -240;
-	fPhotTimeRR1 = -200;
-	fPhotTimeRL2 = -140;
-	fPhotTimeRR2 = -100;
+	//Dec 2012
+//	fPhotTimePL = -190;
+//	fPhotTimePR = -165;
+//	fPhotTimeRL1 = -240;
+//	fPhotTimeRR1 = -200;
+//	fPhotTimeRL2 = -140;
+//	fPhotTimeRR2 = -100;
+
+	//Dec 2008
+	fPhotTimePL = 90;
+	fPhotTimePR = 105;
+	fPhotTimeRL1 = 10;
+	fPhotTimeRR1 = 80;
+	fPhotTimeRL2 = 115;
+	fPhotTimeRR2 = 185;
 
 	for (i = 0; i < fNTagg; i++) {
 		fTaggerChannel[i] 	 = (fLADD->GetHits())[i];
@@ -585,12 +594,21 @@ void TA2Cristina::Reconstruct()
 	fNPromptPi0	= 0;
 	fNRandomPi0	= 0;
 
-	fPi0TimePL = -185;
-	fPi0TimePR = -165;
-	fPi0TimeRL1 = -240;
-	fPi0TimeRR1 = -200;
-	fPi0TimeRL2 = -140;
-	fPi0TimeRR2 = -100;
+	//Dec 2012
+//	fPi0TimePL = -185;
+//	fPi0TimePR = -165;
+//	fPi0TimeRL1 = -240;
+//	fPi0TimeRR1 = -200;
+//	fPi0TimeRL2 = -140;
+//	fPi0TimeRR2 = -100;
+
+	//Dec 2008
+	fPi0TimePL  = 95;
+	fPi0TimePR  = 105;
+	fPi0TimeRL1 = 10;
+	fPi0TimeRR1 = 80;
+	fPi0TimeRL2 = 115;
+	fPi0TimeRR2 = 185;
 
 	for (i = 0; i < fNPi0; i++)  {
 
@@ -600,8 +618,6 @@ void TA2Cristina::Reconstruct()
 			TA2Particle taggerphoton 	= *fTaggedPhoton[j];
 			fTaggerPi0Time[fNTaggNPi0] 	= taggerphoton.GetTime() - fPi0Time[i];
 			TA2Particle pi0   	 	= *fPi0[i];
-
-//			std::cout << taggerphoton.GetE() << std::endl;
 
 			TLorentzVector p4incident , p4missing, p4;
  			p4	   = pi0.GetP4();
