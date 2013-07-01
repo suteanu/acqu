@@ -52,9 +52,9 @@ BitPattern:  Trigger.Pat.dat
 ##              Name            Class           	Setup file
 #Apparatus:      Misc	        TA2GenericApp  		TrigMisc.dat.13.07.07
 Apparatus:      TAGG            TA2Tagger   		Tagger_883.dat
-Apparatus:      CB              TA2CrystalBall		CB_PID.dat
+Apparatus:      CB              TA2CrystalBall		CB.dat
 #Apparatus:      MWPC	        TA2GenericApp  		MWPC_Hits.dat
-Apparatus:      TAPS            TA2Taps		  	TAPS.14.12.06.dat
+Apparatus:      TAPS            TA2Taps		  	TAPS.dat
 #Apparatus:      APPEPT	        TA2Tagger  		EPT_1604.dat
 ##
 ## Turn on apparatus-level reconstruction
