@@ -6,6 +6,10 @@
 #
 Target:	0. 0. 0.	938.271  #Used by TA2Physics.cc
 Input: 3.
+Compton-Prompt-Windows: -190 -165
+Compton-Random-Windows: -240 -200 -140 -100
+Pi0-Prompt-Windows: -185 -165
+Pi0-Random-Windows: -240 -200 -140 -100
 #
 Initialise:
 #

@@ -5,6 +5,11 @@
 ## Should usually be done before display is setup
 #
 Target:	0. 0. 0.	938.271  #Used by TA2Physics.cc
+Input: 3.
+Compton-Prompt-Windows: 90 105
+Compton-Random-Windows: 10 80 115 185
+Pi0-Prompt-Windows: 95 105
+Pi0-Random-Windows: 10 80 115 185
 #
 Initialise:
 #

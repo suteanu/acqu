@@ -8,9 +8,13 @@
 
 #include "TA2Cristina.h"
 
-enum { EInput = 1000};
+enum { EInput = 1000, EComptonPromptWindows, EComptonRandomWindows, EPi0PromptWindows, EPi0RandomWindows};
 static const Map_t kInputs[] = {
-	{"Input:",	EInput},
+	{"Input:",			EInput},
+	{"Compton-Prompt-Windows:",	EComptonPromptWindows},
+	{"Compton-Random-Windows:",	EComptonRandomWindows},
+	{"Pi0-Prompt-Windows:",		EPi0PromptWindows},
+	{"Pi0-Random-Windows:",		EPi0RandomWindows},
 	{NULL,          -1}
 };
 
@@ -128,12 +132,40 @@ void TA2Cristina::SetConfig(Char_t* line, Int_t key)
 
 	switch (key){
 		case EInput:
-			//  Invariant mass limits
-			if( sscanf( line, "%lf", &fInput ) != 1 ){
+			//  Example input (double)
+			if( sscanf( line, "%lf\n", &fInput ) != 1 ){
 				PrintError( line, "<OOOOPS...>");
 				return;
 			}
-			break;
+		break;
+		case EComptonPromptWindows:
+			//  Compton Prompt Windows
+			if( sscanf( line, "%d %d\n", &fPhotTimePL, &fPhotTimePR ) != 2 ){
+				PrintError( line, "<Error: Compton Prompt Windows not set correctly>");
+				return;
+			}
+		break;
+		case EComptonRandomWindows:
+			//  Compton Random Windows
+			if( sscanf( line, "%d %d %d %d\n", &fPhotTimeRL1, &fPhotTimeRR1, &fPhotTimeRL2, &fPhotTimeRR2 ) != 4 ){
+				PrintError( line, "<Error: Compton Random Windows not set correctly>");
+				return;
+			}
+		break;
+		case EPi0PromptWindows:
+			//  Pi0 Prompt Windows
+			if( sscanf( line, "%d %d\n", &fPi0TimePL, &fPi0TimePR ) != 2 ){
+				PrintError( line, "<Error: Pi0 Prompt Windows not set correctly>");
+				return;
+			}
+		break;
+		case EPi0RandomWindows:
+			//  Pi0 Random Windows
+			if( sscanf( line, "%d %d %d %d\n", &fPi0TimeRL1, &fPi0TimeRR1, &fPi0TimeRL2, &fPi0TimeRR2 ) != 4 ){
+				PrintError( line, "<Error: Pi0 Random Windows not set correctly>");
+				return;
+			}
+		break;
 		default:
 		// default main apparatus SetConfig()
 		TA2Physics::SetConfig( line, key );
@@ -542,12 +574,12 @@ void TA2Cristina::Reconstruct()
 //	fPhotTimeRR2 = -100;
 
 	//Dec 2008
-	fPhotTimePL = 90;
-	fPhotTimePR = 105;
-	fPhotTimeRL1 = 10;
-	fPhotTimeRR1 = 80;
-	fPhotTimeRL2 = 115;
-	fPhotTimeRR2 = 185;
+//	fPhotTimePL = 90;
+//	fPhotTimePR = 105;
+//	fPhotTimeRL1 = 10;
+//	fPhotTimeRR1 = 80;
+//	fPhotTimeRL2 = 115;
+//	fPhotTimeRR2 = 185;
 
 	for (i = 0; i < fNPhoton; i++)  {
 
@@ -567,10 +599,8 @@ void TA2Cristina::Reconstruct()
 
 				fTaggerChannelPrompt[fNPrompt]  = fTaggerChannel[j];
 				fMissingMassPrompt[fNPrompt]	= p4missing.M();
-//				printf("i = %d , fPhotonTheta[i] = %f, fPhotonPhi[i] = %f \n", i, fPhotonTheta[i], fPhotonPhi[i]);
 				fPhotonThetaPrompt[fNPrompt]	= fPhotonTheta[i];
 				fPhotonPhiPrompt[fNPrompt]	= fPhotonPhi[i];
-//				printf("fPhotonThetaPrompt[i] = %f, fPhotonPhiPrompt[i] = %f \n\n", i, fPhotonThetaPrompt[i], fPhotonPhiPrompt[i]);
 				fNPrompt++;
 			}
 
@@ -603,12 +633,12 @@ void TA2Cristina::Reconstruct()
 //	fPi0TimeRR2 = -100;
 
 	//Dec 2008
-	fPi0TimePL  = 95;
-	fPi0TimePR  = 105;
-	fPi0TimeRL1 = 10;
-	fPi0TimeRR1 = 80;
-	fPi0TimeRL2 = 115;
-	fPi0TimeRR2 = 185;
+//	fPi0TimePL  = 95;
+//	fPi0TimePR  = 105;
+//	fPi0TimeRL1 = 10;
+//	fPi0TimeRR1 = 80;
+//	fPi0TimeRL2 = 115;
+//	fPi0TimeRR2 = 185;
 
 	for (i = 0; i < fNPi0; i++)  {
 

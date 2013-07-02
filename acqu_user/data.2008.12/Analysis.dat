@@ -45,7 +45,7 @@ BitPattern:  Trigger.Pat
 #Apparatus:	TAGG		TA2Tagger		Tagger_855_LP.dat
 Apparatus:	TAGG		TA2Tagger		Tagger_855.dat
 Apparatus:	CB		TA2CrystalBall		CB.dat
-Apparatus:	TAPS		TA2Taps			TAPS.dat
+#Apparatus:	TAPS		TA2Taps			TAPS.dat
 ##
 ## Turn on apparatus-level reconstruction
 Reconstruct-Analysis:
