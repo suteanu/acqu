@@ -183,7 +183,7 @@ void TA2Cristina::PostInit()
 	// TAPS
 	fTAPS = (TA2Taps*)((TA2Analysis*)fParent)->GetChild("TAPS");
 	if ( !fTAPS) printf("TAPS *NOT* included in analysis\n");
-	else {  printf("TAPS included in analysis\n");
+	else {  printf("TAPS included in analysis hetttyyysyshsb\n");
 		fTAPSParticles = fTAPS->GetParticles(); }
 
 	// BaF2
@@ -522,6 +522,13 @@ void TA2Cristina::Reconstruct()
 
 	fNTagg		= fTAGGNParticle;
 
+	for (i = 0; i < fNTagg; i++) {
+		fTaggerChannel[i] 	 = (fLADD->GetHits())[i];
+		fTaggedPhoton[i] 	 = fTAGGParticles+i;
+		TA2Particle taggerphoton = *fTaggedPhoton[i];
+		fTaggerTime[i]	 	 = taggerphoton.GetTime();
+	} 
+
 	fNTaggNPhot	= 0;
 	fNPrompt	= 0;
 	fNRandom	= 0;
@@ -542,35 +549,30 @@ void TA2Cristina::Reconstruct()
 	fPhotTimeRL2 = 115;
 	fPhotTimeRR2 = 185;
 
-	for (i = 0; i < fNTagg; i++) {
-		fTaggerChannel[i] 	 = (fLADD->GetHits())[i];
-		fTaggedPhoton[i] 	 = fTAGGParticles+i;
-		TA2Particle taggerphoton = *fTaggedPhoton[i];
-		fTaggerTime[i]	 	 = taggerphoton.GetTime();
-	} 
-
-
 	for (i = 0; i < fNPhoton; i++)  {
 
 		for (j = 0; j < fNTagg; j++) {
 
 //			fTaggedPhoton[j] 		= fTAGGParticles+j;
 			TA2Particle taggerphoton 	= *fTaggedPhoton[j];
-			fTaggerPhotonTime[fNTaggNPhot] 	= taggerphoton.GetTime() - fPhotonTime[i];
+			fTaggerPhotonTime[fNTaggNPhot] 	= fTaggerTime[j] - fPhotonTime[i];
 			TA2Particle photon   		= *fPhoton[i];
 
 			TLorentzVector p4incident , p4missing;
 			p4incident = fP4target[0] + taggerphoton.GetP4();
 			p4missing  = p4incident   - photon.GetP4();
 
+			printf("fTaggerPhotonTime[fNTaggNPhot] = %f \n", fTaggerPhotonTime[fNTaggNPhot] );
+
 			if ( (fTaggerPhotonTime[fNTaggNPhot] >= fPhotTimePL && fTaggerPhotonTime[fNTaggNPhot] <= fPhotTimePR) ||
 			  	(gAR->GetProcessType() == EMCProcess) ) {
 
 				fTaggerChannelPrompt[fNPrompt]  = fTaggerChannel[j];
 				fMissingMassPrompt[fNPrompt]	= p4missing.M();
+				printf("i = %d , fPhotonTheta[i] = %f, fPhotonPhi[i] = %f \n", i, fPhotonTheta[i], fPhotonPhi[i]);
 				fPhotonThetaPrompt[fNPrompt]	= fPhotonTheta[i];
 				fPhotonPhiPrompt[fNPrompt]	= fPhotonPhi[i];
-
+				printf("fPhotonThetaPrompt[i] = %f, fPhotonPhiPrompt[i] = %f \n\n", i, fPhotonThetaPrompt[i], fPhotonPhiPrompt[i]);
 				fNPrompt++;
 			}
 
