@@ -53,7 +53,8 @@ class TA2Cristina : public TA2Physics {
 
 // Cristina Class Variables
 	UInt_t 		fBasicVariable;	// BasicVariable
-	Double_t 	fInput;		
+	Double_t 	fInput;	
+	Int_t		fProduceTreeFile;
 	UInt_t 		i,j;
 
 	// Particle Information

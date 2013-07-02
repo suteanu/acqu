@@ -8,13 +8,14 @@
 
 #include "TA2Cristina.h"
 
-enum { EInput = 1000, EComptonPromptWindows, EComptonRandomWindows, EPi0PromptWindows, EPi0RandomWindows};
+enum { EInput = 1000, EComptonPromptWindows, EComptonRandomWindows, EPi0PromptWindows, EPi0RandomWindows, EProduceTreeFile};
 static const Map_t kInputs[] = {
 	{"Input:",			EInput},
 	{"Compton-Prompt-Windows:",	EComptonPromptWindows},
 	{"Compton-Random-Windows:",	EComptonRandomWindows},
 	{"Pi0-Prompt-Windows:",		EPi0PromptWindows},
 	{"Pi0-Random-Windows:",		EPi0RandomWindows},
+	{"Produce-Tree-File:",		EProduceTreeFile},
 	{NULL,          -1}
 };
 
@@ -166,6 +167,15 @@ void TA2Cristina::SetConfig(Char_t* line, Int_t key)
 				return;
 			}
 		break;
+		case EProduceTreeFile:
+			//  Pi0 Random Windows
+			if( sscanf( line, "%d\n", &fProduceTreeFile) != 1 ){
+				PrintError( line, "<Error: Tree files not turned on/off correctly>");
+				return;
+			}
+			if(fProduceTreeFile == 1) printf("Tree Files have been activated.\n");
+		break;
+
 		default:
 		// default main apparatus SetConfig()
 		TA2Physics::SetConfig( line, key );
