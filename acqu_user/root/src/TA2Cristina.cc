@@ -183,7 +183,7 @@ void TA2Cristina::PostInit()
 	// TAPS
 	fTAPS = (TA2Taps*)((TA2Analysis*)fParent)->GetChild("TAPS");
 	if ( !fTAPS) printf("TAPS *NOT* included in analysis\n");
-	else {  printf("TAPS included in analysis hetttyyysyshsb\n");
+	else {  printf("TAPS included in analysis\n");
 		fTAPSParticles = fTAPS->GetParticles(); }
 
 	// BaF2
@@ -263,7 +263,7 @@ void TA2Cristina::PostInit()
 
 // Create Tree Files, Define Branches
 
-	fCristinaFile = new TFile("TA2Cristina.root", "RECREATE", "Cristina", 3);
+	fCristinaFile = new TFile("/work0/cristina/TA2Cristina.root", "RECREATE", "Cristina", 3);
 	fCristinaTree = new TTree("TA2CristinaTree", "Compton Kinematics");
 	fCristinaTree->Branch("BasicVariable",	&fBasicVariable,"BasicVariable/I");
 	fCristinaTree->Branch("NPhotTemp",	&fNPhotTemp, 	"NPhotTemp/I");
@@ -562,17 +562,15 @@ void TA2Cristina::Reconstruct()
 			p4incident = fP4target[0] + taggerphoton.GetP4();
 			p4missing  = p4incident   - photon.GetP4();
 
-			printf("fTaggerPhotonTime[fNTaggNPhot] = %f \n", fTaggerPhotonTime[fNTaggNPhot] );
-
 			if ( (fTaggerPhotonTime[fNTaggNPhot] >= fPhotTimePL && fTaggerPhotonTime[fNTaggNPhot] <= fPhotTimePR) ||
 			  	(gAR->GetProcessType() == EMCProcess) ) {
 
 				fTaggerChannelPrompt[fNPrompt]  = fTaggerChannel[j];
 				fMissingMassPrompt[fNPrompt]	= p4missing.M();
-				printf("i = %d , fPhotonTheta[i] = %f, fPhotonPhi[i] = %f \n", i, fPhotonTheta[i], fPhotonPhi[i]);
+//				printf("i = %d , fPhotonTheta[i] = %f, fPhotonPhi[i] = %f \n", i, fPhotonTheta[i], fPhotonPhi[i]);
 				fPhotonThetaPrompt[fNPrompt]	= fPhotonTheta[i];
 				fPhotonPhiPrompt[fNPrompt]	= fPhotonPhi[i];
-				printf("fPhotonThetaPrompt[i] = %f, fPhotonPhiPrompt[i] = %f \n\n", i, fPhotonThetaPrompt[i], fPhotonPhiPrompt[i]);
+//				printf("fPhotonThetaPrompt[i] = %f, fPhotonPhiPrompt[i] = %f \n\n", i, fPhotonThetaPrompt[i], fPhotonPhiPrompt[i]);
 				fNPrompt++;
 			}
 

@@ -115,6 +115,7 @@ Period:	100000	PeriodMacro.C	PeriodMacro()
 #Finish:		Finish.C	FinishData("Empty/SomeEmpty")
 #Finish:  	        FinishMacro.C   FinishMacro("21015.root")
 #Finish:		ParaPerpFinish.C	ParaPerpFinish()
+Finish: 		FinishTree.C	FinishTree()
 ##
 ## Save all accepted events (ie those which pass all data cuts) to a
 ## ROOT file. Data saved in RAW format (ie ADC indices and values
