@@ -9,12 +9,12 @@
 ## Parameter File: FPcomm.Offline
 ## Master parameter file for Acqu-Root analysis.
 ## Expected to reside in directory $acqu/data/
-## To use invoke for example... AcquRoot CBMC.Offline
+## To use invoke for example... AcquRoot --offline CBMC.Offline
 ##-----------------------------------------------------------------------
 ## Input data setup for Offline analysis...this info is ignored
 ## if no offline connection is used, ie can be left in.
 ## Tree name and # branches are used if storing filtered data in root tree
-## format or reading data from a chain of tree files.
+## format or reading data ( --offline ) from a chain of tree files.
 ## Process Type can be "Raw", "MC" or "Physics".
 ## For a standard Raw analysis 3 branches would normally be used.
 ## For MC input the number of branches depends on the format of the saved data
@@ -37,9 +37,11 @@ Branch:	  Mk1_Header            120000
 ##
 ## List of Tree files which will form the input TChain for --offline running
 #TreeFile: /scratch/jrma/CB_5324.rd0
+#TreeFile: /scratch/jrma/CB_5325.rd0
+#TreeFile: /scratch/jrma/CB_5326.rd0
 ##
 ## Directory to save any created ROOT files (include final / )
-Directory: saved/
+Directory: $acqu/
 ##
 ## Manual setup of ADC, Scaler, bits-in-ADC numbers
 ## Usually needed only where experiment header information is not given

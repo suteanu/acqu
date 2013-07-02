@@ -13,10 +13,12 @@
 ##
 ## Specify list of detectors which constitute the TAPS apparatus
 ##	  Name         Class Name		Setup file
-Detector: BaF2         TA2TAPS_BaF2		BaF2_Etp4_Apr07_cal13.dat  
+#Detector: BaF2         TA2TAPS_BaF2		BaF2_Etp4_Apr07_cal13.dat  
 #Detector: PbWO4        TA2PlasticPID		PbWO4.30.08.2012.dat
 #Detector: VetoBaF2     TA2PlasticPID		VetoBaF2.14.12.06.dat
-Detector: VetoBaF2      TA2TAPS_Veto		VetoBaF2.14.12.06.dat
+#
+Detector: BaF2       	TA2TAPS_BaF2		BaF2-PbWO4.dat
+Detector: VetoBaF2	TA2TAPS_Veto            Veto.dat
 ##
 ## Data reconstruction method for Crystal Ball 
 Reconstruct:

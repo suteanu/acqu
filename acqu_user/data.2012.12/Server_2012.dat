@@ -16,7 +16,7 @@ Input-Streams:	1		32768		0
 ##
 ## Optional directory spec. If not specified File-Names must contain the full
 ## directory path
-File-Directory:	/data1/CBTAPS_data/December2012/
+File-Directory:	scratch/
 ##
 ## Specify each input stream
 ## From disk file, ACQU (Mk1) format, save any output to file (save=1)
@@ -42,5 +42,5 @@ Stream-Spec:	File	Mk1	0	32768	32	0	400
 #
 ## Some December Threshold Pi0 Production Data; Perp polarization
 #
-File-Name:     Compton_385.dat 0 0
+File-Name:     Compton_385.dat 0 3000
 ## END
