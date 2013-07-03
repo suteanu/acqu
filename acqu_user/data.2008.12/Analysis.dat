@@ -54,10 +54,9 @@ Reconstruct-Analysis:
 ##			Name	Class		Config File
 #Physics-Analysis:	COMP	TA2Compton	ComptonPhysics.dat
 #Physics-Analysis:	THR	TA2ThreshPi0	ThrPi0Physics.dat
-Physics-Analysis:	CRIS	TA2Cristina	Cristina.dat
+Physics-Analysis:	PHYS	TA2Pi0Compton	Pi0Compton.dat
 #Physics-Analysis:	PaPr	TA2ParaPerpTest	Cristina.dat
-#Physics-Analysis:	TRIG	TA2Trigger	Trigger.dat
-#Physics-Analysis:	CRIS	TA2CristinaCompton	Trigger.dat
+
 ##
 ## Do some post initialisation...usually necessary
 Initialise:

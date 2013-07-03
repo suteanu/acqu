@@ -67,7 +67,7 @@ Reconstruct-Analysis:
 #Physics-Analysis:	Pi0	TA2PhotoPhysics	CBTaggPi0Physics.dat
 #Physics-Analysis:	PaPr	TA2ParaPerpTest	Cristina.dat
 #Physics-Analysis:	Cris	TA2Cristina	Cristina.dat
-Physics-Analysis:	PHYS	TA2Pi0Compton	Cristina.dat
+Physics-Analysis:	PHYS	TA2Pi0Compton	Pi0Compton.dat
 ##
 ## Do some post initialisation...usually necessary
 Initialise:
