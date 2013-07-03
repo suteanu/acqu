@@ -171,10 +171,11 @@ class TA2Cristina : public TA2Physics {
 
 inline void TA2Cristina::CloseTrees() {
 
-    fCristinaFile->cd();
-    fCristinaTree->Write();
-    fCristinaFile->Close();
-
+	if(fProduceTreeFile == 1) {
+    		fCristinaFile->cd();
+    		fCristinaTree->Write();
+    		fCristinaFile->Close();
+	}
 }	
 
 #endif

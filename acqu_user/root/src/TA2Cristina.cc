@@ -1,10 +1,4 @@
-//--Author	Cristina C   14th Nov 2011   Basic Form
-// PDG codes of particles generlly observed MAMI-B
-// kElectron 11,     kPositron -11
-// kMuonMinus 13     kMuonPlus -13      kGamma 22
-// kPi0 111          kPiPlus 211        kPiMinus -211       kEta 221
-// kProton 2212      kNeutron 2112
-// 
+//--Author	Cristina Collicott   June 2013   Compton and Pi0 analysis
 
 #include "TA2Cristina.h"
 
@@ -36,9 +30,6 @@ TA2Cristina::TA2Cristina( const char* name, TA2Analysis* analysis )
 
 	fBaF2			= NULL;	// BaF2
 	fVeto			= NULL; // TAPS Vetos
-
-// Imported Variables
-
 
 // Cristina Variables
 	fBasicVariable 		= 0;
@@ -111,7 +102,6 @@ TA2Cristina::TA2Cristina( const char* name, TA2Analysis* analysis )
 	fPi0PhiPrompt		= NULL;
 	fPi0PhiRandom		= NULL;
 
-
 	AddCmdList(kInputs);
 }
 
@@ -121,8 +111,9 @@ TA2Cristina::~TA2Cristina()
 {
 
 // Delete Tree Files
-	delete fCristinaTree;
-	delete fCristinaFile;
+//
+//	delete fCristinaTree;
+//	delete fCristinaFile;
 
 }
 	
@@ -173,7 +164,8 @@ void TA2Cristina::SetConfig(Char_t* line, Int_t key)
 				PrintError( line, "<Error: Tree files not turned on/off correctly>");
 				return;
 			}
-			if(fProduceTreeFile == 1) printf("Tree Files have been activated.\n");
+			if(fProduceTreeFile == 1) printf("\n\nPhysics tree file enabled\n");
+                        else printf("\n\nPhysics tree file disabled\n");
 		break;
 
 		default:
@@ -188,7 +180,6 @@ void TA2Cristina::PostInit()
 {
 
 // Introduce Detectors
-	printf("\n");
 
 	// Tagger
 	fTAGG = (TA2Tagger*)((TA2Analysis*)fParent)->GetChild("TAGG");
@@ -238,6 +229,7 @@ void TA2Cristina::PostInit()
 //	if (!fVeto) printf(" - BaF2 Vetos NOT included in analysis\n\n");
 //	else printf(" - BaF2 Vetos included in analysis\n\n");
 
+	printf("\n");
 
 // Get max # of Particles from detectors, used for defining array sizes
 
@@ -303,7 +295,9 @@ void TA2Cristina::PostInit()
 	fPi0PhiPrompt		= new Double_t[352*fMaxNParticle*fMaxNParticle];
 	fPi0PhiRandom		= new Double_t[352*fMaxNParticle*fMaxNParticle];
 
-// Create Tree Files, Define Branches
+// Create Tree Files, Define Branches (if option is turned on "fProduceTreeFile ==1")
+
+	if(fProduceTreeFile == 1){
 
 	fCristinaFile = new TFile("/work0/cristina/TA2Cristina.root", "RECREATE", "Cristina", 3);
 	fCristinaTree = new TTree("TA2CristinaTree", "Compton Kinematics");
@@ -365,9 +359,9 @@ void TA2Cristina::PostInit()
 	fCristinaTree->Branch("Pi0ThetaRandom",		fPi0ThetaRandom, 	"Pi0ThetaRandom[NRandomPi0]/D");
 	fCristinaTree->Branch("Pi0PhiPrompt",		fPi0PhiPrompt, 		"Pi0PhiPrompt[NPromptPi0]/D");
 	fCristinaTree->Branch("Pi0PhiRandom",		fPi0PhiRandom, 		"Pi0PhiRandom[NRandomPi0]/D");
-
-	gROOT->cd();
 	
+	gROOT->cd();
+	}
 	// Default physics initialisation
 	TA2Physics::PostInit();
 }
@@ -733,8 +727,10 @@ void TA2Cristina::Reconstruct()
 	fPi0PhiRandom[fNRandomPi0]		= EBufferEnd;
 
 // Fill Tree File
-	fBasicVariable = 4; 
-	fCristinaTree->Fill();
+	fBasicVariable = 4;
 
+	if(fProduceTreeFile == 1) {
+		fCristinaTree->Fill();
+	}
 }
 

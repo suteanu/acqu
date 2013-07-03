@@ -5,7 +5,7 @@ void FinishTree(Char_t* file = NULL)
 
     	TString name;
 
-	printf("End-of-Run macro executing:\n");
+	printf("\nEnd-of-Run macro executing:\n");
 
         printf("Closing tree files..."); 
  	TA2Cristina* comp = (TA2Cristina*)(gAN->GetPhysics());
@@ -17,5 +17,6 @@ void FinishTree(Char_t* file = NULL)
 	TFile f1(file,"RECREATE");
 	gROOT->GetList()->Write();
 	f1.Close();
-  	printf("done. All histograms saved to %s\n\n",file);
+  	printf("done.\n",file);
+  	printf("All histograms saved to %s\n",file);
 }
