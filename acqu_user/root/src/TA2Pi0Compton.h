@@ -19,6 +19,7 @@
 #include "TA2CentralApparatus.h"
 #include "TA2Taps.h"
 #include "TA2Ladder.h"
+//#include "TA2PhotoPhysics.h"
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -47,12 +48,13 @@ class TA2Pi0Compton : public TA2Physics {
 	TA2PlasticPID	*fVeto; 	// TAPS Vetos
 
 // Tree Files
-//	TFile* 		fCristinaFile;
-//	TTree* 		fCristinaTree;
+	TFile* 		fFile;
+	TTree* 		fTree;
+	Int_t		fProduceTreeFile;
 
 // Pi0Compton Class Variables
 	UInt_t 		fBasicVariable;	// BasicVariable
-	Double_t 	fInput;		
+	Double_t 	fInput;	
 	UInt_t 		i,j;
 
 	// Particle Information
@@ -161,18 +163,19 @@ class TA2Pi0Compton : public TA2Physics {
 		virtual void SetConfig(Char_t*, Int_t);
 		virtual void Reconstruct();	// reconstruct detector info
 		virtual TA2DataManager* CreateChild( const char*, Int_t ){ return NULL;}
-//		virtual void CloseTrees();
+		virtual void CloseTrees();
 	ClassDef(TA2Pi0Compton,1)
 };
 
-/*
+// ----------------------------------------------------------------------------
+
 inline void TA2Pi0Compton::CloseTrees() {
 
-    fCristinaFile->cd();
-    fCristinaTree->Write();
-    fCristinaFile->Close();
-
-}
-*/
+	if(fProduceTreeFile == 1) {
+    		fFile->cd();
+    		fTree->Write();
+    		fFile->Close();
+	}
+}	
 
 #endif

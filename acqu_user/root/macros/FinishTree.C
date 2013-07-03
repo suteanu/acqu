@@ -1,14 +1,10 @@
 void FinishTree(Char_t* file = NULL)
 {
-	// Stuff to do at the end of an analysis run
-	// Here all spectra are saved to disk
-
     	TString name;
-
 	printf("\nEnd-of-Run macro executing:\n");
 
         printf("Closing tree files..."); 
- 	TA2Cristina* comp = (TA2Cristina*)(gAN->GetPhysics());
+ 	TA2Pi0Compton* comp = (TA2Pi0Compton*)(gAN->GetPhysics());
  	comp->CloseTrees();
 	printf(" done. \n");
 

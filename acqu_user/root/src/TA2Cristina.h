@@ -50,11 +50,11 @@ class TA2Cristina : public TA2Physics {
 // Tree Files
 	TFile* 		fCristinaFile;
 	TTree* 		fCristinaTree;
+	Int_t		fProduceTreeFile;
 
 // Cristina Class Variables
 	UInt_t 		fBasicVariable;	// BasicVariable
 	Double_t 	fInput;	
-	Int_t		fProduceTreeFile;
 	UInt_t 		i,j;
 
 	// Particle Information

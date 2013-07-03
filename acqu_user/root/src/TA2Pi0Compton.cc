@@ -1,16 +1,15 @@
-//
-//  TA2Pi0Compton
-//
-//  Basic physics class for pi0 production and Compton scattering.
-//
-//--Author	Dave Hornidge   26 June 2013
-//
+//--Author	Cristina Collicott   June 2013   Compton and Pi0 analysis
 
 #include "TA2Pi0Compton.h"
 
-enum { EInput = 1000};
+enum { EInput = 1000, EComptonPromptWindows, EComptonRandomWindows, EPi0PromptWindows, EPi0RandomWindows, EProduceTreeFile};
 static const Map_t kInputs[] = {
-	{"Input:",	EInput},
+	{"Input:",			EInput},
+	{"Compton-Prompt-Windows:",	EComptonPromptWindows},
+	{"Compton-Random-Windows:",	EComptonRandomWindows},
+	{"Pi0-Prompt-Windows:",		EPi0PromptWindows},
+	{"Pi0-Random-Windows:",		EPi0RandomWindows},
+	{"Produce-Tree-File:",		EProduceTreeFile},
 	{NULL,          -1}
 };
 
@@ -32,7 +31,8 @@ TA2Pi0Compton::TA2Pi0Compton( const char* name, TA2Analysis* analysis )
 	fBaF2			= NULL;	// BaF2
 	fVeto			= NULL; // TAPS Vetos
 
-// Physics Variables
+// Pi0Compton Variables
+	fBasicVariable 		= 0;
 
 	// Particle Counters
 	fNPhotTemp		= 0;
@@ -102,7 +102,6 @@ TA2Pi0Compton::TA2Pi0Compton( const char* name, TA2Analysis* analysis )
 	fPi0PhiPrompt		= NULL;
 	fPi0PhiRandom		= NULL;
 
-
 	AddCmdList(kInputs);
 }
 
@@ -112,10 +111,9 @@ TA2Pi0Compton::~TA2Pi0Compton()
 {
 
 // Delete Tree Files
-
-// Shut off for now
-//	delete fCristinaTree;
-//	delete fCristinaFile;
+//
+//	delete fTree;
+//	delete fFile;
 
 }
 	
@@ -126,12 +124,50 @@ void TA2Pi0Compton::SetConfig(Char_t* line, Int_t key)
 
 	switch (key){
 		case EInput:
-			//  Invariant mass limits
-			if( sscanf( line, "%lf", &fInput ) != 1 ){
+			//  Example input (double)
+			if( sscanf( line, "%lf\n", &fInput ) != 1 ){
 				PrintError( line, "<OOOOPS...>");
 				return;
 			}
-			break;
+		break;
+		case EComptonPromptWindows:
+			//  Compton Prompt Windows
+			if( sscanf( line, "%d %d\n", &fPhotTimePL, &fPhotTimePR ) != 2 ){
+				PrintError( line, "<Error: Compton Prompt Windows not set correctly>");
+				return;
+			}
+		break;
+		case EComptonRandomWindows:
+			//  Compton Random Windows
+			if( sscanf( line, "%d %d %d %d\n", &fPhotTimeRL1, &fPhotTimeRR1, &fPhotTimeRL2, &fPhotTimeRR2 ) != 4 ){
+				PrintError( line, "<Error: Compton Random Windows not set correctly>");
+				return;
+			}
+		break;
+		case EPi0PromptWindows:
+			//  Pi0 Prompt Windows
+			if( sscanf( line, "%d %d\n", &fPi0TimePL, &fPi0TimePR ) != 2 ){
+				PrintError( line, "<Error: Pi0 Prompt Windows not set correctly>");
+				return;
+			}
+		break;
+		case EPi0RandomWindows:
+			//  Pi0 Random Windows
+			if( sscanf( line, "%d %d %d %d\n", &fPi0TimeRL1, &fPi0TimeRR1, &fPi0TimeRL2, &fPi0TimeRR2 ) != 4 ){
+				PrintError( line, "<Error: Pi0 Random Windows not set correctly>");
+				return;
+			}
+		break;
+		case EProduceTreeFile:
+			//  Pi0 Random Windows
+			if( sscanf( line, "%d\n", &fProduceTreeFile) != 1 ){
+				PrintError( line, "<Error: Tree files not turned on/off correctly>");
+				return;
+			}
+			if(fProduceTreeFile == 1) printf("\n\nPhysics tree file enabled\n");
+                        else printf("\n\nPhysics tree file disabled\n");
+		break;
+
 		default:
 		// default main apparatus SetConfig()
 		TA2Physics::SetConfig( line, key );
@@ -144,7 +180,6 @@ void TA2Pi0Compton::PostInit()
 {
 
 // Introduce Detectors
-	printf("\n");
 
 	// Tagger
 	fTAGG = (TA2Tagger*)((TA2Analysis*)fParent)->GetChild("TAGG");
@@ -194,6 +229,7 @@ void TA2Pi0Compton::PostInit()
 //	if (!fVeto) printf(" - BaF2 Vetos NOT included in analysis\n\n");
 //	else printf(" - BaF2 Vetos included in analysis\n\n");
 
+	printf("\n");
 
 // Get max # of Particles from detectors, used for defining array sizes
 
@@ -259,71 +295,73 @@ void TA2Pi0Compton::PostInit()
 	fPi0PhiPrompt		= new Double_t[352*fMaxNParticle*fMaxNParticle];
 	fPi0PhiRandom		= new Double_t[352*fMaxNParticle*fMaxNParticle];
 
-/*
-// Create Tree Files, Define Branches
-	fCristinaFile = new TFile("TA2Pi0Compton.root", "RECREATE", "Cristina", 3);
-	fCristinaTree = new TTree("TA2Pi0ComptonTree", "Compton Kinematics");
-	fCristinaTree->Branch("NPhotTemp",	&fNPhotTemp, 	"NPhotTemp/I");
-	fCristinaTree->Branch("NPhoton",	&fNPhoton, 	"NPhoton/I");
-	fCristinaTree->Branch("NProton",	&fNProton, 	"NProton/I");
-	fCristinaTree->Branch("NPi0",		&fNPi0, 	"NPi0/I");
-	fCristinaTree->Branch("NUnknown",	&fNUnknown, 	"NUnknown/I");
-	fCristinaTree->Branch("NPionPhoton",	&fNPionPhoton, 	"NPionPhoton/I");
+// Create Tree Files, Define Branches (if option is turned on "fProduceTreeFile ==1")
 
-	fCristinaTree->Branch("PhotonEnergy",	fPhotonEnergy,	"PhotonEnergy[NPhoton]/D");
-	fCristinaTree->Branch("PhotonTheta",	fPhotonTheta, 	"PhotonTheta[NPhoton]/D");
-	fCristinaTree->Branch("PhotonPhi",	fPhotonPhi, 	"PhotonPhi[NPhoton]/D");
-	fCristinaTree->Branch("PhotonTime",	fPhotonTime, 	"PhotonTime[NPhoton]/D");
+	if(fProduceTreeFile == 1){
+//	Char_t* file = "
+	fFile = new TFile("/work0/cristina/TA2Pi0Compton.root", "RECREATE", "Physics", 3);
+	fTree = new TTree("Pi0ComptonTree", "Compton and Pi0 Kinematics");
+	fTree->Branch("BasicVariable",	&fBasicVariable,"BasicVariable/I");
+	fTree->Branch("NPhotTemp",	&fNPhotTemp, 	"NPhotTemp/I");
+	fTree->Branch("NPhoton",	&fNPhoton, 	"NPhoton/I");
+	fTree->Branch("NProton",	&fNProton, 	"NProton/I");
+	fTree->Branch("NPi0",		&fNPi0, 	"NPi0/I");
+	fTree->Branch("NUnknown",	&fNUnknown, 	"NUnknown/I");
+	fTree->Branch("NPionPhoton",	&fNPionPhoton, 	"NPionPhoton/I");
 
-	fCristinaTree->Branch("ProtonEnergy",	fProtonEnergy,	"ProtonEnergy[NProton]/D");
-	fCristinaTree->Branch("ProtonTheta",	fProtonTheta, 	"ProtonTheta[NProton]/D");
-	fCristinaTree->Branch("ProtonPhi",	fProtonPhi, 	"ProtonPhi[NProton]/D");
-	fCristinaTree->Branch("ProtonTime",	fProtonTime, 	"ProtonTime[NProton]/D");
+	fTree->Branch("PhotonEnergy",	fPhotonEnergy,	"PhotonEnergy[NPhoton]/D");
+	fTree->Branch("PhotonTheta",	fPhotonTheta, 	"PhotonTheta[NPhoton]/D");
+	fTree->Branch("PhotonPhi",	fPhotonPhi, 	"PhotonPhi[NPhoton]/D");
+	fTree->Branch("PhotonTime",	fPhotonTime, 	"PhotonTime[NPhoton]/D");
 
-	fCristinaTree->Branch("Pi0Energy",	fPi0Energy,	"Pi0Energy[NPi0]/D");
-	fCristinaTree->Branch("Pi0Theta",	fPi0Theta, 	"Pi0Theta[NPi0]/D");
-	fCristinaTree->Branch("Pi0Phi",		fPi0Phi, 	"Pi0Phi[NPi0]/D");
-	fCristinaTree->Branch("Pi0Time",	fPi0Time, 	"Pi0Time[NPi0]/D");
+	fTree->Branch("ProtonEnergy",	fProtonEnergy,	"ProtonEnergy[NProton]/D");
+	fTree->Branch("ProtonTheta",	fProtonTheta, 	"ProtonTheta[NProton]/D");
+	fTree->Branch("ProtonPhi",	fProtonPhi, 	"ProtonPhi[NProton]/D");
+	fTree->Branch("ProtonTime",	fProtonTime, 	"ProtonTime[NProton]/D");
 
-	fCristinaTree->Branch("NTagg",		&fNTagg,	"NTagg/I");
-	fCristinaTree->Branch("TaggerChannel",	fTaggerChannel,	"TaggerChannel[NTagg]/I");
+	fTree->Branch("Pi0Energy",	fPi0Energy,	"Pi0Energy[NPi0]/D");
+	fTree->Branch("Pi0Theta",	fPi0Theta, 	"Pi0Theta[NPi0]/D");
+	fTree->Branch("Pi0Phi",		fPi0Phi, 	"Pi0Phi[NPi0]/D");
+	fTree->Branch("Pi0Time",	fPi0Time, 	"Pi0Time[NPi0]/D");
 
-	fCristinaTree->Branch("NPrompt",	&fNPrompt, 	"NPrompt/I");
-	fCristinaTree->Branch("NRandom",	&fNRandom, 	"NRandom/I");
-	fCristinaTree->Branch("NTaggNPhot",	&fNTaggNPhot,	"NTaggNPhot/I");
+	fTree->Branch("NTagg",		&fNTagg,	"NTagg/I");
+	fTree->Branch("TaggerChannel",	fTaggerChannel,	"TaggerChannel[NTagg]/I");
 
-	fCristinaTree->Branch("NPromptPi0",	&fNPromptPi0, 	"NPromptPi0/I");
-	fCristinaTree->Branch("NRandomPi0",	&fNRandomPi0, 	"NRandomPi0/I");
-	fCristinaTree->Branch("NTaggNPi0",	&fNTaggNPi0,	"NTaggNPi0/I");
+	fTree->Branch("NPrompt",	&fNPrompt, 	"NPrompt/I");
+	fTree->Branch("NRandom",	&fNRandom, 	"NRandom/I");
+	fTree->Branch("NTaggNPhot",	&fNTaggNPhot,	"NTaggNPhot/I");
 
-	fCristinaTree->Branch("TaggerTime",  		fTaggerTime,   		"TaggerTime[NTagg]/D");
-	fCristinaTree->Branch("TaggerPhotonTime",  	fTaggerPhotonTime,   	"TaggerPhotonTime[NTaggNPhot]/D");
-	fCristinaTree->Branch("TaggerPi0Time",	   	fTaggerPi0Time,      	"TaggerPi0Time[NTaggNPi0]/D");
+	fTree->Branch("NPromptPi0",	&fNPromptPi0, 	"NPromptPi0/I");
+	fTree->Branch("NRandomPi0",	&fNRandomPi0, 	"NRandomPi0/I");
+	fTree->Branch("NTaggNPi0",	&fNTaggNPi0,	"NTaggNPi0/I");
 
-	fCristinaTree->Branch("N2PhotonInvariantMass", 	&fN2PhotonInvariantMass,"N2PhotonInvariantMass/I");
-	fCristinaTree->Branch("2PhotonInvariantMass",  	f2PhotonInvariantMass,  "2PhotonInvariantMass[N2PhotonInvariantMass]/D");
+	fTree->Branch("TaggerTime",  		fTaggerTime,   		"TaggerTime[NTagg]/D");
+	fTree->Branch("TaggerPhotonTime",  	fTaggerPhotonTime,   	"TaggerPhotonTime[NTaggNPhot]/D");
+	fTree->Branch("TaggerPi0Time",	   	fTaggerPi0Time,      	"TaggerPi0Time[NTaggNPi0]/D");
 
-	fCristinaTree->Branch("TaggerChannelPrompt",	fTaggerChannelPrompt,	"TaggerChannelPrompt[NPrompt]/I");
-	fCristinaTree->Branch("TaggerChannelRandom",	fTaggerChannelRandom,	"TaggerChannelRandom[NRandom]/I");
-	fCristinaTree->Branch("MissingMassPrompt",	fMissingMassPrompt,	"MissingMassPrompt[NPrompt]/D");
-	fCristinaTree->Branch("MissingMassRandom",	fMissingMassRandom,	"MissingMassRandom[NRandom]/D");
-	fCristinaTree->Branch("PhotonThetaPrompt",	fPhotonThetaPrompt, 	"PhotonThetaPrompt[NPrompt]/D");
-	fCristinaTree->Branch("PhotonThetaRandom",	fPhotonThetaRandom, 	"PhotonThetaRandom[NRandom]/D");
-	fCristinaTree->Branch("PhotonPhiPrompt",	fPhotonPhiPrompt, 	"PhotonPhiPrompt[NPrompt]/D");
-	fCristinaTree->Branch("PhotonPhiRandom",	fPhotonPhiRandom, 	"PhotonPhiRandom[NRandom]/D");
+	fTree->Branch("N2PhotonInvariantMass", 	&fN2PhotonInvariantMass,"N2PhotonInvariantMass/I");
+	fTree->Branch("2PhotonInvariantMass",  	f2PhotonInvariantMass,  "2PhotonInvariantMass[N2PhotonInvariantMass]/D");
 
-	fCristinaTree->Branch("TaggerChannelPromptPi0",	fTaggerChannelPromptPi0,"TaggerChannelPromptPi0[NPromptPi0]/I");
-	fCristinaTree->Branch("TaggerChannelRandomPi0",	fTaggerChannelRandomPi0,"TaggerChannelRandomPi0[NRandomPi0]/I");
-	fCristinaTree->Branch("MissingMassPromptPi0",	fMissingMassPromptPi0,	"MissingMassPromptPi0[NPromptPi0]/D");
-	fCristinaTree->Branch("MissingMassRandomPi0",	fMissingMassRandomPi0,	"MissingMassRandomPi0[NRandomPi0]/D");
-	fCristinaTree->Branch("Pi0ThetaPrompt",		fPi0ThetaPrompt, 	"Pi0ThetaPrompt[NPromptPi0]/D");
-	fCristinaTree->Branch("Pi0ThetaRandom",		fPi0ThetaRandom, 	"Pi0ThetaRandom[NRandomPi0]/D");
-	fCristinaTree->Branch("Pi0PhiPrompt",		fPi0PhiPrompt, 		"Pi0PhiPrompt[NPromptPi0]/D");
-	fCristinaTree->Branch("Pi0PhiRandom",		fPi0PhiRandom, 		"Pi0PhiRandom[NRandomPi0]/D");
+	fTree->Branch("TaggerChannelPrompt",	fTaggerChannelPrompt,	"TaggerChannelPrompt[NPrompt]/I");
+	fTree->Branch("TaggerChannelRandom",	fTaggerChannelRandom,	"TaggerChannelRandom[NRandom]/I");
+	fTree->Branch("MissingMassPrompt",	fMissingMassPrompt,	"MissingMassPrompt[NPrompt]/D");
+	fTree->Branch("MissingMassRandom",	fMissingMassRandom,	"MissingMassRandom[NRandom]/D");
+	fTree->Branch("PhotonThetaPrompt",	fPhotonThetaPrompt, 	"PhotonThetaPrompt[NPrompt]/D");
+	fTree->Branch("PhotonThetaRandom",	fPhotonThetaRandom, 	"PhotonThetaRandom[NRandom]/D");
+	fTree->Branch("PhotonPhiPrompt",	fPhotonPhiPrompt, 	"PhotonPhiPrompt[NPrompt]/D");
+	fTree->Branch("PhotonPhiRandom",	fPhotonPhiRandom, 	"PhotonPhiRandom[NRandom]/D");
 
-	gROOT->cd();
-*/
+	fTree->Branch("TaggerChannelPromptPi0",	fTaggerChannelPromptPi0,"TaggerChannelPromptPi0[NPromptPi0]/I");
+	fTree->Branch("TaggerChannelRandomPi0",	fTaggerChannelRandomPi0,"TaggerChannelRandomPi0[NRandomPi0]/I");
+	fTree->Branch("MissingMassPromptPi0",	fMissingMassPromptPi0,	"MissingMassPromptPi0[NPromptPi0]/D");
+	fTree->Branch("MissingMassRandomPi0",	fMissingMassRandomPi0,	"MissingMassRandomPi0[NRandomPi0]/D");
+	fTree->Branch("Pi0ThetaPrompt",		fPi0ThetaPrompt, 	"Pi0ThetaPrompt[NPromptPi0]/D");
+	fTree->Branch("Pi0ThetaRandom",		fPi0ThetaRandom, 	"Pi0ThetaRandom[NRandomPi0]/D");
+	fTree->Branch("Pi0PhiPrompt",		fPi0PhiPrompt, 		"Pi0PhiPrompt[NPromptPi0]/D");
+	fTree->Branch("Pi0PhiRandom",		fPi0PhiRandom, 		"Pi0PhiRandom[NRandomPi0]/D");
 	
+	gROOT->cd();
+	}
 	// Default physics initialisation
 	TA2Physics::PostInit();
 }
@@ -335,6 +373,7 @@ void TA2Pi0Compton::LoadVariable( )
 // Input name - variable pointer associations for any subsequent cut/histogram setup
 
 	TA2Physics::LoadVariable();
+	TA2DataManager::LoadVariable("BasicVariable", 		&fBasicVariable, 		EISingleX);
 
 	TA2DataManager::LoadVariable("NPhoton", 		&fNPhoton,			EISingleX);
 	TA2DataManager::LoadVariable("PhotonTheta", 		fPhotonTheta,			EDMultiX);
@@ -519,17 +558,6 @@ void TA2Pi0Compton::Reconstruct()
 
 	fNTagg		= fTAGGNParticle;
 
-	fNTaggNPhot	= 0;
-	fNPrompt	= 0;
-	fNRandom	= 0;
-
-	fPhotTimePL = -190;
-	fPhotTimePR = -165;
-	fPhotTimeRL1 = -240;
-	fPhotTimeRR1 = -200;
-	fPhotTimeRL2 = -140;
-	fPhotTimeRR2 = -100;
-
 	for (i = 0; i < fNTagg; i++) {
 		fTaggerChannel[i] 	 = (fLADD->GetHits())[i];
 		fTaggedPhoton[i] 	 = fTAGGParticles+i;
@@ -537,6 +565,25 @@ void TA2Pi0Compton::Reconstruct()
 		fTaggerTime[i]	 	 = taggerphoton.GetTime();
 	} 
 
+	fNTaggNPhot	= 0;
+	fNPrompt	= 0;
+	fNRandom	= 0;
+
+	//Dec 2012
+//	fPhotTimePL = -190;
+//	fPhotTimePR = -165;
+//	fPhotTimeRL1 = -240;
+//	fPhotTimeRR1 = -200;
+//	fPhotTimeRL2 = -140;
+//	fPhotTimeRR2 = -100;
+
+	//Dec 2008
+//	fPhotTimePL = 90;
+//	fPhotTimePR = 105;
+//	fPhotTimeRL1 = 10;
+//	fPhotTimeRR1 = 80;
+//	fPhotTimeRL2 = 115;
+//	fPhotTimeRR2 = 185;
 
 	for (i = 0; i < fNPhoton; i++)  {
 
@@ -544,7 +591,7 @@ void TA2Pi0Compton::Reconstruct()
 
 //			fTaggedPhoton[j] 		= fTAGGParticles+j;
 			TA2Particle taggerphoton 	= *fTaggedPhoton[j];
-			fTaggerPhotonTime[fNTaggNPhot] 	= taggerphoton.GetTime() - fPhotonTime[i];
+			fTaggerPhotonTime[fNTaggNPhot] 	= fTaggerTime[j] - fPhotonTime[i];
 			TA2Particle photon   		= *fPhoton[i];
 
 			TLorentzVector p4incident , p4missing;
@@ -558,7 +605,6 @@ void TA2Pi0Compton::Reconstruct()
 				fMissingMassPrompt[fNPrompt]	= p4missing.M();
 				fPhotonThetaPrompt[fNPrompt]	= fPhotonTheta[i];
 				fPhotonPhiPrompt[fNPrompt]	= fPhotonPhi[i];
-
 				fNPrompt++;
 			}
 
@@ -582,12 +628,21 @@ void TA2Pi0Compton::Reconstruct()
 	fNPromptPi0	= 0;
 	fNRandomPi0	= 0;
 
-	fPi0TimePL = -185;
-	fPi0TimePR = -165;
-	fPi0TimeRL1 = -240;
-	fPi0TimeRR1 = -200;
-	fPi0TimeRL2 = -140;
-	fPi0TimeRR2 = -100;
+	//Dec 2012
+//	fPi0TimePL = -185;
+//	fPi0TimePR = -165;
+//	fPi0TimeRL1 = -240;
+//	fPi0TimeRR1 = -200;
+//	fPi0TimeRL2 = -140;
+//	fPi0TimeRR2 = -100;
+
+	//Dec 2008
+//	fPi0TimePL  = 95;
+//	fPi0TimePR  = 105;
+//	fPi0TimeRL1 = 10;
+//	fPi0TimeRR1 = 80;
+//	fPi0TimeRL2 = 115;
+//	fPi0TimeRR2 = 185;
 
 	for (i = 0; i < fNPi0; i++)  {
 
@@ -597,8 +652,6 @@ void TA2Pi0Compton::Reconstruct()
 			TA2Particle taggerphoton 	= *fTaggedPhoton[j];
 			fTaggerPi0Time[fNTaggNPi0] 	= taggerphoton.GetTime() - fPi0Time[i];
 			TA2Particle pi0   	 	= *fPi0[i];
-
-//			std::cout << taggerphoton.GetE() << std::endl;
 
 			TLorentzVector p4incident , p4missing, p4;
  			p4	   = pi0.GetP4();
@@ -673,5 +726,11 @@ void TA2Pi0Compton::Reconstruct()
 	fPi0PhiPrompt[fNPromptPi0]		= EBufferEnd;
 	fPi0PhiRandom[fNRandomPi0]		= EBufferEnd;
 
+// Fill Tree File
+	fBasicVariable = 4;
+
+	if(fProduceTreeFile == 1) {
+		fTree->Fill();
+	}
 }
 
