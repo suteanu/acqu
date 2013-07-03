@@ -6,10 +6,10 @@
 #
 Target:	0. 0. 0.	938.271  #Used by TA2Physics.cc
 Input: 3.
-Compton-Prompt-Windows: -190 -165
-Compton-Random-Windows: -240 -200 -140 -100
-Pi0-Prompt-Windows: -185 -165
-Pi0-Random-Windows: -240 -200 -140 -100
+Compton-Prompt-Windows: -10 5
+Compton-Random-Windows: -350 -50 45 345
+Pi0-Prompt-Windows: -10 5
+Pi0-Random-Windows: -350 -50 45 345
 Produce-Tree-File: 1
 Tree-File-Name: /work0/cristina/TA2Pi0Compton.root
 #
@@ -27,7 +27,8 @@ Display: 1D NPi0		10 0 10
 Display: 1D NUnknown		10 0 10 
 #
 #Display: 1D TaggerTime 		1000 50 167 -1 -1
-#Display: 1D PhotTaggTime 	1000 0 200 -1 -1
+Display: 1D TaggerPhotonTime 	1400 -700 700 -1 -1
+Display: 1D TaggerPi0Time 	1400 -700 700 -1 -1
 #
 #Display: 1D PhotonEnergy	85 0 850 -1 -1
 #Display: 1D PhotonTheta		180 0 180 -1 -1
