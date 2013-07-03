@@ -50,6 +50,7 @@ void MissingMass2008() {
 	TH1D *b2 = new TH1D("Missing-Mass-Pi0",	      "Missing-Mass-Pi0",	 300,900,1200);
 
 	Int_t nentries = (Int_t)tree1->GetEntries();
+	nentries = 1000000;
 	for (Int_t i=0;i<nentries;i++) {
 
 		tree1->GetEntry(i);
@@ -169,14 +170,12 @@ void MissingMass2012() {
 	
 	canvas1 = new TCanvas("canvas1","Missing-Mass-Compton");
 	a2->Add(a0,1);
-//	a2->Add(a1,-0.3125); //Data2012
-	a2->Add(a1,-0.1071); //Data2008
+	a2->Add(a1,-0.3125); //Data2012
 	a2->Draw();
 
 	canvas2 = new TCanvas("canvas2","Missing-Mass-Pi0");
 	b2->Add(b0,1);
-//	b2->Add(b1,-0.25); // Data2012
-	b2->Add(b1,-0.15); // Data2008
+	b2->Add(b1,-0.25); // Data2012
 	b2->Draw();
 
 }
