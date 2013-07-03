@@ -51,6 +51,7 @@ class TA2Pi0Compton : public TA2Physics {
 	TFile* 		fFile;
 	TTree* 		fTree;
 	Int_t		fProduceTreeFile;
+	Char_t   	fTreeFileName[256];
 
 // Pi0Compton Class Variables
 	UInt_t 		fBasicVariable;	// BasicVariable

@@ -65,7 +65,7 @@ Initialise:
 ## The procedures are usually held in macro script files
 ## Period...every N events
 ##		N	Macro File	Macro Procedure
-Period:	100000	PeriodMacro.C	PeriodMacro()
+Period:	10000	PeriodMacro.C	PeriodMacro()
 #Period:	100000	PeriodMacro.C	PeriodMacro()
 ##
 ## EndFile...each time an input data file is closed

@@ -2,7 +2,7 @@
 
 #include "TA2Pi0Compton.h"
 
-enum { EInput = 1000, EComptonPromptWindows, EComptonRandomWindows, EPi0PromptWindows, EPi0RandomWindows, EProduceTreeFile};
+enum { EInput = 1000, EComptonPromptWindows, EComptonRandomWindows, EPi0PromptWindows, EPi0RandomWindows, EProduceTreeFile, ETreeFileName};
 static const Map_t kInputs[] = {
 	{"Input:",			EInput},
 	{"Compton-Prompt-Windows:",	EComptonPromptWindows},
@@ -10,6 +10,7 @@ static const Map_t kInputs[] = {
 	{"Pi0-Prompt-Windows:",		EPi0PromptWindows},
 	{"Pi0-Random-Windows:",		EPi0RandomWindows},
 	{"Produce-Tree-File:",		EProduceTreeFile},
+	{"Tree-File-Name:",		ETreeFileName},
 	{NULL,          -1}
 };
 
@@ -167,7 +168,14 @@ void TA2Pi0Compton::SetConfig(Char_t* line, Int_t key)
 			if(fProduceTreeFile == 1) printf("\n\nPhysics tree file enabled\n");
                         else printf("\n\nPhysics tree file disabled\n");
 		break;
-
+		case ETreeFileName:
+			//  Tree File Name
+			if( sscanf( line, "%s\n", fTreeFileName) != 1){
+				PrintError( line, "<Error: Tree file name not set correctly>");
+				return;
+			}
+			else printf("Physics class tree file will be saved to: %s\n\n", fTreeFileName);
+		break;
 		default:
 		// default main apparatus SetConfig()
 		TA2Physics::SetConfig( line, key );
@@ -198,36 +206,11 @@ void TA2Pi0Compton::PostInit()
 	else {  printf("CB system included in analysis\n");
 		fCBParticles  = fCB->GetParticles(); }
 
-	// NaI
-//	fNaI = (TA2CalArray*)((TA2Analysis*)fParent)->GetGrandChild("NaI");
-//	if (!fNaI) printf(" - NaI NOT included in analysis\n");
-//	else printf(" - NaI included in analysis\n");
-
-	// Pid
-//	fPID = (TA2PlasticPID*)((TA2Analysis*)fParent)->GetGrandChild("PID");
-//	if (!fPID) printf(" - PID NOT included in analysis\n");
-//	else printf(" - PID included in analysis\n");
-
-	// Mwpc
-//	fMWPC = (TA2CylMwpc*)((TA2Analysis*)fParent)->GetGrandChild("CylMWPC");
-//	if (!fMWPC) printf(" - Wire Chambers NOT included in analysis\n\n");
-//	else printf(" - Wire Chambers included in analysis\n\n");
-
 	// TAPS
 	fTAPS = (TA2Taps*)((TA2Analysis*)fParent)->GetChild("TAPS");
 	if ( !fTAPS) printf("TAPS *NOT* included in analysis\n");
 	else {  printf("TAPS included in analysis\n");
 		fTAPSParticles = fTAPS->GetParticles(); }
-
-	// BaF2
-//	fBaF2 = (TA2TAPS_BaF2*)((TA2Analysis*)fParent)->GetGrandChild("BaF2");
-//	if (!fBaF2) printf(" - BaF2 NOT included in analysis\n\n");
-//	else printf(" - BaF2 included in analysis\n");
-
-	// Vetos
- //	fVeto = (TA2PlasticPID*)((TA2Analysis*)fParent)->GetGrandChild("VetoBaF2");
-//	if (!fVeto) printf(" - BaF2 Vetos NOT included in analysis\n\n");
-//	else printf(" - BaF2 Vetos included in analysis\n\n");
 
 	printf("\n");
 
@@ -298,8 +281,8 @@ void TA2Pi0Compton::PostInit()
 // Create Tree Files, Define Branches (if option is turned on "fProduceTreeFile ==1")
 
 	if(fProduceTreeFile == 1){
-//	Char_t* file = "
-	fFile = new TFile("/work0/cristina/TA2Pi0Compton.root", "RECREATE", "Physics", 3);
+
+	fFile = new TFile(fTreeFileName, "RECREATE", "Physics", 3);
 	fTree = new TTree("Pi0ComptonTree", "Compton and Pi0 Kinematics");
 	fTree->Branch("BasicVariable",	&fBasicVariable,"BasicVariable/I");
 	fTree->Branch("NPhotTemp",	&fNPhotTemp, 	"NPhotTemp/I");
@@ -683,7 +666,6 @@ void TA2Pi0Compton::Reconstruct()
 			fNTaggNPi0++;
 		}
 	}
-
 
 // Apply BufferEnd to the end of all arrays
 	fPhotonEnergy[fNPhoton]			= EBufferEnd;
