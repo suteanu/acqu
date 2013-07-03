@@ -41,7 +41,7 @@ File-Directory:	scratch/
 Stream-Spec:	File	Mk1	0	32768	32	0	400
 #
 ## Some December Threshold Pi0 Production Data; Para polarization
-File-Name:  CB_21011.dat 0 1000
+File-Name:  CB_21011.dat 0 0
 #File-Name:  CB_21012.dat 0 2000
 #File-Name:  CB_21013.dat 0 0
 #File-Name:  CB_21014.dat 0 0
