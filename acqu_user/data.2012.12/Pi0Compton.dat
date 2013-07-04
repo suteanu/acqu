@@ -11,7 +11,7 @@ Compton-Random-Windows: -350 -50 45 345
 Pi0-Prompt-Windows: -10 5
 Pi0-Random-Windows: -350 -50 45 345
 Produce-Tree-File: 1
-Tree-File-Name: /work0/cristina/TA2Pi0Compton.root
+Tree-File-Name: /work0/cristina/TA2Pi0Compton2012.root
 #
 Initialise:
 #
