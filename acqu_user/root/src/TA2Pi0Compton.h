@@ -54,8 +54,6 @@ class TA2Pi0Compton : public TA2Physics {
 	Char_t   	fTreeFileName[256];
 
 // Pi0Compton Class Variables
-	UInt_t 		fBasicVariable;	// BasicVariable
-	Double_t 	fInput;	
 	UInt_t 		i,j;
 
 	// Particle Information
@@ -105,6 +103,8 @@ class TA2Pi0Compton : public TA2Physics {
 
 	Int_t		fNPionPhoton;		// # of photons which reconstruted into pion
 	Bool_t*		fIsPionPhoton;		// Array to mark pion photons
+	Int_t 		fPi0InvMassCut1;	//
+	Int_t		fPi0InvMassCut2;
 
 	Int_t		fNTagg;
 	Int_t*		fTaggerChannel;

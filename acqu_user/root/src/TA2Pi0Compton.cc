@@ -2,13 +2,14 @@
 
 #include "TA2Pi0Compton.h"
 
-enum { EInput = 1000, EComptonPromptWindows, EComptonRandomWindows, EPi0PromptWindows, EPi0RandomWindows, EProduceTreeFile, ETreeFileName};
+enum { EComptonPromptWindows = 1000, EComptonRandomWindows, EPi0PromptWindows, EPi0RandomWindows, EPi0InvariantMassCuts,
+		                     EProduceTreeFile, ETreeFileName};
 static const Map_t kInputs[] = {
-	{"Input:",			EInput},
 	{"Compton-Prompt-Windows:",	EComptonPromptWindows},
 	{"Compton-Random-Windows:",	EComptonRandomWindows},
 	{"Pi0-Prompt-Windows:",		EPi0PromptWindows},
 	{"Pi0-Random-Windows:",		EPi0RandomWindows},
+	{"Pi0-Invariant-Mass-Cuts:",	EPi0InvariantMassCuts},
 	{"Produce-Tree-File:",		EProduceTreeFile},
 	{"Tree-File-Name:",		ETreeFileName},
 	{NULL,          -1}
@@ -33,7 +34,6 @@ TA2Pi0Compton::TA2Pi0Compton( const char* name, TA2Analysis* analysis )
 	fVeto			= NULL; // TAPS Vetos
 
 // Pi0Compton Variables
-	fBasicVariable 		= 0;
 
 	// Particle Counters
 	fNPhotTemp		= 0;
@@ -124,13 +124,6 @@ void TA2Pi0Compton::SetConfig(Char_t* line, Int_t key)
 	// Any special command-line input for Crystal Ball apparatus
 
 	switch (key){
-		case EInput:
-			//  Example input (double)
-			if( sscanf( line, "%lf\n", &fInput ) != 1 ){
-				PrintError( line, "<OOOOPS...>");
-				return;
-			}
-		break;
 		case EComptonPromptWindows:
 			//  Compton Prompt Windows
 			if( sscanf( line, "%d %d\n", &fPhotTimePL, &fPhotTimePR ) != 2 ){
@@ -159,6 +152,13 @@ void TA2Pi0Compton::SetConfig(Char_t* line, Int_t key)
 				return;
 			}
 		break;
+                case EPi0InvariantMassCuts:
+                        //  Pi0 Invariant Mass Cuts
+                        if( sscanf( line, "%d %d\n", &fPi0InvMassCut1, &fPi0InvMassCut2 ) != 2 ){
+                      		PrintError( line, "<Error: Pi0 Invariant Mass Cuts not set correctly>");
+                       		return;
+                        }
+                break;
 		case EProduceTreeFile:
 			//  Pi0 Random Windows
 			if( sscanf( line, "%d\n", &fProduceTreeFile) != 1 ){
@@ -283,7 +283,6 @@ void TA2Pi0Compton::PostInit()
 
 	fFile = new TFile(fTreeFileName, "RECREATE", "Physics", 3);
 	fTree = new TTree("Pi0ComptonTree", "Compton and Pi0 Kinematics");
-	fTree->Branch("BasicVariable",	&fBasicVariable,"BasicVariable/I");
 	fTree->Branch("NPhotTemp",	&fNPhotTemp, 	"NPhotTemp/I");
 	fTree->Branch("NPhoton",	&fNPhoton, 	"NPhoton/I");
 	fTree->Branch("NProton",	&fNProton, 	"NProton/I");
@@ -356,7 +355,6 @@ void TA2Pi0Compton::LoadVariable( )
 // Input name - variable pointer associations for any subsequent cut/histogram setup
 
 	TA2Physics::LoadVariable();
-	TA2DataManager::LoadVariable("BasicVariable", 		&fBasicVariable, 		EISingleX);
 
 	TA2DataManager::LoadVariable("NPhoton", 		&fNPhoton,			EISingleX);
 	TA2DataManager::LoadVariable("PhotonTheta", 		fPhotonTheta,			EDMultiX);
@@ -490,7 +488,7 @@ void TA2Pi0Compton::Reconstruct()
 			f2PhotonInvariantMass[fN2PhotonInvariantMass] = p4.M();
 			fN2PhotonInvariantMass++;
 
-			if (p4.M() > 120 && p4.M() < 150) {
+			if (p4.M() > fPi0InvMassCut1 && p4.M() < fPi0InvMassCut2) {
 
 				time = (photon1.GetTime() + photon2.GetTime())/2;
 
@@ -675,7 +673,6 @@ void TA2Pi0Compton::Reconstruct()
 	fPi0PhiRandom[fNRandomPi0]		= EBufferEnd;
 
 // Fill Tree File
-	fBasicVariable = 4;
 
 	if(fProduceTreeFile == 1) {
 		fTree->Fill();

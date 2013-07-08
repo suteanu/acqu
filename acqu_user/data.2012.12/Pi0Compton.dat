@@ -1,21 +1,19 @@
-##--Author      C Collicott. 14th Nov. 2011
+##--Author      C Collicott. June 2013
 ##--Description
 ##
 ## Do some post-initialisation.
 ## Should usually be done before display is setup
 #
 Target:	0. 0. 0.	938.271  #Used by TA2Physics.cc
-Input: 3.
 Compton-Prompt-Windows: -10 5
 Compton-Random-Windows: -350 -50 45 345
 Pi0-Prompt-Windows: -10 5
 Pi0-Random-Windows: -350 -50 45 345
+Pi0-Invariant-Mass-Cuts: 120 150
 Produce-Tree-File: 1
 Tree-File-Name: /work0/cristina/TA2Pi0Compton2012.root
 #
 Initialise:
-#
-Display: 1D BasicVariable	10 0 10
 #
 Display: 1D TAGGNParticle	50 0 50
 Display: 1D CAPPNParticle	10 0 10
