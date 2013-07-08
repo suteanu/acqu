@@ -290,6 +290,7 @@ void TA2Pi0Compton::PostInit()
 	fTree->Branch("NPi0",		&fNPi0, 	"NPi0/I");
 	fTree->Branch("NUnknown",	&fNUnknown, 	"NUnknown/I");
 	fTree->Branch("NPionPhoton",	&fNPionPhoton, 	"NPionPhoton/I");
+	fTree->Branch("CBNParticle",	&fCBNParticle, 	"CBNParticle/I");
 
 	fTree->Branch("PhotonEnergy",	fPhotonEnergy,	"PhotonEnergy[NPhoton]/D");
 	fTree->Branch("PhotonTheta",	fPhotonTheta, 	"PhotonTheta[NPhoton]/D");
